@@ -53,7 +53,7 @@ public class GuiStage extends Stage implements EventHandler {
     }
 
     protected void initGui() {
-        Texture itemTexture = Service.assetManager().get("assets/icon.png");
+        Texture itemTexture = Service.assetManager().get("icon.png");
         TextureRegion[][] icons = TextureRegion.split(itemTexture,
                 itemTexture.getWidth() / 16, itemTexture.getHeight() / 39);
 

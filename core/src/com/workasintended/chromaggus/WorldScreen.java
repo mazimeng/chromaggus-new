@@ -39,7 +39,7 @@ public class WorldScreen implements Screen {
 	}
 
 	protected void initAssets() {
-		Service.assetManager().load("assets/icon.png", Texture.class);
+		Service.assetManager().load("icon.png", Texture.class);
 		Service.assetManager().finishLoading();
 	}
 
@@ -49,7 +49,7 @@ public class WorldScreen implements Screen {
 		OrthographicCamera cam = new OrthographicCamera(1, 1*(h/w));
 		cam.update();
 
-		float zoom = 1f;
+		float zoom = 0.8f;
 		ExtendViewport viewport = new ExtendViewport(w*zoom, h*zoom);
 		viewport.setCamera(cam);
 

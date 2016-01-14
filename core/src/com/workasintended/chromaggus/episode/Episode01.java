@@ -36,13 +36,13 @@ public class Episode01 {
 
 		BitmapFont font = new BitmapFont();
 
-		Texture unit1 = new Texture("assets/red.png");
-		Texture unit2 = new Texture("assets/blue.png");
-		Texture textureCity = new Texture("assets/city.png");
-		Sprite circle = new Sprite(new Texture("assets/circle.png"));
-		Texture textureCursor = new Texture("assets/cursor.png");
-		Texture characterSpriteSheet = new Texture("assets/characters.png");
-		Texture char01 = new Texture("assets/char01.png");
+		Texture unit1 = new Texture("red.png");
+		Texture unit2 = new Texture("blue.png");
+		Texture textureCity = new Texture("city.png");
+		Sprite circle = new Sprite(new Texture("circle.png"));
+		Texture textureCursor = new Texture("cursor.png");
+		Texture characterSpriteSheet = new Texture("characters.png");
+		Texture char01 = new Texture("char01.png");
 
 		TextureRegion[][] characterFrames = TextureRegion.split(characterSpriteSheet,
 				characterSpriteSheet.getWidth() / 16, characterSpriteSheet.getHeight() / 10);
@@ -71,7 +71,7 @@ public class Episode01 {
 				Character unit = makeCharacter(stage, 1, font, characterSpriteSheet, frames);
 				unit.setPosition(12*32, 22*32);
 
-				Texture slashSpriteSheet = new Texture("assets/slash.png");
+				Texture slashSpriteSheet = new Texture("slash.png");
 				TextureRegion[][] tmp = TextureRegion.split(slashSpriteSheet,
 						slashSpriteSheet.getWidth() / 4, slashSpriteSheet.getHeight() / 1);
 				TextureRegion[] slashFrames = new TextureRegion[4];
@@ -141,7 +141,7 @@ public class Episode01 {
         stage.addListener(new HumanController(stage));
 
 		{
-			TiledMap map = new TmxMapLoader(new InternalFileHandleResolver()).load("assets/episode01.tmx");
+			TiledMap map = new TmxMapLoader(new InternalFileHandleResolver()).load("episode01.tmx");
 			float unitScale = 2f;
 			OrthogonalTiledMapRenderer renderer = new OrthogonalTiledMapRenderer(map, unitScale);
 			stage.setTiledMapRenderer(renderer);

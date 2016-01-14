@@ -34,7 +34,10 @@ public class DefaultEventQueue implements EventQueue {
 //
 //		}
 
-		LinkedList<EventHandler> handlerList = this.handlers.getOrDefault(name, new LinkedList<EventHandler>());
+		LinkedList<EventHandler> handlerList = this.handlers.get(name);
+		if(handlerList == null) {
+			handlerList = new LinkedList<EventHandler>();
+		}
 		this.handlers.put(name, handlerList);
 		handlerList.add(handler);
 	}
