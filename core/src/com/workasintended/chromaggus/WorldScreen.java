@@ -6,8 +6,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.viewport.*;
 import com.workasintended.chromaggus.episode.Episode01;
 import com.workasintended.chromaggus.pathfinding.GridMap;
@@ -15,7 +16,10 @@ import com.workasintended.chromaggus.pathfinding.GridMap;
 public class WorldScreen implements Screen {
 	private WorldStage stage;
 	private GuiStage gui;
-	public WorldScreen() {
+	private EventListener eventListener;
+	public WorldScreen(EventListener eventListener) {
+		this.eventListener = eventListener;
+
 		this.initAssets();
 		this.initWorld();
 		this.initGui();
@@ -46,17 +50,20 @@ public class WorldScreen implements Screen {
 	protected void initWorld() {
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-		OrthographicCamera cam = new OrthographicCamera(1, 1*(h/w));
+		OrthographicCamera cam = new OrthographicCamera(h, w);
+		cam.zoom = 0.5f;
 		cam.update();
 
-		float zoom = 0.8f;
-		ExtendViewport viewport = new ExtendViewport(w*zoom, h*zoom);
-		viewport.setCamera(cam);
+//		float zoom = 0.8f;
+//		ExtendViewport viewport = new ExtendViewport(w*zoom, h*zoom);
+//		viewport.setCamera(cam);
 
-		stage = new WorldStage(viewport);
+
+		stage = new WorldStage();
 		stage.setGridMap(new GridMap(100));
 		stage.setShapeRenderer(new ShapeRenderer());
-
+		stage.getViewport().setCamera(cam);
+		stage.addListener(this.eventListener);
 		new Episode01().build(stage);
 	}
 	

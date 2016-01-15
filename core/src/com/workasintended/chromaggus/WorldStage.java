@@ -18,6 +18,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.workasintended.chromaggus.pathfinding.GridMap;
 
 public class WorldStage extends Stage implements EventHandler {
+    public WorldStage() {
+        super();
+    }
+
     public WorldStage(Viewport viewport) {
         super(viewport);
     }
@@ -43,7 +47,6 @@ public class WorldStage extends Stage implements EventHandler {
             if (!unit.dead()) alive++;
 
         }
-
 
         getCamera().position.x += cameraMovement.x * delta * 50f;
         getCamera().position.y += cameraMovement.y * delta * 50f;

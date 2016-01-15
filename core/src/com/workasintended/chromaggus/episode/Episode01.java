@@ -138,7 +138,7 @@ public class Episode01 {
 //			stage.addActor(cursor);
 		}
 
-        stage.addListener(new HumanController(stage));
+//        stage.addListener(new HumanController(stage));
 
 		{
 			TiledMap map = new TmxMapLoader(new InternalFileHandleResolver()).load("episode01.tmx");
