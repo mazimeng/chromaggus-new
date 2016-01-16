@@ -16,9 +16,11 @@ import com.workasintended.chromaggus.pathfinding.GridMap;
 public class WorldScreen implements Screen {
 	private WorldStage stage;
 	private GuiStage gui;
-	private EventListener eventListener;
-	public WorldScreen(EventListener eventListener) {
-		this.eventListener = eventListener;
+	private EventListener inputHandler;
+	private GameConfiguration gameConfiguration;
+
+	public WorldScreen(GameConfiguration gameConfiguration) {
+		this.gameConfiguration = gameConfiguration;
 
 		this.initAssets();
 		this.initWorld();
@@ -63,7 +65,11 @@ public class WorldScreen implements Screen {
 		stage.setGridMap(new GridMap(100));
 		stage.setShapeRenderer(new ShapeRenderer());
 		stage.getViewport().setCamera(cam);
-		stage.addListener(this.eventListener);
+
+		this.inputHandler = this.gameConfiguration.makeInputListener(stage);
+		stage.addListener(this.inputHandler);
+
+
 		new Episode01().build(stage);
 	}
 	
@@ -140,5 +146,29 @@ public class WorldScreen implements Screen {
 	public void dispose() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void setInputHandler(EventListener inputHandler) {
+		this.inputHandler = inputHandler;
+	}
+
+	public WorldStage getStage() {
+		return stage;
+	}
+
+	public void setStage(WorldStage stage) {
+		this.stage = stage;
+	}
+
+	public GuiStage getGui() {
+		return gui;
+	}
+
+	public void setGui(GuiStage gui) {
+		this.gui = gui;
+	}
+
+	public EventListener getInputHandler() {
+		return inputHandler;
 	}
 }

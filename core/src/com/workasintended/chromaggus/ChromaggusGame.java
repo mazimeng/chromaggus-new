@@ -17,9 +17,7 @@ public class ChromaggusGame extends Game {
 
 	@Override
 	public void create() {
-		EventListener inputListener = this.gameConfiguration.makeInputListener();
-		WorldScreen screen = new WorldScreen(inputListener);
-		
+		WorldScreen screen = new WorldScreen(gameConfiguration);
 		this.setScreen(screen);
 	}
 
