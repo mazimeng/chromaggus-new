@@ -55,17 +55,11 @@ public class WorldScreen implements Screen {
 	}
 
 	protected void initWorld() {
-		Camera cam = gameConfiguration.makeCamera();
-
-		float w = Gdx.graphics.getWidth();
-		float h = Gdx.graphics.getHeight();
-		FillViewport viewport = new FillViewport(w*0.4f, h*0.4f);
-		viewport.setCamera(cam);
+		Viewport viewport = gameConfiguration.makeWorldViewport();
 
 		stage = new WorldStage();
 		stage.setGridMap(new GridMap(100));
 		stage.setShapeRenderer(new ShapeRenderer());
-//		stage.getViewport().setCamera(cam);
 		stage.setViewport(viewport);
 
 		this.inputHandler = this.gameConfiguration.makeInputListener(stage);
@@ -76,16 +70,10 @@ public class WorldScreen implements Screen {
 	}
 	
 	protected void initGui() {
-		Camera cam = gameConfiguration.makeCamera();
+		Viewport viewport = gameConfiguration.makeGuiViewport();
 
 		gui = new GuiStage();
 		gui.setWorldStage(stage);
-
-		float w = Gdx.graphics.getWidth();
-		float h = Gdx.graphics.getHeight();
-		FitViewport viewport = new FitViewport(w*0.4f, h*0.4f);
-		viewport.setCamera(cam);
-
 		gui.setViewport(viewport);
 	}
 
@@ -123,7 +111,7 @@ public class WorldScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		stage.getViewport().setWorldSize(width*0.4f, height*0.4f);
+		stage.getViewport().setWorldSize(width, height);
 		stage.getViewport().update(width, height);
 
 		gui.getViewport().setWorldSize(width*0.4f, height*0.4f);

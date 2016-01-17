@@ -4,23 +4,21 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.workasintended.chromaggus.ability.Ability;
 import com.workasintended.chromaggus.ability.Melee;
-import com.workasintended.chromaggus.action.AttackTarget;
+import com.workasintended.chromaggus.action.Develop;
 import com.workasintended.chromaggus.action.MoveToPosition;
 import com.workasintended.chromaggus.action.MoveToUnit;
 import com.workasintended.chromaggus.ai.AiComponent;
 import com.workasintended.chromaggus.event.MoveUnitArgument;
-import com.workasintended.chromaggus.order.Attack;
 import com.workasintended.chromaggus.order.Idle;
-import com.workasintended.chromaggus.order.Move;
 import com.workasintended.chromaggus.order.Order;
 import com.workasintended.chromaggus.pathfinding.Grid;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class Unit extends Group implements EventHandler{
 	public int hp;
@@ -43,6 +41,8 @@ public class Unit extends Group implements EventHandler{
 	public CombatComponent combat;
 	public CityComponent city;
 	public MovementComponent movement;
+    public RendererComponent renderer;
+    public DevelopmentComponent development;
 
 	private Order order = new Idle();
 
@@ -114,6 +114,7 @@ public class Unit extends Group implements EventHandler{
 		if(this.combat != null) this.combat.update(delta);
 
 		if(this.order!=null) this.order.update(delta);
+		if(this.development!=null) this.development.update(delta);
 
 		for(Ability ability: abilities) {
 			if(ability == null) continue;
@@ -138,7 +139,12 @@ public class Unit extends Group implements EventHandler{
 	
 	@Override
 	public void draw (Batch batch, float parentAlpha) {
-		super.draw(batch, parentAlpha);		
+		super.draw(batch, parentAlpha);
+
+        if(this.renderer!=null) {
+            renderer.draw(batch, parentAlpha);
+        }
+
 		if(this.sprite != null) batch.draw(sprite
 				, this.getX(), this.getY()
 				, this.getOriginX(), this.getOriginY()
@@ -236,19 +242,29 @@ public class Unit extends Group implements EventHandler{
             Actor actor = this.getStage().hit(moveUnitArgument.getTarget().x, moveUnitArgument.getTarget().y, false);
 			if(actor == this) return;
 
-            boolean attack = actor instanceof Unit;
+            Unit targetUnit = null;
+            if(actor instanceof Unit) {
+                targetUnit = (Unit)actor;
+            }
 
             Action action = null;
-            if(attack) {
-				SequenceAction sequenceAction = new SequenceAction(new MoveToUnit((Unit)actor), new com.workasintended.chromaggus.action.Attack((Unit)actor));
-				RepeatAction repeatAction = new RepeatAction();
-				repeatAction.setAction(sequenceAction);
-				repeatAction.setCount(RepeatAction.FOREVER);
-				action = repeatAction;
-            }
-            else {
+
+            if(targetUnit==null) {
                 action = new MoveToPosition(moveUnitArgument.getTarget());
+            } else if(targetUnit.city!=null && this.development!=null) {
+                Unit city = targetUnit;
+                ParallelAction parallelAction = new ParallelAction(new MoveToUnit(city),
+                        new Develop(city));
+                action = parallelAction;
             }
+            else if(targetUnit.combat!=null) {
+                SequenceAction sequenceAction = new SequenceAction(new MoveToUnit((Unit)actor), new com.workasintended.chromaggus.action.Attack((Unit)actor));
+                RepeatAction repeatAction = new RepeatAction();
+                repeatAction.setAction(sequenceAction);
+                repeatAction.setCount(RepeatAction.FOREVER);
+                action = repeatAction;
+            }
+
             this.clearActions();
             this.addAction(action);
 

@@ -1,9 +1,7 @@
 package com.workasintended.chromaggus.episode;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -17,18 +15,12 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.workasintended.chromaggus.*;
-import com.workasintended.chromaggus.Character;
 import com.workasintended.chromaggus.ability.Ability;
 import com.workasintended.chromaggus.ability.Melee;
-import com.workasintended.chromaggus.ai.Ai;
-import com.workasintended.chromaggus.ai.AiComponent;
-import com.workasintended.chromaggus.ai.StateDevelop;
-import com.workasintended.chromaggus.ai.StateIdle;
 import com.workasintended.chromaggus.pathfinding.Grid;
 import com.workasintended.chromaggus.pathfinding.GridMap;
 
 import java.util.Iterator;
-import java.util.Random;
 
 public class Episode01 {
 	public void build(WorldStage stage) {
@@ -37,22 +29,19 @@ public class Episode01 {
 
 		BitmapFont font = new BitmapFont();
 
-		Texture unit1 = new Texture("red.png");
-		Texture unit2 = new Texture("blue.png");
 		Texture textureCity = new Texture("city.png");
-		Sprite circle = new Sprite(new Texture("circle.png"));
 		Texture textureCursor = new Texture("cursor.png");
-		Texture characterSpriteSheet = new Texture("characters.png");
+		Texture char00 = new Texture("char00.png");
 		Texture char01 = new Texture("char01.png");
+		Texture char02 = new Texture("char02.png");
 
-		TextureRegion[][] characterFrames = TextureRegion.split(characterSpriteSheet,
-				characterSpriteSheet.getWidth() / 16, characterSpriteSheet.getHeight() / 10);
-
-
+		TextureRegion[][] char01Frames = TextureRegion.split(char01,
+				char01.getWidth() / 3, char01.getHeight() / 4);
+		TextureRegion[][] char00Frames = TextureRegion.split(char00,
+				char00.getWidth() / 12, char00.getHeight() / 8);
+		TextureRegion[][] char02Frames = TextureRegion.split(char02,
+				char00.getWidth() / 12, char00.getHeight() / 8);
 		textureCity = textureCursor;
-
-//		Ai ai = new Ai();
-//		stage.addActor(ai);
 
 		{
 			{
@@ -65,54 +54,57 @@ public class Episode01 {
 
 			{
 				TextureRegion[] frames = new TextureRegion[2];
+				frames[0] = char01Frames[0][0];
+				frames[1] = char01Frames[0][2];
 
-				frames[0] = characterFrames[0][0];
-				frames[1] = characterFrames[0][1];
-
-				Character unit = makeCharacter(stage, 1, font, characterSpriteSheet, frames);
+				Unit unit = makeCharacter(stage, 1, font, frames);
 				unit.setPosition(12*32, 22*32);
-
-				Texture slashSpriteSheet = new Texture("slash.png");
-				TextureRegion[][] tmp = TextureRegion.split(slashSpriteSheet,
-						slashSpriteSheet.getWidth() / 4, slashSpriteSheet.getHeight() / 1);
-				TextureRegion[] slashFrames = new TextureRegion[4];
-
-				slashFrames[0] = tmp[0][0];
-				slashFrames[1] = tmp[0][1];
-				slashFrames[2] = tmp[0][2];
-				slashFrames[3] = tmp[0][3];
-				Animation animation = new Animation(0.5f, slashFrames);
-
-				Melee melee = unit.getAbility(Ability.MELEE, Melee.class);
-				melee.setAnimationRenderable(new AnimationRenderable(animation));
-
 				stage.addActor(unit);
-				Grid grid = stage.getGridMap().grid(unit.getX(), unit.getY());
-				unit.occupy(grid);
 			}
 			{
 				TextureRegion[] frames = new TextureRegion[2];
 
-				frames[0] = characterFrames[3][0];
-				frames[1] = characterFrames[3][1];
-				Character unit = makeCharacter(stage, 1, font, characterSpriteSheet, frames);
+				frames[0] = char00Frames[0][3];
+				frames[1] = char00Frames[0][5];
+				Unit unit = makeCharacter(stage, 1, font, frames);
 				unit.setPosition(10 * 32, 20 * 32);
-
 				stage.addActor(unit);
-				Grid grid = stage.getGridMap().grid(unit.getX(), unit.getY());
-				unit.occupy(grid);
 			}
 			{
 				TextureRegion[] frames = new TextureRegion[2];
 
-				frames[0] = characterFrames[2][0];
-				frames[1] = characterFrames[2][1];
-				Character unit = makeCharacter(stage, 2, font, characterSpriteSheet, frames);
+				frames[0] = char00Frames[4][0];
+				frames[1] = char00Frames[4][2];
+				Unit unit = makeCharacter(stage, 2, font, frames);
 				unit.setPosition(7 * 32, 24 * 32);
-				Grid grid = stage.getGridMap().grid(unit.getX(), unit.getY());
-				unit.occupy(grid);
-				//unit.ai = new AiComponent();
-				//unit.ai.setAiState(new StateIdle(unit));
+				stage.addActor(unit);
+			}
+
+			{
+				TextureRegion[] frames = new TextureRegion[2];
+
+				frames[0] = char00Frames[4][3];
+				frames[1] = char00Frames[4][5];
+				Unit unit = makeCharacter(stage, 2, font, frames);
+				unit.setPosition(9 * 32, 24 * 32);
+				stage.addActor(unit);
+			}
+			{
+				TextureRegion[] frames = new TextureRegion[2];
+
+				frames[0] = char00Frames[0][6];
+				frames[1] = char00Frames[0][8];
+				Unit unit = makeCharacter(stage, 2, font, frames);
+				unit.setPosition(12 * 32, 5 * 32);
+				stage.addActor(unit);
+			}
+			{
+				TextureRegion[] frames = new TextureRegion[2];
+
+				frames[0] = char02Frames[0][0];
+				frames[1] = char02Frames[0][2];
+				Unit unit = makeCharacter(stage, 2, font, frames);
+				unit.setPosition(20 * 32, 16 * 32);
 				stage.addActor(unit);
 			}
 
@@ -186,10 +178,15 @@ public class Episode01 {
         return unit;
 	}
 
-	protected Character makeCharacter(WorldStage stage, int faction, BitmapFont font, Texture spriteSheet, TextureRegion[] frames) {
+	protected Unit makeCharacter(WorldStage stage, int faction, BitmapFont font, TextureRegion[] frames) {
 		Animation animation = new Animation(0.5f, frames);
-		Character unit = new Character();
-		unit.setAnimation(animation);
+		Unit unit = new Unit();
+
+		CharacterRendererComponent characterRendererComponent = new CharacterRendererComponent(unit);
+		characterRendererComponent.setAnimation(animation);
+
+		unit.renderer = characterRendererComponent;
+
 		unit.setTouchable(Touchable.enabled);
 		unit.hp = 100;
 		unit.strength = 5;
@@ -200,6 +197,9 @@ public class Episode01 {
 
 		MovementComponent movementComponent = new MovementComponent(stage.getGridMap());
 		movementComponent.setUnit(unit);
+
+        DevelopmentComponent developmentComponent = new DevelopmentComponent(unit);
+        unit.development = developmentComponent;
 
 		unit.movement = movementComponent;
 		return unit;

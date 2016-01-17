@@ -21,7 +21,6 @@ public class CityComponent {
 	}
 	
 	public void update(float delta) {
-		this.develop(delta);
 	}
 	
 	public void draw(Batch batch) {
