@@ -3,6 +3,7 @@ package com.workasintended.chromaggus;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.workasintended.chromaggus.event.DebugRendererArgument;
 import com.workasintended.chromaggus.pathfinding.GridMap;
 
 public class WorldStage extends Stage implements EventHandler {
@@ -33,6 +35,8 @@ public class WorldStage extends Stage implements EventHandler {
     private Rectangle selectionBox;
     private Vector2 cameraMovement = new Vector2();
 
+    private HashMap<String, DebugRenderer> debugRenderers = new HashMap<>();
+
     public LinkedList<AnimationRenderable> animationRenderables = new LinkedList<>();
 
     @Override
@@ -48,8 +52,7 @@ public class WorldStage extends Stage implements EventHandler {
 
         }
 
-        getCamera().position.x += cameraMovement.x * delta * 50f;
-        getCamera().position.y += cameraMovement.y * delta * 50f;
+        this.updateCameraMovement(delta);
     }
 
     @Override
@@ -70,6 +73,7 @@ public class WorldStage extends Stage implements EventHandler {
         getBatch().end();
 
         drawSelection();
+        debug(shapeRenderer);
     }
 
     public void drawSelection() {
@@ -143,8 +147,9 @@ public class WorldStage extends Stage implements EventHandler {
         if (event.getName() == EventName.MOVING_CAMERA) {
             Vector2 dir = event.getArgument(Vector2.class);
             //getCamera().translate(position.x, position.y, 0);
-            cameraMovement.x = dir.x;
-            cameraMovement.y = dir.y;
+            cameraMovement.x = (cameraMovement.x + dir.x)*0.5f;
+            cameraMovement.y = (cameraMovement.y + dir.y)*0.5f;
+
             return;
         }
 
@@ -157,6 +162,12 @@ public class WorldStage extends Stage implements EventHandler {
 
         if(event.getName()==EventName.UNIT_DIED) {
             Unit unit = event.getArgument(Unit.class);
+            return;
+
+        }
+        if(event.getName()==EventName.SET_DEBUG_RENDERER) {
+            DebugRendererArgument renderer = event.getArgument(DebugRendererArgument.class);
+            this.debugRenderers.put(renderer.getName(), renderer.getDebugRenderer());
             return;
 
         }
@@ -176,5 +187,22 @@ public class WorldStage extends Stage implements EventHandler {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         return super.touchUp(screenX, screenY, pointer, button);
+    }
+
+    private void updateCameraMovement(float delta) {
+        getCamera().position.x += cameraMovement.x;
+        getCamera().position.y += cameraMovement.y;
+
+        cameraMovement.x = cameraMovement.x * 0.8f;
+        cameraMovement.y = cameraMovement.y * 0.8f;
+    }
+
+    private void debug(ShapeRenderer render) {
+        shapeRenderer.setProjectionMatrix(getCamera().combined);
+
+        for (Map.Entry<String, DebugRenderer> stringDebugRendererEntry : debugRenderers.entrySet()) {
+            DebugRenderer renderer = stringDebugRendererEntry.getValue();
+            renderer.render(render);
+        }
     }
 }

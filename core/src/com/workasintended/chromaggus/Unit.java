@@ -7,6 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.workasintended.chromaggus.ability.Ability;
 import com.workasintended.chromaggus.ability.Melee;
+import com.workasintended.chromaggus.action.AttackTarget;
+import com.workasintended.chromaggus.action.MoveToPosition;
 import com.workasintended.chromaggus.ai.AiComponent;
 import com.workasintended.chromaggus.event.MoveUnitArgument;
 import com.workasintended.chromaggus.order.Attack;
@@ -22,7 +24,7 @@ public class Unit extends Group implements EventHandler{
 	public int hp;
 	public int strength;
 	public float radius = 32;
-	public float speed = 20;
+	public float speed = 32;
 	private int faction = 0;
 	
 	public Sprite highlight;
@@ -183,16 +185,18 @@ public class Unit extends Group implements EventHandler{
 
 	public void setOrder(Order order) {
 		final Order o = order;
-		this.order.setOnStop(new Runnable() {
-			@Override
-			public void run() {
-				Unit.this.order = o;
-				if (Unit.this.order != null) {
-					Unit.this.order.start();
-				}
-			}
-		});
-		this.order.stop();
+//		this.order.setOnStop(new Runnable() {
+//			@Override
+//			public void run() {
+//				Unit.this.order = o;
+//				if (Unit.this.order != null) {
+//					Unit.this.order.start();
+//				}
+//			}
+//		});
+		//this.order.stop();
+		this.order = o;
+		this.order.start();
 	}
 
 	public <T> T getAbility(int index, Class<T> type) {
@@ -225,21 +229,38 @@ public class Unit extends Group implements EventHandler{
 	public void handle(Event event) {
 		if(event.getName() == EventName.MOVE_UNIT) {
 			MoveUnitArgument moveUnitArgument = event.getArgument(MoveUnitArgument.class);
-			if(moveUnitArgument.getUnit() == this) {
-				if (this.movement == null) return;
+            if(moveUnitArgument.getUnit() != this) return;
 
-				System.out.println("handling MOVE_UNIT");
+            Actor actor = this.getStage().hit(moveUnitArgument.getTarget().x, moveUnitArgument.getTarget().y, false);
 
-				Actor actor = this.getStage().hit(moveUnitArgument.getTarget().x, moveUnitArgument.getTarget().y, false);
-				boolean chase = actor instanceof Unit;
+            boolean attack = actor instanceof Unit;
 
-				if(chase) {
-					this.setOrder(new Attack(this, (Unit)actor));
-				}
-				else {
-					this.setOrder(new Move(this, moveUnitArgument.getTarget()));
-				}
-			}
+            Action action = null;
+            if(attack) {
+                action = new AttackTarget((Unit)actor);
+            }
+            else {
+                action = new MoveToPosition(moveUnitArgument.getTarget());
+            }
+            this.clearActions();
+            this.addAction(action);
+
+
+//			if(moveUnitArgument.getUnit() == this) {
+//				if (this.movement == null) return;
+//
+//				System.out.println("handling MOVE_UNIT");
+//
+//				Actor actor = this.getStage().hit(moveUnitArgument.getTarget().x, moveUnitArgument.getTarget().y, false);
+//				boolean chase = actor instanceof Unit;
+//
+//				if(chase) {
+//					this.setOrder(new Attack(this, (Unit)actor));
+//				}
+//				else {
+//					this.setOrder(new Move(this, moveUnitArgument.getTarget()));
+//				}
+//			}
 
 			return;
 		}

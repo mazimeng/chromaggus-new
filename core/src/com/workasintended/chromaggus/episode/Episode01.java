@@ -3,6 +3,7 @@ package com.workasintended.chromaggus.episode;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -110,8 +111,8 @@ public class Episode01 {
 				unit.setPosition(7 * 32, 24 * 32);
 				Grid grid = stage.getGridMap().grid(unit.getX(), unit.getY());
 				unit.occupy(grid);
-				unit.ai = new AiComponent();
-				unit.ai.setAiState(new StateIdle(unit));
+				//unit.ai = new AiComponent();
+				//unit.ai.setAiState(new StateIdle(unit));
 				stage.addActor(unit);
 			}
 
@@ -176,7 +177,7 @@ public class Episode01 {
         Unit unit = new Unit();
         unit.setTouchable(Touchable.enabled);
         unit.hp = 100;
-        unit.strength = 50;
+        unit.strength = 5;
         unit.setFont(font);
         unit.combat = new CombatComponent();
         unit.setFaction(faction);
@@ -191,7 +192,7 @@ public class Episode01 {
 		unit.setAnimation(animation);
 		unit.setTouchable(Touchable.enabled);
 		unit.hp = 100;
-		unit.strength = 50;
+		unit.strength = 5;
 		unit.setFont(font);
 		unit.combat = new CombatComponent();
 		unit.setSize(32, 32);

@@ -1,5 +1,6 @@
 package com.workasintended.chromaggus;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 
@@ -8,4 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
  */
 public abstract class GameConfiguration {
     public abstract EventListener makeInputListener(WorldStage worldStage);
+    public abstract EventHandler makeInputHandler();
+    public abstract Camera makeCamera();
 }

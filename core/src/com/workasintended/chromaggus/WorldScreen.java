@@ -3,6 +3,7 @@ package com.workasintended.chromaggus;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -37,10 +38,14 @@ public class WorldScreen implements Screen {
 		
 		if(stage != null) {
 			stage.act(delta);
+
+			stage.getViewport().apply();
 			stage.draw();
 		}
 
 		gui.act(Gdx.graphics.getDeltaTime());
+
+		gui.getViewport().apply();
 		gui.draw();
 	}
 
@@ -50,21 +55,18 @@ public class WorldScreen implements Screen {
 	}
 
 	protected void initWorld() {
+		Camera cam = gameConfiguration.makeCamera();
+
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-		OrthographicCamera cam = new OrthographicCamera(h, w);
-		cam.zoom = 0.5f;
-		cam.update();
-
-//		float zoom = 0.8f;
-//		ExtendViewport viewport = new ExtendViewport(w*zoom, h*zoom);
-//		viewport.setCamera(cam);
-
+		FillViewport viewport = new FillViewport(w*0.5f, h*0.5f);
+		viewport.setCamera(cam);
 
 		stage = new WorldStage();
 		stage.setGridMap(new GridMap(100));
 		stage.setShapeRenderer(new ShapeRenderer());
-		stage.getViewport().setCamera(cam);
+//		stage.getViewport().setCamera(cam);
+		stage.setViewport(viewport);
 
 		this.inputHandler = this.gameConfiguration.makeInputListener(stage);
 		stage.addListener(this.inputHandler);
@@ -74,16 +76,17 @@ public class WorldScreen implements Screen {
 	}
 	
 	protected void initGui() {
+		Camera cam = gameConfiguration.makeCamera();
+
+		gui = new GuiStage();
+		gui.setWorldStage(stage);
+
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-		OrthographicCamera cam = new OrthographicCamera(1, 1*(h/w));
-		cam.update();
-
-		float zoom = 0.75f;
-		ExtendViewport viewport = new ExtendViewport(w*zoom, h*zoom);
+		FitViewport viewport = new FitViewport(w*0.4f, h*0.4f);
 		viewport.setCamera(cam);
-		gui = new GuiStage(viewport);
-		gui.setWorldStage(stage);
+
+		gui.setViewport(viewport);
 	}
 
 	protected void initInputs() {
@@ -105,11 +108,12 @@ public class WorldScreen implements Screen {
 			Service.eventQueue().register(EventName.MOVING_CAMERA, stage);
 			Service.eventQueue().register(EventName.RENDER_ANIMATION, stage);
 			Service.eventQueue().register(EventName.UNIT_DIED, stage);
+			Service.eventQueue().register(EventName.SET_DEBUG_RENDERER, stage);
 		}
 
-		{
-			Service.eventQueue().register(EventName.SELECTION_COMPLETED, gui);
-		}
+		Service.eventQueue().register(EventName.CANCEL_SELECTION, gameConfiguration.makeInputHandler());
+		Service.eventQueue().register(EventName.SELECTION_COMPLETED, gui);
+
 	}
 
 	@Override
@@ -121,6 +125,7 @@ public class WorldScreen implements Screen {
 	public void resize(int width, int height) {
 		this.stage.getViewport().update(width, height);
 
+		gui.getViewport().setWorldSize(width*0.4f, height*0.4f);
 		gui.getViewport().update(width, height, true);
 	}
 

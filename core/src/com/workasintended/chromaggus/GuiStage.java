@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -26,8 +27,7 @@ public class GuiStage extends Stage implements EventHandler {
     private CityPanel cityPanel = new CityPanel();
     private WorldStage worldStage;
 
-    public GuiStage(Viewport viewport) {
-        super(viewport);
+    public GuiStage() {
         this.initSkin();
         this.initGui();
     }
@@ -58,18 +58,30 @@ public class GuiStage extends Stage implements EventHandler {
                 itemTexture.getWidth() / 16, itemTexture.getHeight() / 39);
 
         // Create a table that fills the screen. Everything else will go inside this table.
-        Table table = new Table();
+        Table table = new Table().right().bottom();
         table.setFillParent(true);
         this.addActor(table);
 
+        {
+            Label label = new Label("hello", skin);
+            table.add(label).top().left().colspan(3).expandY();
+        }
 
         {
             TextureRegionDrawable textureRegionDrawable = new TextureRegionDrawable(icons[9][3]);
             final ImageButton imageButton  = new ImageButton(textureRegionDrawable);
             ImageButton invalid = new ImageButton(new TextureRegionDrawable(icons[0][1]));
             ImageButton valid = new ImageButton(new TextureRegionDrawable(icons[1][0]));
+            valid.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    Service.eventQueue().enqueue(new Event(EventName.CANCEL_SELECTION));
+                }
+            });
+
+            table.row();
             table.add(imageButton);
-            table.add(invalid);
             table.add(invalid);
             table.add(valid);
 
@@ -138,6 +150,14 @@ public class GuiStage extends Stage implements EventHandler {
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = skin.getFont("default");
         skin.add("default", labelStyle);
+
+        com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle listStyle = new com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle();
+        listStyle.background = skin.newDrawable("white", Color.DARK_GRAY);
+        listStyle.font = skin.getFont("default");
+        listStyle.fontColorSelected = Color.GREEN;
+        listStyle.fontColorUnselected = Color.GRAY;
+//        listStyle.selection = Color.BLUE;
+//        skin.add("default", listStyle);
     }
 
     void initIcons() {
