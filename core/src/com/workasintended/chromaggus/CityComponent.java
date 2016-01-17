@@ -8,7 +8,6 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
 public class CityComponent {
-	
 	private float radius = 64;
 	private WorldStage stage;
 	private Unit unit;

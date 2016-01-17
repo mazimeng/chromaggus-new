@@ -59,7 +59,7 @@ public class WorldScreen implements Screen {
 
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-		FillViewport viewport = new FillViewport(w*0.5f, h*0.5f);
+		FillViewport viewport = new FillViewport(w*0.4f, h*0.4f);
 		viewport.setCamera(cam);
 
 		stage = new WorldStage();
@@ -123,7 +123,8 @@ public class WorldScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		this.stage.getViewport().update(width, height);
+		stage.getViewport().setWorldSize(width*0.4f, height*0.4f);
+		stage.getViewport().update(width, height);
 
 		gui.getViewport().setWorldSize(width*0.4f, height*0.4f);
 		gui.getViewport().update(width, height, true);

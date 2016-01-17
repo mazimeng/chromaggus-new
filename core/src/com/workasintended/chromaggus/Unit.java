@@ -4,11 +4,13 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.workasintended.chromaggus.ability.Ability;
 import com.workasintended.chromaggus.ability.Melee;
 import com.workasintended.chromaggus.action.AttackTarget;
 import com.workasintended.chromaggus.action.MoveToPosition;
+import com.workasintended.chromaggus.action.MoveToUnit;
 import com.workasintended.chromaggus.ai.AiComponent;
 import com.workasintended.chromaggus.event.MoveUnitArgument;
 import com.workasintended.chromaggus.order.Attack;
@@ -232,12 +234,17 @@ public class Unit extends Group implements EventHandler{
             if(moveUnitArgument.getUnit() != this) return;
 
             Actor actor = this.getStage().hit(moveUnitArgument.getTarget().x, moveUnitArgument.getTarget().y, false);
+			if(actor == this) return;
 
             boolean attack = actor instanceof Unit;
 
             Action action = null;
             if(attack) {
-                action = new AttackTarget((Unit)actor);
+				SequenceAction sequenceAction = new SequenceAction(new MoveToUnit((Unit)actor), new com.workasintended.chromaggus.action.Attack((Unit)actor));
+				RepeatAction repeatAction = new RepeatAction();
+				repeatAction.setAction(sequenceAction);
+				repeatAction.setCount(RepeatAction.FOREVER);
+				action = repeatAction;
             }
             else {
                 action = new MoveToPosition(moveUnitArgument.getTarget());

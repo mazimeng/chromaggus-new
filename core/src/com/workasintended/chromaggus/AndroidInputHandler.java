@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
+import com.badlogic.gdx.utils.Align;
+import com.workasintended.chromaggus.event.DebugRendererArgument;
 import com.workasintended.chromaggus.event.MoveUnitArgument;
 
 /**
@@ -20,12 +22,14 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
 
     @Override
     public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
-//        System.out.println(String.format("touchDown: %s, %s, %s, %s", x, y, pointer, button));
+        System.out.println(String.format("touchDown: %s, %s, %s, %s", x, y, pointer, button));
+        this.inputHandler.touchDown(event, x, y, pointer, button);
     }
 
     @Override
     public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-//        System.out.println(String.format("touchUp: %s, %s, %s, %s", x, y, pointer, button));
+        System.out.println(String.format("touchUp: %s, %s, %s, %s", x, y, pointer, button));
+        this.inputHandler.touchUp(event, x, y, pointer, button);
     }
 
     @Override
@@ -99,24 +103,61 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
 
         @Override
         public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
-            Vector2 scrolling = new Vector2(-deltaX, -deltaY);
+            System.out.println(String.format("selected: %s", selected));
+            Vector2 scrolling = new Vector2();
+            if(selected!=null) {
+                Service.eventQueue().enqueue(new Event(EventName.SET_DEBUG_RENDERER,
+                        new DebugRendererArgument("moveToPosition",
+                                new DebugRenderer.LineRenderer(selected.getX(Align.center), selected.getY(Align.center),
+                                        x, y))));
+
+                scrolling = new Vector2(deltaX*0.25f, deltaY*0.25f);
+            }
+            else {
+                scrolling = new Vector2(-deltaX, -deltaY);
+            }
             Service.eventQueue().enqueue(new Event(EventName.MOVING_CAMERA, scrolling));
         }
 
         @Override
-        public void tap(InputEvent event, float x, float y, int pointer, int button) {
-            super.touchUp(event, x, y, pointer, button);
-            Actor actor = getWorldStage().hit(x, y, false);
+        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            if(selected!=null) {
+                Service.eventQueue().enqueue(new Event(EventName.MOVE_UNIT, new MoveUnitArgument(selected, new Vector2(x, y))));
+                selected = null;
+            }
+        }
 
-            if((selected==null && (actor instanceof Unit))) {
+        @Override
+        public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            Actor actor = getWorldStage().hit(x, y, false);
+            System.out.println(String.format("touchDown: %s", actor));
+            if((actor instanceof Unit) && ((Unit) actor).city!=null) {
+                System.out.println(String.format("city: %s", ((Unit) actor).city.getGold()));
+            }
+
+            if(actor instanceof Unit) {
                 selected = (Unit)actor;
             }
-            else if(selected!=null && actor != null && selected!=actor) {
-                Service.eventQueue().enqueue(new Event(EventName.MOVE_UNIT, new MoveUnitArgument(selected, new Vector2(x, y))));
-            }
-            else if(selected!=null && actor==null){
-                Service.eventQueue().enqueue(new Event(EventName.MOVE_UNIT, new MoveUnitArgument(selected, new Vector2(x, y))));
-            }
+        }
+
+        @Override
+        public void tap(InputEvent event, float x, float y, int pointer, int button) {
+//            super.touchUp(event, x, y, pointer, button);
+//            Actor actor = getWorldStage().hit(x, y, false);
+//
+//            if((actor instanceof Unit) && ((Unit) actor).city!=null) {
+//                System.out.println(String.format("city: %s", ((Unit) actor).city.getGold()));
+//            }
+//
+//            if((selected==null && (actor instanceof Unit))) {
+//                selected = (Unit)actor;
+//            }
+//            else if(selected!=null && actor != null && selected!=actor) {
+//                Service.eventQueue().enqueue(new Event(EventName.MOVE_UNIT, new MoveUnitArgument(selected, new Vector2(x, y))));
+//            }
+//            else if(selected!=null && actor==null){
+//                Service.eventQueue().enqueue(new Event(EventName.MOVE_UNIT, new MoveUnitArgument(selected, new Vector2(x, y))));
+//            }
 
 //            System.out.println(String.format("selection tap: %s, %s, %s, %s, %s", actor, x, y, pointer, button));
 //            if (actor != null) {
