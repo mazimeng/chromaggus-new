@@ -26,4 +26,8 @@ public class Event {
 	public void setName(EventName name) {
 		this.name = name;
 	}
+
+	public <T> T cast(Class<T> type) {
+		return type.cast(this);
+	}
 }

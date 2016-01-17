@@ -20,13 +20,18 @@ public class Attack extends MoveToPosition{
 
     @Override
     public boolean act(float delta) {
+        if((getUnit().getFaction() & targetUnit.getFaction())>0) return true;
+
+        if(targetUnit.dead()) return true;
+
         if(closeEnough(delta)) {
             nextAttack -= delta;
 
             if(nextAttack<=0) {
-                System.out.println(String.format("attack"));
                 targetUnit.hp -= getUnit().strength;
                 nextAttack = attackCooldown;
+
+                experience(targetUnit.dead());
             }
 
             return false;
@@ -35,6 +40,17 @@ public class Attack extends MoveToPosition{
             nextAttack = attackCooldown;
             return true;
         }
+    }
+
+    private void experience(boolean killed) {
+        Unit unit = getUnit();
+        int experience = unit.getExperience() + unit.getExperienceGrowth() * (killed?2:1);
+        if(experience>=unit.getExperienceToLevelUp()) {
+            experience = experience - unit.getExperienceToLevelUp();
+            unit.setHp((int)(unit.getHp()*unit.getAttributeGrowth()));
+            unit.setStrength((int)(unit.getStrength()*unit.getAttributeGrowth()));
+        }
+        unit.setExperience(experience);
     }
 
     private boolean closeEnough(float delta) {

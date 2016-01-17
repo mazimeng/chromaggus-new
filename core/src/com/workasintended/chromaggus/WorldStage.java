@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.workasintended.chromaggus.event.CameraZoomEvent;
 import com.workasintended.chromaggus.event.DebugRendererArgument;
 import com.workasintended.chromaggus.pathfinding.GridMap;
 
@@ -34,6 +35,8 @@ public class WorldStage extends Stage implements EventHandler {
 
     private Rectangle selectionBox;
     private Vector2 cameraMovement = new Vector2();
+    private float cameraZoomSpeed = 0.01f;
+    private float cameraZoom = 0f;
 
     private HashMap<String, DebugRenderer> debugRenderers = new HashMap<>();
 
@@ -151,6 +154,11 @@ public class WorldStage extends Stage implements EventHandler {
             cameraMovement.y = (cameraMovement.y + dir.y)*0.5f;
 
             return;
+        }
+
+        if(event.getName()==EventName.CAMERA_ZOOM) {
+            CameraZoomEvent cameraZoomEvent = event.cast(CameraZoomEvent.class);
+            int dir = cameraZoomEvent.getDir();
         }
 
         if(event.getName() == EventName.RENDER_ANIMATION) {

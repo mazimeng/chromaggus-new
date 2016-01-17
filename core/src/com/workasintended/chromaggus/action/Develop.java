@@ -22,6 +22,8 @@ public class Develop extends Action {
         if(this.city.city == null) return true;
         Unit self = (Unit)this.getActor();
 
+        if((self.getFaction() & city.getFaction())==0) return true;
+
         float dst2 = Vector2.dst2(self.getX(Align.center), self.getY(Align.center),
                 city.getX(Align.center), city.getY(Align.center));
 

@@ -57,8 +57,8 @@ public class Episode01 {
 				frames[0] = char01Frames[0][0];
 				frames[1] = char01Frames[0][2];
 
-				Unit unit = makeCharacter(stage, 1, font, frames);
-				unit.setPosition(12*32, 22*32);
+				Unit unit = makeCharacter(stage, Faction.FACTION_A, font, frames);
+				unit.setPosition(470, 760);
 				stage.addActor(unit);
 			}
 			{
@@ -66,8 +66,8 @@ public class Episode01 {
 
 				frames[0] = char00Frames[0][3];
 				frames[1] = char00Frames[0][5];
-				Unit unit = makeCharacter(stage, 1, font, frames);
-				unit.setPosition(10 * 32, 20 * 32);
+				Unit unit = makeCharacter(stage, Faction.FACTION_A, font, frames);
+				unit.setPosition(400, 815);
 				stage.addActor(unit);
 			}
 			{
@@ -75,8 +75,8 @@ public class Episode01 {
 
 				frames[0] = char00Frames[4][0];
 				frames[1] = char00Frames[4][2];
-				Unit unit = makeCharacter(stage, 2, font, frames);
-				unit.setPosition(7 * 32, 24 * 32);
+				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
+				unit.setPosition(210, 720);
 				stage.addActor(unit);
 			}
 
@@ -85,8 +85,8 @@ public class Episode01 {
 
 				frames[0] = char00Frames[4][3];
 				frames[1] = char00Frames[4][5];
-				Unit unit = makeCharacter(stage, 2, font, frames);
-				unit.setPosition(9 * 32, 24 * 32);
+				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
+				unit.setPosition(768, 470);
 				stage.addActor(unit);
 			}
 			{
@@ -94,8 +94,8 @@ public class Episode01 {
 
 				frames[0] = char00Frames[0][6];
 				frames[1] = char00Frames[0][8];
-				Unit unit = makeCharacter(stage, 2, font, frames);
-				unit.setPosition(12 * 32, 5 * 32);
+				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
+				unit.setPosition(880, 380);
 				stage.addActor(unit);
 			}
 			{
@@ -103,8 +103,8 @@ public class Episode01 {
 
 				frames[0] = char02Frames[0][0];
 				frames[1] = char02Frames[0][2];
-				Unit unit = makeCharacter(stage, 2, font, frames);
-				unit.setPosition(20 * 32, 16 * 32);
+				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
+				unit.setPosition(870, 320);
 				stage.addActor(unit);
 			}
 

@@ -13,6 +13,7 @@ import com.workasintended.chromaggus.action.Develop;
 import com.workasintended.chromaggus.action.MoveToPosition;
 import com.workasintended.chromaggus.action.MoveToUnit;
 import com.workasintended.chromaggus.ai.AiComponent;
+import com.workasintended.chromaggus.event.AttackUnitEvent;
 import com.workasintended.chromaggus.event.MoveUnitArgument;
 import com.workasintended.chromaggus.order.Idle;
 import com.workasintended.chromaggus.order.Order;
@@ -20,179 +21,181 @@ import com.workasintended.chromaggus.pathfinding.Grid;
 
 import java.util.LinkedList;
 
-public class Unit extends Group implements EventHandler{
-	public int hp;
-	public int strength;
-	public float radius = 32;
-	public float speed = 32;
-	private int faction = 0;
-	
-	public Sprite highlight;
-	
-	private Sprite sprite;
-	private boolean highlighted = false;
-	
-	private BitmapFont font;	
-	
-	private GameComponent[] components = new GameComponent[10];
+public class Unit extends Group implements EventHandler {
+    public int hp;
+    public int strength;
+    public float radius = 32;
+    public float speed = 32;
+    private int faction = 0;
+    private int experience = 0;
+    private int experienceToLevelUp = 100;
+    private int experienceGrowth = 20;
+    private float attributeGrowth = 1.2f;
 
-	public boolean selected = false;
-	public AiComponent ai;
-	public CombatComponent combat;
-	public CityComponent city;
-	public MovementComponent movement;
+
+    public Sprite highlight;
+
+    private Sprite sprite;
+    private boolean highlighted = false;
+
+    private BitmapFont font;
+
+    private GameComponent[] components = new GameComponent[10];
+
+    public boolean selected = false;
+    public AiComponent ai;
+    public CombatComponent combat;
+    public CityComponent city;
+    public MovementComponent movement;
     public RendererComponent renderer;
     public DevelopmentComponent development;
 
-	private Order order = new Idle();
+    private Order order = new Idle();
 
-	public Ability[] abilities;
+    public Ability[] abilities;
 
-	public Grid currentGrid;
+    public Grid currentGrid;
 
-	private LinkedList<UnitTask> taskQueue = new LinkedList<>();
-	private UnitTask executingTask = null;
+    private LinkedList<UnitTask> taskQueue = new LinkedList<>();
+    private UnitTask executingTask = null;
 
-	public Unit() {
-		abilities = new Ability[9];
-		abilities[Ability.MELEE] = new Melee(this);
-
-		
-		this.addListener(new InputListener(){
-
-			@Override
-			public void enter(InputEvent event, float x, float y, int pointer,
-					Actor fromActor) {
-				Unit.this.highlighted = true;
-			}
-
-			@Override
-			public void exit(InputEvent event, float x, float y, int pointer,
-					Actor toActor) {
-				Unit.this.highlighted = false;
-			}
-			
-		});
-		
-	}
-	
-	public Sprite getSprite() {
-		return sprite;
-	}
-	public void setSprite(Sprite sprite) {
-		this.sprite = sprite;
-		this.setSize(sprite.getWidth(), sprite.getHeight());
-		//this.setOrigin(sprite.getWidth() * 0.5f, sprite.getHeight() * 0.5f);
-	}
-	
-	public int getFaction() {
-		return faction;
-	}
-
-	public void setFaction(int faction) {
-		this.faction = faction;
-	}
-
-	public BitmapFont getFont() {
-		return font;
-	}
-
-	public void setFont(BitmapFont font) {
-		this.font = font;
-	}
-
-	@Override
-	public void act(float delta) {
-		if(this.dead()) {
-			this.remove();
-			Service.eventQueue().enqueue(new Event(EventName.UNIT_DIED, this));
-		}
-		super.act(delta);
-		
-		if(this.city!=null) this.city.update(delta);
-		if(this.ai != null) this.ai.update(delta);
-		if(this.combat != null) this.combat.update(delta);
-
-		if(this.order!=null) this.order.update(delta);
-		if(this.development!=null) this.development.update(delta);
-
-		for(Ability ability: abilities) {
-			if(ability == null) continue;
-			ability.update(delta);
-		}
-	}
-	
+    public Unit() {
+        abilities = new Ability[9];
+        abilities[Ability.MELEE] = new Melee(this);
 
 
-	
-	public boolean isHighlighted() {
-		return highlighted;
-	}
-	
+        this.addListener(new InputListener() {
+
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer,
+                              Actor fromActor) {
+                Unit.this.highlighted = true;
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer,
+                             Actor toActor) {
+                Unit.this.highlighted = false;
+            }
+
+        });
+
+    }
+
+    public Sprite getSprite() {
+        return sprite;
+    }
+
+    public void setSprite(Sprite sprite) {
+        this.sprite = sprite;
+        this.setSize(sprite.getWidth(), sprite.getHeight());
+        //this.setOrigin(sprite.getWidth() * 0.5f, sprite.getHeight() * 0.5f);
+    }
+
+    public int getFaction() {
+        return faction;
+    }
+
+    public void setFaction(int faction) {
+        this.faction = faction;
+    }
+
+    public BitmapFont getFont() {
+        return font;
+    }
+
+    public void setFont(BitmapFont font) {
+        this.font = font;
+    }
+
+    @Override
+    public void act(float delta) {
+        if (this.dead()) {
+            this.remove();
+            Service.eventQueue().enqueue(new Event(EventName.UNIT_DIED, this));
+        }
+        super.act(delta);
+
+        if (this.city != null) this.city.update(delta);
+        if (this.ai != null) this.ai.update(delta);
+        if (this.combat != null) this.combat.update(delta);
+
+        if (this.order != null) this.order.update(delta);
+        if (this.development != null) this.development.update(delta);
+
+        for (Ability ability : abilities) {
+            if (ability == null) continue;
+            ability.update(delta);
+        }
+    }
 
 
-	public void setHighlighted(boolean highlighted) {
-		this.highlighted = highlighted;
-	}
+    public boolean isHighlighted() {
+        return highlighted;
+    }
 
-	
-	
-	@Override
-	public void draw (Batch batch, float parentAlpha) {
-		super.draw(batch, parentAlpha);
 
-        if(this.renderer!=null) {
+    public void setHighlighted(boolean highlighted) {
+        this.highlighted = highlighted;
+    }
+
+
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
+
+        if (this.renderer != null) {
             renderer.draw(batch, parentAlpha);
         }
 
-		if(this.sprite != null) batch.draw(sprite
-				, this.getX(), this.getY()
-				, this.getOriginX(), this.getOriginY()
-				, this.getWidth(), this.getHeight()
-				, this.getScaleX(), this.getScaleY()
-				, this.getRotation());
-		
-		if(font!=null) font.draw(batch, Integer.toString(this.hp), this.getX(), this.getY());
-		if(this.city!=null) this.city.draw(batch);
-		
-		if(this.highlight != null) batch.draw(highlight
-				, this.getX(), this.getY()
-				, this.getOriginX(), this.getOriginY()
-				, this.getWidth(), this.getHeight()
-				, this.getScaleX(), this.getScaleY()
-				, 0);
-	}
+        if (this.sprite != null) batch.draw(sprite
+                , this.getX(), this.getY()
+                , this.getOriginX(), this.getOriginY()
+                , this.getWidth(), this.getHeight()
+                , this.getScaleX(), this.getScaleY()
+                , this.getRotation());
 
-	public float getSpeed() {
-		return speed;
-	}
+        if (font != null) font.draw(batch, Integer.toString(this.hp), this.getX(), this.getY());
+        if (this.city != null) this.city.draw(batch);
 
-	public void setSpeed(float speed) {
-		this.speed = speed;
-	}
-	
-	public boolean dead() {
-		return this.hp <= 0;
-	}
-	
-	public WorldStage getWorld() {
-		Stage stage = this.getStage();
-		WorldStage world = (stage instanceof WorldStage)?(WorldStage)stage:null;
-		return world;
-	}
+        if (this.highlight != null) batch.draw(highlight
+                , this.getX(), this.getY()
+                , this.getOriginX(), this.getOriginY()
+                , this.getWidth(), this.getHeight()
+                , this.getScaleX(), this.getScaleY()
+                , 0);
+    }
 
-	public void queueAction(Action action) {
-		SequenceAction sequenceAction = null;
-		if(getActions().size==0) {
-			sequenceAction = new SequenceAction();
-			getActions().add(sequenceAction);
-		}
+    public float getSpeed() {
+        return speed;
+    }
 
-		sequenceAction.addAction(action);
-	}
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
 
-	public void setOrder(Order order) {
-		final Order o = order;
+    public boolean dead() {
+        return this.hp <= 0;
+    }
+
+    public WorldStage getWorld() {
+        Stage stage = this.getStage();
+        WorldStage world = (stage instanceof WorldStage) ? (WorldStage) stage : null;
+        return world;
+    }
+
+    public void queueAction(Action action) {
+        SequenceAction sequenceAction = null;
+        if (getActions().size == 0) {
+            sequenceAction = new SequenceAction();
+            getActions().add(sequenceAction);
+        }
+
+        sequenceAction.addAction(action);
+    }
+
+    public void setOrder(Order order) {
+        final Order o = order;
 //		this.order.setOnStop(new Runnable() {
 //			@Override
 //			public void run() {
@@ -202,91 +205,136 @@ public class Unit extends Group implements EventHandler{
 //				}
 //			}
 //		});
-		//this.order.stop();
-		this.order = o;
-		this.order.start();
-	}
+        //this.order.stop();
+        this.order = o;
+        this.order.start();
+    }
 
-	public <T> T getAbility(int index, Class<T> type) {
-		return type.cast(abilities[index]);
-	}
+    public <T> T getAbility(int index, Class<T> type) {
+        return type.cast(abilities[index]);
+    }
 
-	public void occupy(Grid grid) {
-		grid.addUnit(this);
-		grid.state = Grid.State.Blocked;
-		currentGrid = grid;
-	}
+    public void occupy(Grid grid) {
+        grid.addUnit(this);
+        grid.state = Grid.State.Blocked;
+        currentGrid = grid;
+    }
 
-	public void release(Grid grid) {
-		grid.removeUnit(this);
-		grid.state = Grid.State.Walkable;
-	}
+    public void release(Grid grid) {
+        grid.removeUnit(this);
+        grid.state = Grid.State.Walkable;
+    }
 
-	public void occupy(float x, float y) {
-		Grid grid = getWorld().getGridMap().grid(x, y);
-		occupy(grid);
+    public void occupy(float x, float y) {
+        Grid grid = getWorld().getGridMap().grid(x, y);
+        occupy(grid);
 
-	}
+    }
 
-	public void release(float x, float y) {
-		Grid grid = getWorld().getGridMap().grid(x, y);
-		release(grid);
-	}
+    public void release(float x, float y) {
+        Grid grid = getWorld().getGridMap().grid(x, y);
+        release(grid);
+    }
 
-	@Override
-	public void handle(Event event) {
-		if(event.getName() == EventName.MOVE_UNIT) {
-			MoveUnitArgument moveUnitArgument = event.getArgument(MoveUnitArgument.class);
-            if(moveUnitArgument.getUnit() != this) return;
+    @Override
+    public void handle(Event event) {
+        if (handleAttack(event)) {
+        }
+        else if (event.getName() == EventName.MOVE_UNIT) {
+            MoveUnitArgument moveUnitArgument = event.getArgument(MoveUnitArgument.class);
+            if (moveUnitArgument.getUnit() != this) return;
 
             Actor actor = this.getStage().hit(moveUnitArgument.getTarget().x, moveUnitArgument.getTarget().y, false);
-			if(actor == this) return;
+            if (actor == this) return;
 
             Unit targetUnit = null;
-            if(actor instanceof Unit) {
-                targetUnit = (Unit)actor;
+            if (actor instanceof Unit) {
+                targetUnit = (Unit) actor;
             }
 
             Action action = null;
 
-            if(targetUnit==null) {
+            if (targetUnit == null) {
                 action = new MoveToPosition(moveUnitArgument.getTarget());
-            } else if(targetUnit.city!=null && this.development!=null) {
+            } else if (targetUnit.city != null && this.development != null) {
                 Unit city = targetUnit;
                 ParallelAction parallelAction = new ParallelAction(new MoveToUnit(city),
                         new Develop(city));
                 action = parallelAction;
             }
-            else if(targetUnit.combat!=null) {
-                SequenceAction sequenceAction = new SequenceAction(new MoveToUnit((Unit)actor), new com.workasintended.chromaggus.action.Attack((Unit)actor));
-                RepeatAction repeatAction = new RepeatAction();
-                repeatAction.setAction(sequenceAction);
-                repeatAction.setCount(RepeatAction.FOREVER);
-                action = repeatAction;
-            }
 
             this.clearActions();
             this.addAction(action);
+        }
 
+    }
 
-//			if(moveUnitArgument.getUnit() == this) {
-//				if (this.movement == null) return;
-//
-//				System.out.println("handling MOVE_UNIT");
-//
-//				Actor actor = this.getStage().hit(moveUnitArgument.getTarget().x, moveUnitArgument.getTarget().y, false);
-//				boolean chase = actor instanceof Unit;
-//
-//				if(chase) {
-//					this.setOrder(new Attack(this, (Unit)actor));
-//				}
-//				else {
-//					this.setOrder(new Move(this, moveUnitArgument.getTarget()));
-//				}
-//			}
+    private boolean handleAttack(Event event) {
+        if(event.getName() != EventName.ATTACK_UNIT) return false;
 
-			return;
-		}
+        AttackUnitEvent attackUnitEvent = event.cast(AttackUnitEvent.class);
 
-	}
+        Unit target = attackUnitEvent.getTarget();
+        Unit attacker = attackUnitEvent.getAttacker();
+        if(attacker!=this) return false;
+        if (target.combat == null || attacker.combat==null) return false;
+
+        SequenceAction sequenceAction = new SequenceAction(new MoveToUnit(target), new com.workasintended.chromaggus.action.Attack(target));
+        RepeatAction repeatAction = new RepeatAction();
+        repeatAction.setAction(sequenceAction);
+        repeatAction.setCount(RepeatAction.FOREVER);
+        Action action = repeatAction;
+        this.clearActions();
+        this.addAction(action);
+
+        return true;
+    }
+
+    public int getExperience() {
+        return experience;
+    }
+
+    public void setExperience(int experience) {
+        this.experience = experience;
+    }
+
+    public int getExperienceToLevelUp() {
+        return experienceToLevelUp;
+    }
+
+    public void setExperienceToLevelUp(int experienceToLevelUp) {
+        this.experienceToLevelUp = experienceToLevelUp;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+
+    public int getExperienceGrowth() {
+        return experienceGrowth;
+    }
+
+    public void setExperienceGrowth(int experienceGrowth) {
+        this.experienceGrowth = experienceGrowth;
+    }
+
+    public float getAttributeGrowth() {
+        return attributeGrowth;
+    }
+
+    public void setAttributeGrowth(float attributeGrowth) {
+        this.attributeGrowth = attributeGrowth;
+    }
 }

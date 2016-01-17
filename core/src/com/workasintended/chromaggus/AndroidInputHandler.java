@@ -5,6 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
+import com.workasintended.chromaggus.episode.Faction;
+import com.workasintended.chromaggus.event.AttackUnitEvent;
+import com.workasintended.chromaggus.event.CameraZoomEvent;
 import com.workasintended.chromaggus.event.DebugRendererArgument;
 import com.workasintended.chromaggus.event.MoveUnitArgument;
 
@@ -14,6 +17,7 @@ import com.workasintended.chromaggus.event.MoveUnitArgument;
 public class AndroidInputHandler extends ActorGestureListener implements EventHandler {
     private WorldStage worldStage;
     private InputHandler inputHandler;
+    private int faction = Faction.FACTION_A;
 
     public AndroidInputHandler(WorldStage worldStage) {
         this.worldStage = worldStage;
@@ -61,8 +65,8 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
     @Override
     public void zoom(InputEvent event, float initialDistance, float distance) {
         super.zoom(event, initialDistance, distance);
-//        System.out.println(String.format("zoom: %s, %s", initialDistance, distance));
-
+        System.out.println(String.format("zoom: %s, %s", initialDistance, distance));
+        this.inputHandler.zoom(event, initialDistance, distance);
     }
 
     @Override
@@ -103,7 +107,6 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
 
         @Override
         public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
-            System.out.println(String.format("selected: %s", selected));
             Vector2 scrolling = new Vector2();
             if(selected!=null) {
                 Service.eventQueue().enqueue(new Event(EventName.SET_DEBUG_RENDERER,
@@ -111,7 +114,7 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
                                 new DebugRenderer.LineRenderer(selected.getX(Align.center), selected.getY(Align.center),
                                         x, y))));
 
-                scrolling = new Vector2(deltaX*0.25f, deltaY*0.25f);
+//                scrolling = new Vector2(deltaX*0.25f, deltaY*0.25f);
             }
             else {
                 scrolling = new Vector2(-deltaX, -deltaY);
@@ -122,7 +125,14 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
         @Override
         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
             if(selected!=null) {
-                Service.eventQueue().enqueue(new Event(EventName.MOVE_UNIT, new MoveUnitArgument(selected, new Vector2(x, y))));
+                Actor actor = getWorldStage().hit(x, y, false);
+                if(actor instanceof Unit && selected!=actor) {
+                    Service.eventQueue().enqueue(new AttackUnitEvent(selected, (Unit)actor));
+                }
+                else if(actor==null) {
+                    Service.eventQueue().enqueue(new Event(EventName.MOVE_UNIT, new MoveUnitArgument(selected, new Vector2(x, y))));
+
+                }
                 selected = null;
             }
         }
@@ -136,7 +146,8 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
             }
 
             if(actor instanceof Unit) {
-                selected = (Unit)actor;
+                Unit unit = (Unit)actor;
+                if((unit.getFaction() & AndroidInputHandler.this.faction)>0) selected = (Unit)actor;
             }
         }
 
@@ -174,6 +185,14 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
 //            }
         }
 
+        @Override
+        public void zoom(InputEvent event, float initialDistance, float distance) {
+            this.selected = null;
+            int dir = distance>initialDistance?1:-1;
+            Service.eventQueue().enqueue(new Event(EventName.CAMERA_ZOOM,
+                    new CameraZoomEvent(dir)));
+
+        }
 
         @Override
         public void handle(Event event) {
