@@ -71,7 +71,7 @@ public class MoveToPosition extends Action {
         this.began = true;
 
         Service.eventQueue().enqueue(new Event(EventName.SET_DEBUG_RENDERER,
-                new DebugRendererArgument("moveToPosition", new DebugRenderer.LineRenderer(position.x, position.y, targetPosition.x, targetPosition.y))));
+                new DebugRendererArgument("direction_"+unit.hashCode(), new DebugRenderer.LineRenderer(position.x, position.y, targetPosition.x, targetPosition.y))));
     }
 
     protected Unit getUnit() {

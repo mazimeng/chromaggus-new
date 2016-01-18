@@ -110,7 +110,7 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
             Vector2 scrolling = new Vector2();
             if(selected!=null) {
                 Service.eventQueue().enqueue(new Event(EventName.SET_DEBUG_RENDERER,
-                        new DebugRendererArgument("moveToPosition",
+                        new DebugRendererArgument("direction_"+selected.hashCode(),
                                 new DebugRenderer.LineRenderer(selected.getX(Align.center), selected.getY(Align.center),
                                         x, y))));
 

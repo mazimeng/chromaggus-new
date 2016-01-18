@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.workasintended.chromaggus.*;
 import com.workasintended.chromaggus.ability.Ability;
 import com.workasintended.chromaggus.ability.Melee;
+import com.workasintended.chromaggus.ai.StateDefense;
 import com.workasintended.chromaggus.pathfinding.Grid;
 import com.workasintended.chromaggus.pathfinding.GridMap;
 
@@ -77,6 +78,8 @@ public class Episode01 {
 				frames[1] = char00Frames[4][2];
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(210, 720);
+				unit.ai = new StateDefense(unit, stage);
+				unit.setStrength(8);
 				stage.addActor(unit);
 			}
 
@@ -87,6 +90,8 @@ public class Episode01 {
 				frames[1] = char00Frames[4][5];
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(768, 470);
+				unit.setStrength(12);
+				unit.ai = new StateDefense(unit, stage);
 				stage.addActor(unit);
 			}
 			{
@@ -96,6 +101,8 @@ public class Episode01 {
 				frames[1] = char00Frames[0][8];
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(880, 380);
+				unit.setStrength(15);
+				unit.ai = new StateDefense(unit, stage);
 				stage.addActor(unit);
 			}
 			{
@@ -105,6 +112,7 @@ public class Episode01 {
 				frames[1] = char02Frames[0][2];
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(870, 320);
+				unit.ai = new StateDefense(unit, stage);
 				stage.addActor(unit);
 			}
 

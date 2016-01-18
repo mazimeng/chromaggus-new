@@ -1,72 +1,43 @@
 package com.workasintended.chromaggus.ai;
 
 import com.badlogic.gdx.math.Vector2;
-import com.workasintended.chromaggus.*;
-import com.workasintended.chromaggus.event.MoveUnitArgument;
-import com.workasintended.chromaggus.pathfinding.Grid;
-import com.workasintended.chromaggus.pathfinding.GridMap;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
+import com.workasintended.chromaggus.Unit;
+import com.workasintended.chromaggus.WorldStage;
 
-import java.util.LinkedList;
-import java.util.List;
+public class StateDefense extends AiComponent {
+    private float alertRadius = 96f;
+    private Vector2 station;
+    private Unit target;
 
-public class StateDefense extends AiState {
-	private Unit target;
-	private Vector2 start;
+    public StateDefense(AiComponent previous) {
+        super(previous);
+    }
 
-	public StateDefense(Unit unit, Unit target) {
-		super(unit);
-		this.target = target;
-	}
+    public StateDefense(Unit self, WorldStage stage) {
+        super(self, stage);
+    }
 
-	@Override
+
+    @Override
 	public void update(float delta) {
-		float d = Math.abs(getUnit().getX()-this.start.x) + Math.abs(getUnit().getY() - this.start.y);
-		float range = 32 * 6;
-		GridMap gridMap = getUnit().getWorld().getGridMap();
-		if(d >= range) {
-			System.out.println("set returnTo");
-			getUnit().ai.setAiState(new StateReturn(getUnit(), this.start));
-		}
-	}
+		Array<Actor> actors = getStage().getActors();
 
-	@Override
-	public void onEnter() {
-		this.start = new Vector2(getUnit().getX(), getUnit().getY());
-//		Service.eventQueue().enqueue(new Event(EventName.MOVE, new MoveEventArgument() {
-//			@Override
-//			public List<Unit> getUnits() {
-//				LinkedList<Unit> units = new LinkedList<Unit>();
-//				units.add(getUnit());
-//				return units;
-//			}
-//
-//			@Override
-//			public Vector2 getTarget() {
-//				return new Vector2(target.getX(), target.getY());
-//			}
-//		}));
+        for (Actor actor : actors) {
+            if(!(actor instanceof Unit) || getSelf() == actor) continue;
 
-		Service.eventQueue().enqueue(new Event(EventName.MOVE_UNIT, new MoveUnitArgument() {
-			@Override
-			public Unit getUnit() {
-				return StateDefense.this.getUnit();
-			}
+            Unit t = (Unit)actor;
+            if((t.getFaction() & getSelf().getFaction()) >0) continue;
 
-			@Override
-			public Vector2 getTarget() {
-				return new Vector2(target.getX(), target.getY());
-			}
-		}));
-	}
+            if(Vector2.dst2(getSelf().getX(Align.center), getSelf().getY(Align.center),
+                    t.getX(Align.center), t.getY(Align.center)) <= alertRadius*alertRadius) {
 
+                getSelf().ai = new StateOffense(this, t);
+                break;
+            }
+        }
 
-	public Unit getTarget() {
-		return target;
-	}
-
-	public void setTarget(Unit target) {
-		this.target = target;
-	}
-
-
+    }
 }

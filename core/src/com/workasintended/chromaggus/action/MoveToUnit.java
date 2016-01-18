@@ -28,7 +28,7 @@ public class MoveToUnit extends MoveToPosition{
         Unit unit = getUnit();
         Vector2 position = new Vector2(unit.getX(getAlignment()), unit.getY(getAlignment()));
         Service.eventQueue().enqueue(new Event(EventName.SET_DEBUG_RENDERER,
-                new DebugRendererArgument("MoveToUnit",
+                new DebugRendererArgument("direction_"+unit.hashCode(),
                         new DebugRenderer.LineRenderer(position.x, position.y, getTargetPosition().x, getTargetPosition().y))));
 
         move(delta);

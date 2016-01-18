@@ -6,45 +6,25 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
 import com.workasintended.chromaggus.GameComponent;
 import com.workasintended.chromaggus.Unit;
+import com.workasintended.chromaggus.UnitComponent;
 import com.workasintended.chromaggus.WorldStage;
 
-public class AiComponent implements GameComponent {
-	protected WorldStage stage;
-	protected Unit unit;
-	private AiState aiState;
+public class AiComponent extends UnitComponent {
+	private WorldStage stage;
 
-	protected Unit closestUnit(Unit closeTo, float range) {
-		Stage stage = unit.getStage();
-		float min = Float.MAX_VALUE;
-		Unit closest = null;
-		for(Actor actor: stage.getActors()) {
-			if(!(actor instanceof Unit)) continue;
-			Unit u = (Unit)actor;
-			
-			if(u == this.unit || (u.getFaction()&this.unit.getFaction())>0) continue;
-			if(u.dead()) continue;
-			
-			float d = Vector2.dst2(u.getX(), u.getY(), closeTo.getX(), closeTo.getY());
-			if(d > range*range) continue;
-			
-			closest = d<=min? u:closest;			
-			min = Math.min(d, min);
-		}
-		
-		return closest;
+	public AiComponent(AiComponent previous) {
+		this(previous.getSelf(), previous.getStage());
 	}
-	@Override
-	public void update(float delta) {
-		if(this.aiState==null) return;
-		this.aiState.update(delta);
+	public AiComponent(Unit self, WorldStage stage) {
+		super(self);
+		this.stage = stage;
 	}
 
-	public AiState getAiState() {
-		return aiState;
+	public WorldStage getStage() {
+		return stage;
 	}
 
-	public void setAiState(AiState aiState) {
-		this.aiState = aiState;
-		aiState.onEnter();
+	public void setStage(WorldStage stage) {
+		this.stage = stage;
 	}
 }
