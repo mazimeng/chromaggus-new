@@ -3,6 +3,11 @@ package com.workasintended.chromaggus;
 public class Event {
 	protected EventName name;
 	protected Object argument = null;
+
+	public Event() {
+
+	}
+
 	public Event(EventName name) {
 		this.name = name;
 	}

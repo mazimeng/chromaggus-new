@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.workasintended.chromaggus.event.CameraZoomEvent;
 import com.workasintended.chromaggus.event.DebugRendererArgument;
+import com.workasintended.chromaggus.event.UnitEvent;
 import com.workasintended.chromaggus.pathfinding.GridMap;
 
 public class WorldStage extends Stage implements EventHandler {
@@ -180,15 +181,23 @@ public class WorldStage extends Stage implements EventHandler {
 
         }
 
-        this.dispatchEvent(event);
+        if(event instanceof UnitEvent) {
+            this.dispatchEvent(event);
+        }
+
     }
 
     private void dispatchEvent(Event event) {
         for (Actor actor : this.getActors()) {
             if(!(actor instanceof Unit)) continue;
-            Unit unit = (Unit)actor;
+            if(!(event instanceof UnitEvent)) continue;
 
-            unit.handle(event);
+            UnitEvent ue = event.cast(UnitEvent.class);
+            Unit unit = ue.getSelf();
+
+            if(unit == actor) {
+                unit.handle(event);
+            }
         }
     }
 

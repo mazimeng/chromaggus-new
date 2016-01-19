@@ -26,19 +26,16 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
 
     @Override
     public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
-        System.out.println(String.format("touchDown: %s, %s, %s, %s", x, y, pointer, button));
         this.inputHandler.touchDown(event, x, y, pointer, button);
     }
 
     @Override
     public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-        System.out.println(String.format("touchUp: %s, %s, %s, %s", x, y, pointer, button));
         this.inputHandler.touchUp(event, x, y, pointer, button);
     }
 
     @Override
     public void tap(InputEvent event, float x, float y, int pointer, int button) {
-        System.out.println(String.format("tap: %s, %s, %s, %s", x, y, pointer, button));
         this.inputHandler.tap(event, x, y, pointer, button);
 
     }
@@ -58,14 +55,12 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
 
     @Override
     public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
-        System.out.println(String.format("pan: %s, %s, %s, %s", x, y, deltaX, deltaY));
         this.inputHandler.pan(event, x, y, deltaX, deltaY);
     }
 
     @Override
     public void zoom(InputEvent event, float initialDistance, float distance) {
         super.zoom(event, initialDistance, distance);
-        System.out.println(String.format("zoom: %s, %s", initialDistance, distance));
         this.inputHandler.zoom(event, initialDistance, distance);
     }
 

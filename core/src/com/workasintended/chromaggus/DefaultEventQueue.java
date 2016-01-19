@@ -1,14 +1,16 @@
 package com.workasintended.chromaggus;
 
+import com.workasintended.chromaggus.event.MoveToPositionEvent;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 
 public class DefaultEventQueue implements EventQueue {
 	private LinkedList<Event> events;
-	private HashMap<EventName, LinkedList<EventHandler>> handlers;
+	private HashMap<Class<?>, LinkedList<EventHandler>> handlers;
 	public DefaultEventQueue() {
 		this.events = new LinkedList<Event>();
-		this.handlers = new HashMap<EventName, LinkedList<EventHandler>>();
+		this.handlers = new HashMap<Class<?>, LinkedList<EventHandler>>();
 	}
 	
 	public void handle(float delta) {
@@ -24,7 +26,7 @@ public class DefaultEventQueue implements EventQueue {
 		}
 	}
 	
-	public void register(EventName name, EventHandler handler) {
+	public void register(Class<Event> eventClass, EventHandler handler) {
 //		LinkedList<EventHandler> handlerList = null;
 //		if(!this.handlers.containsKey(name)) {
 //			handlerList = new LinkedList<EventHandler>();
@@ -34,7 +36,7 @@ public class DefaultEventQueue implements EventQueue {
 //
 //		}
 
-		LinkedList<EventHandler> handlerList = this.handlers.get(name);
+		LinkedList<EventHandler> handlerList = this.handlers.get(eventClass);
 		if(handlerList == null) {
 			handlerList = new LinkedList<EventHandler>();
 		}

@@ -14,6 +14,8 @@ import com.workasintended.chromaggus.action.MoveToPosition;
 import com.workasintended.chromaggus.action.MoveToUnit;
 import com.workasintended.chromaggus.ai.AiComponent;
 import com.workasintended.chromaggus.event.AttackUnitEvent;
+import com.workasintended.chromaggus.event.DevelopCityEvent;
+import com.workasintended.chromaggus.event.MoveToPositionEvent;
 import com.workasintended.chromaggus.event.MoveUnitArgument;
 import com.workasintended.chromaggus.order.Idle;
 import com.workasintended.chromaggus.order.Order;
@@ -240,6 +242,9 @@ public class Unit extends Group implements EventHandler {
     public void handle(Event event) {
         if (handleAttack(event)) {
         }
+        else if(handleMoveToPosition(event)) {
+
+        }
         else if (event.getName() == EventName.MOVE_UNIT) {
             MoveUnitArgument moveUnitArgument = event.getArgument(MoveUnitArgument.class);
             if (moveUnitArgument.getUnit() != this) return;
@@ -269,6 +274,17 @@ public class Unit extends Group implements EventHandler {
 
     }
 
+    private boolean handleMoveToPosition(Event event) {
+        if(!(event instanceof MoveToPositionEvent)) return false;
+
+        MoveToPositionEvent moveToPositionEvent = event.cast(MoveToPositionEvent.class);
+
+        Action action = new MoveToPosition(moveToPositionEvent.getPosition());
+        this.clearActions();
+        this.addAction(action);
+        return true;
+    }
+
     private boolean handleAttack(Event event) {
         if(event.getName() != EventName.ATTACK_UNIT) return false;
 
@@ -286,6 +302,12 @@ public class Unit extends Group implements EventHandler {
         Action action = repeatAction;
         this.clearActions();
         this.addAction(action);
+
+        return true;
+    }
+
+    private boolean handleDevelop(Event event) {
+        if(!(event instanceof DevelopCityEvent)) return false;
 
         return true;
     }
