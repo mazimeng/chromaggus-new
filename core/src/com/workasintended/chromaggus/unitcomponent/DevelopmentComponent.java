@@ -1,7 +1,9 @@
-package com.workasintended.chromaggus;
+package com.workasintended.chromaggus.unitcomponent;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
+import com.workasintended.chromaggus.Unit;
+import com.workasintended.chromaggus.unitcomponent.UnitComponent;
 
 /**
  * Created by mazimeng on 1/17/16.

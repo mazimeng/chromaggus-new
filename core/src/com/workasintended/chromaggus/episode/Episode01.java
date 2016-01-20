@@ -15,11 +15,10 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.workasintended.chromaggus.*;
-import com.workasintended.chromaggus.ability.Ability;
-import com.workasintended.chromaggus.ability.Melee;
 import com.workasintended.chromaggus.ai.StateDefense;
 import com.workasintended.chromaggus.pathfinding.Grid;
 import com.workasintended.chromaggus.pathfinding.GridMap;
+import com.workasintended.chromaggus.unitcomponent.*;
 
 import java.util.Iterator;
 
@@ -171,21 +170,6 @@ public class Episode01 {
 
 	}
 
-	protected Unit makeCharacter(int faction, BitmapFont font, Texture texture) {
-		Sprite sprite = new Sprite(texture);
-
-        Unit unit = new Unit();
-        unit.setTouchable(Touchable.enabled);
-        unit.hp = 100;
-        unit.strength = 5;
-        unit.setFont(font);
-        unit.combat = new CombatComponent();
-        unit.setFaction(faction);
-
-        unit.setSprite(sprite);
-        return unit;
-	}
-
 	protected Unit makeCharacter(WorldStage stage, int faction, BitmapFont font, TextureRegion[] frames) {
 		Animation animation = new Animation(0.5f, frames);
 		Unit unit = new Unit();
@@ -199,17 +183,16 @@ public class Episode01 {
 		unit.hp = 100;
 		unit.strength = 5;
 		unit.setFont(font);
-		unit.combat = new CombatComponent();
+
 		unit.setSize(32, 32);
 		unit.setFaction(faction);
 
-		MovementComponent movementComponent = new MovementComponent(stage.getGridMap());
-		movementComponent.setUnit(unit);
+		MovementComponent movementComponent = new MovementComponent(unit);
 
         DevelopmentComponent developmentComponent = new DevelopmentComponent(unit);
         unit.development = developmentComponent;
-
 		unit.movement = movementComponent;
+		unit.combat = new CombatComponent(unit);
 		return unit;
 	}
 

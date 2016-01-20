@@ -4,26 +4,21 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
-import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.workasintended.chromaggus.ability.Ability;
 import com.workasintended.chromaggus.ability.Melee;
-import com.workasintended.chromaggus.action.Develop;
 import com.workasintended.chromaggus.action.MoveToPosition;
-import com.workasintended.chromaggus.action.MoveToUnit;
 import com.workasintended.chromaggus.ai.AiComponent;
-import com.workasintended.chromaggus.event.AttackUnitEvent;
 import com.workasintended.chromaggus.event.DevelopCityEvent;
-import com.workasintended.chromaggus.event.MoveToPositionEvent;
-import com.workasintended.chromaggus.event.MoveUnitArgument;
+import com.workasintended.chromaggus.event.order.MoveToPositionEvent;
 import com.workasintended.chromaggus.order.Idle;
 import com.workasintended.chromaggus.order.Order;
 import com.workasintended.chromaggus.pathfinding.Grid;
+import com.workasintended.chromaggus.unitcomponent.*;
 
 import java.util.LinkedList;
 
-public class Unit extends Group implements EventHandler {
+public class Unit extends Group {
     public int hp;
     public int strength;
     public float radius = 32;
@@ -42,9 +37,6 @@ public class Unit extends Group implements EventHandler {
 
     private BitmapFont font;
 
-    private GameComponent[] components = new GameComponent[10];
-
-    public boolean selected = false;
     public AiComponent ai;
     public CombatComponent combat;
     public CityComponent city;
@@ -238,44 +230,43 @@ public class Unit extends Group implements EventHandler {
         release(grid);
     }
 
-    @Override
     public void handle(Event event) {
-        if (handleAttack(event)) {
-        }
-        else if(handleMoveToPosition(event)) {
-
-        }
-        else if (event.getName() == EventName.MOVE_UNIT) {
-            MoveUnitArgument moveUnitArgument = event.getArgument(MoveUnitArgument.class);
-            if (moveUnitArgument.getUnit() != this) return;
-
-            Actor actor = this.getStage().hit(moveUnitArgument.getTarget().x, moveUnitArgument.getTarget().y, false);
-            if (actor == this) return;
-
-            Unit targetUnit = null;
-            if (actor instanceof Unit) {
-                targetUnit = (Unit) actor;
-            }
-
-            Action action = null;
-
-            if (targetUnit == null) {
-                action = new MoveToPosition(moveUnitArgument.getTarget());
-            } else if (targetUnit.city != null && this.development != null) {
-                Unit city = targetUnit;
-                ParallelAction parallelAction = new ParallelAction(new MoveToUnit(city),
-                        new Develop(city));
-                action = parallelAction;
-            }
-
-            this.clearActions();
-            this.addAction(action);
-        }
+//        if (handleAttack(event)) {
+//        }
+//        else if(handleMoveToPosition(event)) {
+//
+//        }
+//        else if (event.getName() == EventName.MOVE_UNIT) {
+//            MoveUnitArgument moveUnitArgument = event.getArgument(MoveUnitArgument.class);
+//            if (moveUnitArgument.getUnit() != this) return;
+//
+//            Actor actor = this.getStage().hit(moveUnitArgument.getTarget().x, moveUnitArgument.getTarget().y, false);
+//            if (actor == this) return;
+//
+//            Unit targetUnit = null;
+//            if (actor instanceof Unit) {
+//                targetUnit = (Unit) actor;
+//            }
+//
+//            Action action = null;
+//
+//            if (targetUnit == null) {
+//                action = new MoveToPosition(moveUnitArgument.getTarget());
+//            } else if (targetUnit.city != null && this.development != null) {
+//                Unit city = targetUnit;
+//                ParallelAction parallelAction = new ParallelAction(new MoveToUnit(city),
+//                        new Develop(city));
+//                action = parallelAction;
+//            }
+//
+//            this.clearActions();
+//            this.addAction(action);
+//        }
 
     }
 
     private boolean handleMoveToPosition(Event event) {
-        if(!(event instanceof MoveToPositionEvent)) return false;
+        if(!event.is(EventName.MOVE_TO_POSITION)) return false;
 
         MoveToPositionEvent moveToPositionEvent = event.cast(MoveToPositionEvent.class);
 
@@ -285,26 +276,26 @@ public class Unit extends Group implements EventHandler {
         return true;
     }
 
-    private boolean handleAttack(Event event) {
-        if(event.getName() != EventName.ATTACK_UNIT) return false;
-
-        AttackUnitEvent attackUnitEvent = event.cast(AttackUnitEvent.class);
-
-        Unit target = attackUnitEvent.getTarget();
-        Unit attacker = attackUnitEvent.getAttacker();
-        if(attacker!=this) return false;
-        if (target.combat == null || attacker.combat==null) return false;
-
-        SequenceAction sequenceAction = new SequenceAction(new MoveToUnit(target), new com.workasintended.chromaggus.action.Attack(target));
-        RepeatAction repeatAction = new RepeatAction();
-        repeatAction.setAction(sequenceAction);
-        repeatAction.setCount(RepeatAction.FOREVER);
-        Action action = repeatAction;
-        this.clearActions();
-        this.addAction(action);
-
-        return true;
-    }
+//    private boolean handleAttack(Event event) {
+//        if(!event.is(EventName.ATTACK_UNIT)) return false;
+//
+//        AttackUnitEvent attackUnitEvent = event.cast(AttackUnitEvent.class);
+//
+//        Unit target = attackUnitEvent.getTarget();
+//        Unit attacker = attackUnitEvent.getAttacker();
+//        if(attacker!=this) return false;
+//        if (target.combat == null || attacker.combat==null) return false;
+//
+//        SequenceAction sequenceAction = new SequenceAction(new MoveToUnit(target), new com.workasintended.chromaggus.action.Attack(target));
+//        RepeatAction repeatAction = new RepeatAction();
+//        repeatAction.setAction(sequenceAction);
+//        repeatAction.setCount(RepeatAction.FOREVER);
+//        Action action = repeatAction;
+//        this.clearActions();
+//        this.addAction(action);
+//
+//        return true;
+//    }
 
     private boolean handleDevelop(Event event) {
         if(!(event instanceof DevelopCityEvent)) return false;

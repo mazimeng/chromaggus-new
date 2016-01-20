@@ -98,6 +98,8 @@ public class WorldScreen implements Screen {
 			Service.eventQueue().register(EventName.UNIT_DIED, stage);
 			Service.eventQueue().register(EventName.SET_DEBUG_RENDERER, stage);
 			Service.eventQueue().register(EventName.ATTACK_UNIT, stage);
+			Service.eventQueue().register(EventName.MOVE_TO_POSITION, stage);
+			Service.eventQueue().register(EventName.FOLLOW_UNIT, stage);
 		}
 
 		Service.eventQueue().register(EventName.CANCEL_SELECTION, gameConfiguration.makeInputHandler());

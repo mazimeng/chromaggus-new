@@ -24,9 +24,13 @@ public class MoveToPosition extends Action {
 
     @Override
     public boolean act(float delta) {
-        if(!began) begin();
+        if(!began) {
+            begin();
+        }
 
-        if(completed(delta)) return true;
+        if(completed(delta)) {
+            return true;
+        }
 
         move(delta);
         return false;

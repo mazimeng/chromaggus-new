@@ -4,27 +4,18 @@ import com.badlogic.gdx.math.Vector2;
 import com.workasintended.chromaggus.Event;
 import com.workasintended.chromaggus.EventName;
 import com.workasintended.chromaggus.Unit;
+import com.workasintended.chromaggus.event.order.UnitEvent;
 
 /**
  * Created by mazimeng on 1/17/16.
  */
-public class AttackUnitEvent extends Event {
-    private Unit attacker;
+public class AttackUnitEvent extends UnitEvent {
     private Unit target;
 
 
     public AttackUnitEvent(Unit attacker, Unit target) {
-        super(EventName.ATTACK_UNIT, null);
-        this.attacker = attacker;
+        super(attacker, EventName.ATTACK_UNIT);
         this.target = target;
-    }
-
-    public Unit getAttacker() {
-        return attacker;
-    }
-
-    public void setAttacker(Unit attacker) {
-        this.attacker = attacker;
     }
 
     public Unit getTarget() {

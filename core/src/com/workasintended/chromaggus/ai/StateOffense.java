@@ -14,6 +14,7 @@ public class StateOffense extends AiComponent {
     private Unit target;
     private Vector2 initialPosition;
     private boolean started = false;
+    private float safeRadius = 128;
     public StateOffense(AiComponent previous, Unit target) {
         this(previous.getSelf(), target, previous.getStage());
     }
@@ -22,18 +23,20 @@ public class StateOffense extends AiComponent {
         super(self, stage);
         this.target = target;
         this.initialPosition = new Vector2(getSelf().getX(Align.center), getSelf().getY(Align.center));
+
+        Service.eventQueue().enqueue(new AttackUnitEvent(getSelf(), target));
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
 
-        if(target.dead()) getSelf().ai = new StateDefense(this);
-        if(started) return;
-
-        started = true;
-        Service.eventQueue().enqueue(new AttackUnitEvent(getSelf(), target));
+        if(target.dead() || !inSafeRadius()) getSelf().ai = new StateReturn(this, initialPosition);
     }
 
+    protected boolean inSafeRadius() {
+        return Vector2.dst2(initialPosition.x, initialPosition.y,
+                getSelf().getX(Align.center), getSelf().getY(Align.center)) <= safeRadius*safeRadius;
+    }
 
 }

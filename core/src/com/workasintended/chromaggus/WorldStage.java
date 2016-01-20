@@ -6,19 +6,23 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.workasintended.chromaggus.action.MoveToPosition;
+import com.workasintended.chromaggus.action.MoveToUnit;
+import com.workasintended.chromaggus.event.AttackUnitEvent;
 import com.workasintended.chromaggus.event.CameraZoomEvent;
 import com.workasintended.chromaggus.event.DebugRendererArgument;
-import com.workasintended.chromaggus.event.UnitEvent;
+import com.workasintended.chromaggus.event.order.MoveToPositionEvent;
+import com.workasintended.chromaggus.event.order.UnitEvent;
 import com.workasintended.chromaggus.pathfinding.GridMap;
 
 public class WorldStage extends Stage implements EventHandler {
@@ -181,25 +185,39 @@ public class WorldStage extends Stage implements EventHandler {
 
         }
 
-        if(event instanceof UnitEvent) {
-            this.dispatchEvent(event);
+        if(event.is(EventName.MOVE_TO_POSITION)) {
+            MoveToPositionEvent moveToPositionEvent = event.cast(MoveToPositionEvent.class);
+
+            Unit unit = moveToPositionEvent.getUnit();
+            unit.movement.moveToPosition(moveToPositionEvent.getPosition());
         }
+
+        if(event.is(EventName.ATTACK_UNIT)){
+            AttackUnitEvent attackUnitEvent = event.cast(AttackUnitEvent.class);
+            Unit unit = attackUnitEvent.getUnit();
+            unit.combat.attack(attackUnitEvent.getTarget());
+        }
+
+
+
+//        if(event instanceof UnitEvent) {
+//            this.dispatchEvent(event);
+//        }
 
     }
 
-    private void dispatchEvent(Event event) {
-        for (Actor actor : this.getActors()) {
-            if(!(actor instanceof Unit)) continue;
-            if(!(event instanceof UnitEvent)) continue;
-
-            UnitEvent ue = event.cast(UnitEvent.class);
-            Unit unit = ue.getSelf();
-
-            if(unit == actor) {
-                unit.handle(event);
-            }
-        }
-    }
+//    private void dispatchEvent(Event event) {
+//        for (Actor actor : this.getActors()) {
+//            if(!(actor instanceof Unit)) continue;
+//
+//            UnitEvent ue = event.cast(UnitEvent.class);
+//            Unit unit = ue.getSelf();
+//
+//            if(unit == actor) {
+//                unit.handle(event);
+//            }
+//        }
+//    }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {

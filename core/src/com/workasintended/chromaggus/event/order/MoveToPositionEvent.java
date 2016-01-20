@@ -1,7 +1,9 @@
-package com.workasintended.chromaggus.event;
+package com.workasintended.chromaggus.event.order;
 
 import com.badlogic.gdx.math.Vector2;
+import com.workasintended.chromaggus.EventName;
 import com.workasintended.chromaggus.Unit;
+import com.workasintended.chromaggus.event.order.UnitEvent;
 
 /**
  * Created by mazimeng on 1/19/16.
@@ -9,7 +11,7 @@ import com.workasintended.chromaggus.Unit;
 public class MoveToPositionEvent extends UnitEvent {
     private Vector2 position;
     public MoveToPositionEvent(Unit self, Vector2 position) {
-        super(self);
+        super(self, EventName.MOVE_TO_POSITION);
         this.position = position;
     }
 

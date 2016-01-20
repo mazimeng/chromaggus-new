@@ -10,6 +10,7 @@ import com.workasintended.chromaggus.event.AttackUnitEvent;
 import com.workasintended.chromaggus.event.CameraZoomEvent;
 import com.workasintended.chromaggus.event.DebugRendererArgument;
 import com.workasintended.chromaggus.event.MoveUnitArgument;
+import com.workasintended.chromaggus.event.order.MoveToPositionEvent;
 
 /**
  * Created by mazimeng on 1/15/16.
@@ -125,7 +126,7 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
                     Service.eventQueue().enqueue(new AttackUnitEvent(selected, (Unit)actor));
                 }
                 else if(actor==null) {
-                    Service.eventQueue().enqueue(new Event(EventName.MOVE_UNIT, new MoveUnitArgument(selected, new Vector2(x, y))));
+                    Service.eventQueue().enqueue(new MoveToPositionEvent(selected, new Vector2(x, y)));
 
                 }
                 selected = null;

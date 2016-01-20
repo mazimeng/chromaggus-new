@@ -35,4 +35,8 @@ public class Event {
 	public <T> T cast(Class<T> type) {
 		return type.cast(this);
 	}
+
+	public boolean is(EventName eventName) {
+		return eventName == this.name;
+	}
 }

@@ -1,16 +1,19 @@
-package com.workasintended.chromaggus.event;
+package com.workasintended.chromaggus.unitcomponent;
 
-import com.workasintended.chromaggus.Event;
 import com.workasintended.chromaggus.Unit;
 
 /**
- * Created by mazimeng on 1/19/16.
+ * Created by mazimeng on 1/17/16.
  */
-public class UnitEvent extends Event {
+public abstract class UnitComponent {
     private Unit self;
 
-    public UnitEvent(Unit self) {
+    public UnitComponent(Unit self) {
         this.self = self;
+    }
+
+    public void update(float delta) {
+
     }
 
     public Unit getSelf() {

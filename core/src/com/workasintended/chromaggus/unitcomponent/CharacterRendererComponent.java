@@ -1,9 +1,11 @@
-package com.workasintended.chromaggus;
+package com.workasintended.chromaggus.unitcomponent;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.workasintended.chromaggus.Unit;
+import com.workasintended.chromaggus.unitcomponent.RendererComponent;
 
 /**
  * Created by mazimeng on 7/11/15.

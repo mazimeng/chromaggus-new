@@ -1,4 +1,4 @@
-package com.workasintended.chromaggus;
+package com.workasintended.chromaggus.unitcomponent;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.workasintended.chromaggus.Unit;
+import com.workasintended.chromaggus.WorldStage;
 
 public class CityComponent {
 	private float radius = 64;
