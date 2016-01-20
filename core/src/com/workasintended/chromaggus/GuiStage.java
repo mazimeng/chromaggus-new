@@ -10,12 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.workasintended.chromaggus.event.SelectionCompleted;
+import com.workasintended.chromaggus.event.UnitSelectedEvent;
 
 import java.util.List;
 
@@ -26,6 +23,8 @@ public class GuiStage extends Stage implements EventHandler {
     private Skin skin;
     private CityPanel cityPanel = new CityPanel();
     private WorldStage worldStage;
+
+    private UnitSelection unitSelection;
 
     public GuiStage() {
         this.initSkin();
@@ -50,6 +49,11 @@ public class GuiStage extends Stage implements EventHandler {
             Unit unit = units.get(0);
             cityPanel.gold.setText(unit.city.getGold().toString());
         }
+        else {
+            this.unitSelection.handle(event);
+        }
+
+
     }
 
     protected void initGui() {
@@ -59,12 +63,13 @@ public class GuiStage extends Stage implements EventHandler {
 
         // Create a table that fills the screen. Everything else will go inside this table.
         Table table = new Table().right().bottom();
+        table.defaults().size(32, 32);
         table.setFillParent(true);
         this.addActor(table);
 
         {
-            Label label = new Label("hello", skin);
-            table.add(label).top().left().colspan(3).expandY();
+            unitSelection = new UnitSelection(new TextureRegionDrawable(icons[1][0]));
+            table.add(unitSelection);
         }
 
         {
@@ -80,17 +85,25 @@ public class GuiStage extends Stage implements EventHandler {
                 }
             });
 
+            imageButton.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                }
+            });
+
             table.row();
             table.add(imageButton);
             table.add(invalid);
             table.add(valid);
 
-            DragAndDrop dragAndDrop = new DragAndDrop();
+            final DragAndDrop dragAndDrop = new DragAndDrop();
             dragAndDrop.addSource(new DragAndDrop.Source(imageButton) {
                 @Override
                 public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
                     DragAndDrop.Payload payload = new DragAndDrop.Payload();
                     payload.setDragActor(new ImageButton(imageButton.getImage().getDrawable()));
+                    dragAndDrop.setDragActorPosition(-imageButton.getWidth()*0.5f, imageButton.getHeight()*0.5f);
                     return payload;
                 }
 
@@ -176,5 +189,25 @@ public class GuiStage extends Stage implements EventHandler {
     class CityPanel {
         public Label development;
         public Label gold;
+    }
+
+    public static class UnitSelection extends Image implements EventHandler{
+        private Drawable empty;
+        public UnitSelection(Drawable empty) {
+            super(empty);
+            this.empty = empty;
+        }
+
+        @Override
+        public void handle(Event event) {
+            UnitSelectedEvent unitSelectedEvent = event.cast(UnitSelectedEvent.class);
+            if(unitSelectedEvent!=null) {
+                Unit unit = unitSelectedEvent.getUnit();
+                if(unit.renderer==null) return;
+
+                TextureRegion icon = unit.renderer.getIcon();
+                this.setDrawable(new TextureRegionDrawable(icon));
+            }
+        }
     }
 }

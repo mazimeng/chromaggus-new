@@ -3,13 +3,10 @@ package com.workasintended.chromaggus;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.viewport.*;
 import com.workasintended.chromaggus.episode.Episode01;
 import com.workasintended.chromaggus.pathfinding.GridMap;
@@ -104,6 +101,7 @@ public class WorldScreen implements Screen {
 
 		Service.eventQueue().register(EventName.CANCEL_SELECTION, gameConfiguration.makeInputHandler());
 		Service.eventQueue().register(EventName.SELECTION_COMPLETED, gui);
+		Service.eventQueue().register(EventName.UNIT_SELECTED, gui);
 
 	}
 

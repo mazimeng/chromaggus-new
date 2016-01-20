@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.workasintended.chromaggus.ability.Ability;
-import com.workasintended.chromaggus.ability.Melee;
 import com.workasintended.chromaggus.action.MoveToPosition;
 import com.workasintended.chromaggus.ai.AiComponent;
 import com.workasintended.chromaggus.event.DevelopCityEvent;
@@ -19,15 +18,15 @@ import com.workasintended.chromaggus.unitcomponent.*;
 import java.util.LinkedList;
 
 public class Unit extends Group {
-    public int hp;
-    public int strength;
+//    public int hp;
+//    public int strength;
     public float radius = 32;
     public float speed = 32;
     private int faction = 0;
-    private int experience = 0;
-    private int experienceToLevelUp = 100;
-    private int experienceGrowth = 20;
-    private float attributeGrowth = 1.2f;
+//    private int experience = 0;
+//    private int experienceToLevelUp = 100;
+//    private int experienceGrowth = 20;
+//    private float attributeGrowth = 1.2f;
 
 
     public Sprite highlight;
@@ -55,7 +54,6 @@ public class Unit extends Group {
 
     public Unit() {
         abilities = new Ability[9];
-        abilities[Ability.MELEE] = new Melee(this);
 
 
         this.addListener(new InputListener() {
@@ -149,7 +147,7 @@ public class Unit extends Group {
                 , this.getScaleX(), this.getScaleY()
                 , this.getRotation());
 
-        if (font != null) font.draw(batch, Integer.toString(this.hp), this.getX(), this.getY());
+        if (font != null) font.draw(batch, Integer.toString(this.combat.getHp()), this.getX(), this.getY());
         if (this.city != null) this.city.draw(batch);
 
         if (this.highlight != null) batch.draw(highlight
@@ -169,7 +167,7 @@ public class Unit extends Group {
     }
 
     public boolean dead() {
-        return this.hp <= 0;
+        return this.combat!= null && this.combat.getHp() <= 0;
     }
 
     public WorldStage getWorld() {
@@ -301,53 +299,5 @@ public class Unit extends Group {
         if(!(event instanceof DevelopCityEvent)) return false;
 
         return true;
-    }
-
-    public int getExperience() {
-        return experience;
-    }
-
-    public void setExperience(int experience) {
-        this.experience = experience;
-    }
-
-    public int getExperienceToLevelUp() {
-        return experienceToLevelUp;
-    }
-
-    public void setExperienceToLevelUp(int experienceToLevelUp) {
-        this.experienceToLevelUp = experienceToLevelUp;
-    }
-
-    public int getHp() {
-        return hp;
-    }
-
-    public void setHp(int hp) {
-        this.hp = hp;
-    }
-
-    public int getStrength() {
-        return strength;
-    }
-
-    public void setStrength(int strength) {
-        this.strength = strength;
-    }
-
-    public int getExperienceGrowth() {
-        return experienceGrowth;
-    }
-
-    public void setExperienceGrowth(int experienceGrowth) {
-        this.experienceGrowth = experienceGrowth;
-    }
-
-    public float getAttributeGrowth() {
-        return attributeGrowth;
-    }
-
-    public void setAttributeGrowth(float attributeGrowth) {
-        this.attributeGrowth = attributeGrowth;
     }
 }

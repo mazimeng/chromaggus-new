@@ -78,7 +78,7 @@ public class Episode01 {
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(210, 720);
 				unit.ai = new StateDefense(unit, stage);
-				unit.setStrength(8);
+				unit.combat.setStrength(8);
 				stage.addActor(unit);
 			}
 
@@ -89,7 +89,7 @@ public class Episode01 {
 				frames[1] = char00Frames[4][5];
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(768, 470);
-				unit.setStrength(12);
+				unit.combat.setStrength(12);
 				unit.ai = new StateDefense(unit, stage);
 				stage.addActor(unit);
 			}
@@ -100,7 +100,7 @@ public class Episode01 {
 				frames[1] = char00Frames[0][8];
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(880, 380);
-				unit.setStrength(15);
+				unit.combat.setStrength(15);
 				unit.ai = new StateDefense(unit, stage);
 				stage.addActor(unit);
 			}
@@ -180,8 +180,6 @@ public class Episode01 {
 		unit.renderer = characterRendererComponent;
 
 		unit.setTouchable(Touchable.enabled);
-		unit.hp = 100;
-		unit.strength = 5;
 		unit.setFont(font);
 
 		unit.setSize(32, 32);
@@ -203,8 +201,6 @@ public class Episode01 {
 
 		Unit unitCity = new Unit();
 		unitCity.setTouchable(Touchable.enabled);
-		unitCity.hp = 10;
-		unitCity.strength = 1;
 		unitCity.setFaction(3);
 
         CityComponent component = new CityComponent(stage, unitCity, font);

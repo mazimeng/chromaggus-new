@@ -33,6 +33,11 @@ public class CharacterRendererComponent extends RendererComponent {
         super.draw(batch, parentAlpha);
     }
 
+    @Override
+    public TextureRegion getIcon() {
+        return animation.getKeyFrame(0);
+    }
+
     public Animation getAnimation() {
         return animation;
     }

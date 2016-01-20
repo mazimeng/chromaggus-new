@@ -28,7 +28,7 @@ public class Attack extends MoveToPosition{
             nextAttack -= delta;
 
             if(nextAttack<=0) {
-                targetUnit.hp -= getUnit().strength;
+                targetUnit.combat.setHp(targetUnit.combat.getHp() - getUnit().combat.getStrength());
                 nextAttack = attackCooldown;
 
                 experience(targetUnit.dead());
@@ -43,14 +43,8 @@ public class Attack extends MoveToPosition{
     }
 
     private void experience(boolean killed) {
-        Unit unit = getUnit();
-        int experience = unit.getExperience() + unit.getExperienceGrowth() * (killed?2:1);
-        if(experience>=unit.getExperienceToLevelUp()) {
-            experience = experience - unit.getExperienceToLevelUp();
-            unit.setHp((int)(unit.getHp()*unit.getAttributeGrowth()));
-            unit.setStrength((int)(unit.getStrength()*unit.getAttributeGrowth()));
-        }
-        unit.setExperience(experience);
+        if(killed) this.getUnit().combat.gainExperienceFromKill();
+        else this.getUnit().combat.gainExperienceFromAttack();
     }
 
     private boolean closeEnough(float delta) {

@@ -33,6 +33,7 @@ public class Event {
 	}
 
 	public <T> T cast(Class<T> type) {
+        if(!(type.isInstance(this))) return null;
 		return type.cast(this);
 	}
 

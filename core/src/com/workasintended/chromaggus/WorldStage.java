@@ -187,15 +187,15 @@ public class WorldStage extends Stage implements EventHandler {
 
         if(event.is(EventName.MOVE_TO_POSITION)) {
             MoveToPositionEvent moveToPositionEvent = event.cast(MoveToPositionEvent.class);
-
             Unit unit = moveToPositionEvent.getUnit();
-            unit.movement.moveToPosition(moveToPositionEvent.getPosition());
+
+            if(unit.movement!=null) unit.movement.moveToPosition(moveToPositionEvent.getPosition());
         }
 
         if(event.is(EventName.ATTACK_UNIT)){
             AttackUnitEvent attackUnitEvent = event.cast(AttackUnitEvent.class);
             Unit unit = attackUnitEvent.getUnit();
-            unit.combat.attack(attackUnitEvent.getTarget());
+            if(unit.combat!=null) unit.combat.attack(attackUnitEvent.getTarget());
         }
 
 

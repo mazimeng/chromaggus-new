@@ -1,15 +1,9 @@
 package com.workasintended.chromaggus;
 
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.workasintended.chromaggus.order.Attack;
-import com.workasintended.chromaggus.order.Chase;
-import com.workasintended.chromaggus.order.Move;
 import com.workasintended.chromaggus.pathfinding.Grid;
-import com.workasintended.chromaggus.pathfinding.GridMap;
 
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.List;
 
 public class CommandHandler implements EventHandler {
 	private WorldStage stage;
