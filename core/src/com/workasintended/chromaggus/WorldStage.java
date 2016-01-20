@@ -18,9 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.workasintended.chromaggus.action.MoveToPosition;
 import com.workasintended.chromaggus.action.MoveToUnit;
-import com.workasintended.chromaggus.event.AttackUnitEvent;
-import com.workasintended.chromaggus.event.CameraZoomEvent;
-import com.workasintended.chromaggus.event.DebugRendererArgument;
+import com.workasintended.chromaggus.event.*;
 import com.workasintended.chromaggus.event.order.MoveToPositionEvent;
 import com.workasintended.chromaggus.event.order.UnitEvent;
 import com.workasintended.chromaggus.pathfinding.GridMap;
@@ -42,6 +40,9 @@ public class WorldStage extends Stage implements EventHandler {
     private Vector2 cameraMovement = new Vector2();
     private float cameraZoomSpeed = 0.01f;
     private float cameraZoom = 0f;
+
+    private float playerGold = 0;
+    private int playerFaction = 1;
 
     private HashMap<String, DebugRenderer> debugRenderers = new HashMap<>();
 
@@ -182,7 +183,6 @@ public class WorldStage extends Stage implements EventHandler {
             DebugRendererArgument renderer = event.getArgument(DebugRendererArgument.class);
             this.debugRenderers.put(renderer.getName(), renderer.getDebugRenderer());
             return;
-
         }
 
         if(event.is(EventName.MOVE_TO_POSITION)) {
@@ -196,6 +196,17 @@ public class WorldStage extends Stage implements EventHandler {
             AttackUnitEvent attackUnitEvent = event.cast(AttackUnitEvent.class);
             Unit unit = attackUnitEvent.getUnit();
             if(unit.combat!=null) unit.combat.attack(attackUnitEvent.getTarget());
+        }
+
+        if(event.is(EventName.UNIT_SELECTED)) {
+            UnitSelectedEvent unitSelectedEvent = event.cast(UnitSelectedEvent.class);
+            if(unitSelectedEvent.getUnit().city!=null) {
+                System.out.println(String.format("player gold: %s", this.getPlayerGold()));
+            }
+        }
+        if(event.is(EventName.DEVELOP_CITY)) {
+            DevelopCityEvent developCityEvent = event.cast(DevelopCityEvent.class);
+            developCityEvent.getUnit().development.develop(developCityEvent.getCity());
         }
 
 
@@ -239,5 +250,21 @@ public class WorldStage extends Stage implements EventHandler {
             DebugRenderer renderer = stringDebugRendererEntry.getValue();
             renderer.render(render);
         }
+    }
+
+    public float getPlayerGold() {
+        return playerGold;
+    }
+
+    public void setPlayerGold(float playerGold) {
+        this.playerGold = playerGold;
+    }
+
+    public int getPlayerFaction() {
+        return playerFaction;
+    }
+
+    public void setPlayerFaction(int playerFaction) {
+        this.playerFaction = playerFaction;
     }
 }

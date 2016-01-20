@@ -117,14 +117,23 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
         @Override
         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
             if (selected != null) {
-                Actor actor = getWorldStage().hit(x, y, false);
-                if (actor instanceof Unit && selected != actor) {
-                    Service.eventQueue().enqueue(new AttackUnitEvent(selected, (Unit) actor));
-                } else if (actor == null) {
-                    Service.eventQueue().enqueue(new MoveToPositionEvent(selected, new Vector2(x, y)));
-
-                }
+                Unit selectedUnit = selected;
                 selected = null;
+                Actor actor = getWorldStage().hit(x, y, false);
+
+                if(actor == null) {
+                    Service.eventQueue().enqueue(new MoveToPositionEvent(selectedUnit, new Vector2(x, y)));
+                    return;
+                }
+
+                Unit unit = (Unit)actor;
+                if (selectedUnit != unit) {
+                    if(unit.city==null && (unit.getFaction()&selectedUnit.getFaction())==0)
+                        Service.eventQueue().enqueue(new AttackUnitEvent(selectedUnit, (Unit) actor));
+                    else if(unit.city!=null && selectedUnit.development!=null) {
+                        Service.eventQueue().enqueue(new DevelopCityEvent(selectedUnit, unit));
+                    }
+                }
             }
         }
 

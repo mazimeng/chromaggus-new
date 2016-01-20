@@ -28,9 +28,9 @@ public class Develop extends Action {
                 city.getX(Align.center), city.getY(Align.center));
 
         if(dst2 <= range*range) {
-            float gold = city.city.getGold();
-            gold = gold + speed * delta;
-            city.city.setGold(gold);
+            float development = city.city.getDevelopment();
+            development = development + speed * delta;
+            city.city.setDevelopment(development);
         }
 
         return false;

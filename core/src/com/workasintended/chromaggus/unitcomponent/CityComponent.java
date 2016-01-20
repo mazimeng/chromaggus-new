@@ -15,6 +15,9 @@ public class CityComponent {
 	private Unit unit;
 	private Float gold = 0f;
 	private BitmapFont font;
+
+	private float development = 0;
+
 	public CityComponent(WorldStage stage, Unit unit, BitmapFont font) {
 		this.unit = unit;
 		//this.gold = new Attribute<Float>(0f, 100f);
@@ -23,6 +26,8 @@ public class CityComponent {
 	}
 	
 	public void update(float delta) {
+		float gold = this.development * delta;
+		this.stage.setPlayerGold(gold + this.stage.getPlayerGold());
 	}
 	
 	public void draw(Batch batch) {
@@ -72,5 +77,13 @@ public class CityComponent {
 
 	public void setGold(Float gold) {
 		this.gold = gold;
+	}
+
+	public float getDevelopment() {
+		return development;
+	}
+
+	public void setDevelopment(float development) {
+		this.development = development;
 	}
 }
