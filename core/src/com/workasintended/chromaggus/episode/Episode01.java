@@ -45,9 +45,8 @@ public class Episode01 {
 
 		{
 			{
-				Unit city = this.makeCity(stage, font, new TextureRegion(textureCity));
+				Unit city = this.makeCity(stage, font, new TextureRegion(textureCity), Faction.FACTION_A);
 				city.setPosition(14*32, 25*32);
-				stage.getGridMap().grid(14, 25).state = Grid.State.Blocked;
 				stage.addActor(city);
 			}
 			stage.getGridMap().grid(8, 7).state= Grid.State.Blocked;
@@ -170,7 +169,7 @@ public class Episode01 {
 
 	}
 
-	protected Unit makeCharacter(WorldStage stage, int faction, BitmapFont font, TextureRegion[] frames) {
+	protected Unit makeCharacter(WorldStage stage, Faction faction, BitmapFont font, TextureRegion[] frames) {
 		Animation animation = new Animation(0.5f, frames);
 		Unit unit = new Unit();
 
@@ -194,16 +193,16 @@ public class Episode01 {
 		return unit;
 	}
 
-	protected Unit makeCity(WorldStage stage, BitmapFont font, TextureRegion texture) {
+	protected Unit makeCity(WorldStage stage, BitmapFont font, TextureRegion texture, Faction faction) {
 		Sprite sprite = new Sprite(texture);
 		sprite.setSize(32, 32);
 
 
 		Unit unitCity = new Unit();
 		unitCity.setTouchable(Touchable.enabled);
-		unitCity.setFaction(3);
+		unitCity.setFaction(faction);
 
-        CityComponent component = new CityComponent(stage, unitCity, font);
+        CityComponent component = new CityComponent(unitCity);
         unitCity.city = component;
         unitCity.setSprite(sprite);
         return unitCity;

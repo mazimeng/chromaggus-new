@@ -22,7 +22,7 @@ public class Unit extends Group {
 //    public int strength;
     public float radius = 32;
     public float speed = 32;
-    private int faction = 0;
+    private Faction faction;
 //    private int experience = 0;
 //    private int experienceToLevelUp = 100;
 //    private int experienceGrowth = 20;
@@ -84,14 +84,6 @@ public class Unit extends Group {
         //this.setOrigin(sprite.getWidth() * 0.5f, sprite.getHeight() * 0.5f);
     }
 
-    public int getFaction() {
-        return faction;
-    }
-
-    public void setFaction(int faction) {
-        this.faction = faction;
-    }
-
     public BitmapFont getFont() {
         return font;
     }
@@ -120,17 +112,6 @@ public class Unit extends Group {
             ability.update(delta);
         }
     }
-
-
-    public boolean isHighlighted() {
-        return highlighted;
-    }
-
-
-    public void setHighlighted(boolean highlighted) {
-        this.highlighted = highlighted;
-    }
-
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
@@ -200,10 +181,6 @@ public class Unit extends Group {
         //this.order.stop();
         this.order = o;
         this.order.start();
-    }
-
-    public <T> T getAbility(int index, Class<T> type) {
-        return type.cast(abilities[index]);
     }
 
     public void occupy(Grid grid) {
@@ -299,5 +276,13 @@ public class Unit extends Group {
         if(!(event instanceof DevelopCityEvent)) return false;
 
         return true;
+    }
+
+    public Faction getFaction() {
+        return faction;
+    }
+
+    public void setFaction(Faction faction) {
+        this.faction = faction;
     }
 }

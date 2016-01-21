@@ -5,21 +5,21 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
-import com.workasintended.chromaggus.episode.Faction;
 import com.workasintended.chromaggus.event.*;
 import com.workasintended.chromaggus.event.order.MoveToPositionEvent;
 
 /**
  * Created by mazimeng on 1/15/16.
  */
-public class AndroidInputHandler extends ActorGestureListener implements EventHandler {
+public class AndroidInputHandler extends ActorGestureListener {
     private WorldStage worldStage;
     private InputHandler inputHandler;
-    private int faction = Faction.FACTION_A;
+    private Player player;
 
-    public AndroidInputHandler(WorldStage worldStage) {
+    public AndroidInputHandler(WorldStage worldStage, Player player) {
         this.worldStage = worldStage;
         inputHandler = new Selection(worldStage);
+        this.player = player;
     }
 
     @Override
@@ -77,12 +77,6 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
         this.worldStage = worldStage;
     }
 
-    @Override
-    public void handle(Event event) {
-        ((EventHandler) this.inputHandler).handle(event);
-    }
-
-
     public class InputHandler extends ActorGestureListener {
         private WorldStage worldStage;
 
@@ -91,7 +85,7 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
         }
     }
 
-    public class Selection extends InputHandler implements EventHandler {
+    public class Selection extends InputHandler {
         Unit selected = null;
 
         public Selection(WorldStage worldStage) {
@@ -128,9 +122,13 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
 
                 Unit unit = (Unit)actor;
                 if (selectedUnit != unit) {
-                    if(unit.city==null && (unit.getFaction()&selectedUnit.getFaction())==0)
+                    if(unit.city==null &&
+                            !unit.getFaction().isFriend(selectedUnit.getFaction())) {
                         Service.eventQueue().enqueue(new AttackUnitEvent(selectedUnit, (Unit) actor));
-                    else if(unit.city!=null && selectedUnit.development!=null) {
+                    }
+                    else if(unit.city!=null &&
+                            unit.getFaction().isFriend(selectedUnit.getFaction()) &&
+                            selectedUnit.development!=null) {
                         Service.eventQueue().enqueue(new DevelopCityEvent(selectedUnit, unit));
                     }
                 }
@@ -140,52 +138,23 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
         @Override
         public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
             Actor actor = getWorldStage().hit(x, y, false);
-            System.out.println(String.format("touchDown: %s", actor));
-            if ((actor instanceof Unit) && ((Unit) actor).city != null) {
-                System.out.println(String.format("city: %s", ((Unit) actor).city.getGold()));
-            }
 
             if (actor instanceof Unit) {
                 Unit unit = (Unit) actor;
-                if ((unit.getFaction() & AndroidInputHandler.this.faction) > 0) selected = (Unit) actor;
+                if(unit.getFaction().isFriend(player.getFaction())) selected = (Unit) actor;
             }
         }
 
         @Override
         public void tap(InputEvent event, float x, float y, int pointer, int button) {
-//            super.touchUp(event, x, y, pointer, button);
             Actor actor = getWorldStage().hit(x, y, false);
             if (actor instanceof Unit) {
-                Service.eventQueue().enqueue(new UnitSelectedEvent((Unit)actor));
+                Service.eventQueue().enqueue(new UnitSelectionEvent((Unit)actor, true));
             }
-//
-//            if((actor instanceof Unit) && ((Unit) actor).city!=null) {
-//                System.out.println(String.format("city: %s", ((Unit) actor).city.getGold()));
-//            }
-//
-//            if((selected==null && (actor instanceof Unit))) {
-//                selected = (Unit)actor;
-//            }
-//            else if(selected!=null && actor != null && selected!=actor) {
-//                Service.eventQueue().enqueue(new Event(EventName.MOVE_UNIT, new MoveUnitArgument(selected, new Vector2(x, y))));
-//            }
-//            else if(selected!=null && actor==null){
-//                Service.eventQueue().enqueue(new Event(EventName.MOVE_UNIT, new MoveUnitArgument(selected, new Vector2(x, y))));
-//            }
 
-//            System.out.println(String.format("selection tap: %s, %s, %s, %s, %s", actor, x, y, pointer, button));
-//            if (actor != null) {
-////                AndroidInputHandler.this.inputHandler = new Command(getWorldStage(), (Unit) actor);
-//            }
-//
-//            if (actor != this.unit) {
-//                Service.eventQueue().enqueue(new Event(EventName.MOVE_UNIT, new MoveUnitArgument(unit, new Vector2(x, y))));
-//            } else {
-//                Selection selection = new Selection(getWorldStage());
-//                //selection.tap(event, x, y, pointer, button);
-//                AndroidInputHandler.this.inputHandler = selection;
-//
-//            }
+            if(actor == null) {
+                Service.eventQueue().enqueue(new UnitSelectionEvent((Unit)actor, false));
+            }
         }
 
         @Override
@@ -195,14 +164,6 @@ public class AndroidInputHandler extends ActorGestureListener implements EventHa
             Service.eventQueue().enqueue(new Event(EventName.CAMERA_ZOOM,
                     new CameraZoomEvent(dir)));
 
-        }
-
-        @Override
-        public void handle(Event event) {
-            if (event.getName() == EventName.CANCEL_SELECTION) {
-                this.selected = null;
-                System.out.println("selection cancelled");
-            }
         }
     }
 }

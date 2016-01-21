@@ -20,7 +20,7 @@ public class Attack extends MoveToPosition{
 
     @Override
     public boolean act(float delta) {
-        if((getUnit().getFaction() & targetUnit.getFaction())>0) return true;
+        if((getUnit().getFaction().isFriend(targetUnit.getFaction()))) return true;
 
         if(targetUnit.dead()) return true;
 

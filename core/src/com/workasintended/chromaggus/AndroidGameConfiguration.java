@@ -18,13 +18,8 @@ public class AndroidGameConfiguration extends GameConfiguration {
     private AndroidInputHandler androidInputHandler;
 
     @Override
-    public EventListener makeInputListener(WorldStage worldStage) {
-        this.androidInputHandler = new AndroidInputHandler(worldStage);
-        return androidInputHandler;
-    }
-
-    @Override
-    public EventHandler makeInputHandler() {
+    public EventListener makeInputListener(WorldStage worldStage, Player player) {
+        this.androidInputHandler = new AndroidInputHandler(worldStage, player);
         return androidInputHandler;
     }
 

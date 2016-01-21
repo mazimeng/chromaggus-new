@@ -7,8 +7,8 @@ import com.workasintended.chromaggus.event.order.UnitEvent;
 /**
  * Created by mazimeng on 1/20/16.
  */
-public class UnitSelectedEvent extends UnitEvent {
-    public UnitSelectedEvent(Unit self) {
-        super(self, EventName.UNIT_SELECTED);
+public class UnitSelectionEvent extends UnitEvent {
+    public UnitSelectionEvent(Unit self, boolean selected) {
+        super(self, selected? EventName.UNIT_SELECTED: EventName.UNIT_DESELECTED);
     }
 }

@@ -11,7 +11,7 @@ import com.workasintended.chromaggus.Unit;
 public class Develop extends Action {
     private Unit city;
     private float range = 64f;
-    private float speed = 1f;
+    private float speed = 2f;
 
     public Develop(Unit city) {
         this.city = city;
@@ -22,7 +22,7 @@ public class Develop extends Action {
         if(this.city.city == null) return true;
         Unit self = (Unit)this.getActor();
 
-        if((self.getFaction() & city.getFaction())==0) return true;
+        if(!self.getFaction().isFriend(city.getFaction())) return true;
 
         float dst2 = Vector2.dst2(self.getX(Align.center), self.getY(Align.center),
                 city.getX(Align.center), city.getY(Align.center));

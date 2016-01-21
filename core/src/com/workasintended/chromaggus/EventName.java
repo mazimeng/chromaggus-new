@@ -22,4 +22,7 @@ public enum EventName {
 	DEVELOP_CITY,
 	MOVE_TO_POSITION,
     UNIT_SELECTED,
+    UNIT_DESELECTED,
+    GAIN_GOLD,
+	BUY_ITEM,
 }

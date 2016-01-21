@@ -1,8 +1,12 @@
 package com.workasintended.chromaggus.unitcomponent;
 
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
+import com.badlogic.gdx.utils.Align;
 import com.workasintended.chromaggus.Unit;
 import com.workasintended.chromaggus.ability.Ability;
 import com.workasintended.chromaggus.action.Attack;
@@ -22,13 +26,13 @@ public class CombatComponent extends UnitComponent {
     private float experienceGrowthFromAttack = 0.2f;
     private float experienceGrowthFromKill = 0.8f;
 
+
     public CombatComponent(Unit self) {
         super(self);
     }
 
     @Override
     public void update(float delta) {
-        this.updateAbilities(delta);
     }
 
     protected void updateAbilities(float delta) {
@@ -50,6 +54,8 @@ public class CombatComponent extends UnitComponent {
         getSelf().addAction(action);
     }
 
+
+
     public void setAbility(int index, Ability ability) {
         this.abilities[index] = ability;
     }
@@ -59,11 +65,11 @@ public class CombatComponent extends UnitComponent {
     }
 
     public void gainExperienceFromAttack() {
-        gainExperience((int)(experienceGrowthFromAttack*experienceToLevelUp));
+        gainExperience((int) (experienceGrowthFromAttack * experienceToLevelUp));
     }
 
     public void gainExperienceFromKill() {
-        gainExperience((int)(experienceGrowthFromKill*experienceToLevelUp));
+        gainExperience((int) (experienceGrowthFromKill * experienceToLevelUp));
     }
 
     public void gainExperience(int exp) {
@@ -74,14 +80,14 @@ public class CombatComponent extends UnitComponent {
     }
 
     public boolean levelup() {
-        int nextLevel = this.experience/this.experienceToLevelUp + 1;
+        int nextLevel = this.experience / this.experienceToLevelUp + 1;
 
-        if(nextLevel<=this.level) return false;
+        if (nextLevel <= this.level) return false;
 
-        while(this.level<nextLevel) {
+        while (this.level < nextLevel) {
             this.level++;
-            this.maxHp = (int)(this.maxHp * this.attributeGrowth);
-            this.strength = (int)(this.strength * this.attributeGrowth);
+            this.maxHp = (int) (this.maxHp * this.attributeGrowth);
+            this.strength = (int) (this.strength * this.attributeGrowth);
         }
         return true;
     }
@@ -99,7 +105,7 @@ public class CombatComponent extends UnitComponent {
     }
 
     public void setHp(int hp) {
-        this.hp = hp;
+        this.hp = MathUtils.clamp(hp, 0, maxHp);
     }
 
     public int getMaxHp() {
@@ -164,5 +170,21 @@ public class CombatComponent extends UnitComponent {
 
     public void setExperienceGrowthFromKill(float experienceGrowthFromKill) {
         this.experienceGrowthFromKill = experienceGrowthFromKill;
+    }
+
+    @Override
+    public String toString() {
+        return "CombatComponent{" +
+                "level=" + level +
+                ", hp=" + hp +
+                ", maxHp=" + maxHp +
+                ", strength=" + strength +
+                ", experience=" + experience +
+                ", experienceToLevelUp=" + experienceToLevelUp +
+                ", attributeGrowth=" + attributeGrowth +
+                ", experienceGrowthFromAttack=" + experienceGrowthFromAttack +
+                ", experienceGrowthFromKill=" + experienceGrowthFromKill +
+                ", radius=" + radius +
+                '}';
     }
 }

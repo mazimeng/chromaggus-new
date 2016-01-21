@@ -16,10 +16,11 @@ public class WorldScreen implements Screen {
 	private GuiStage gui;
 	private EventListener inputHandler;
 	private GameConfiguration gameConfiguration;
+	private Player player = new Player();
 
 	public WorldScreen(GameConfiguration gameConfiguration) {
 		this.gameConfiguration = gameConfiguration;
-
+		this.initPlayer();
 		this.initAssets();
 		this.initWorld();
 		this.initGui();
@@ -46,6 +47,11 @@ public class WorldScreen implements Screen {
 		gui.draw();
 	}
 
+	protected void initPlayer() {
+		this.player = new Player();
+		this.player.setFaction(Faction.FACTION_A);
+	}
+
 	protected void initAssets() {
 		Service.assetManager().load("icon.png", Texture.class);
 		Service.assetManager().finishLoading();
@@ -59,7 +65,7 @@ public class WorldScreen implements Screen {
 		stage.setShapeRenderer(new ShapeRenderer());
 		stage.setViewport(viewport);
 
-		this.inputHandler = this.gameConfiguration.makeInputListener(stage);
+		this.inputHandler = this.gameConfiguration.makeInputListener(stage, player);
 		stage.addListener(this.inputHandler);
 
 
@@ -83,27 +89,27 @@ public class WorldScreen implements Screen {
 	}
 
 	protected void initEvents() {
-		{
-			CommandHandler ch = new CommandHandler(stage);
-			Service.eventQueue().register(EventName.MOVE, ch);
-			Service.eventQueue().register(EventName.MOVE_UNIT, stage);
-			Service.eventQueue().register(EventName.SELECTION_STARTED, stage);
-			Service.eventQueue().register(EventName.SELECTING, stage);
-			Service.eventQueue().register(EventName.SELECTION_COMPLETED, stage);
-			Service.eventQueue().register(EventName.MOVING_CAMERA, stage);
-			Service.eventQueue().register(EventName.RENDER_ANIMATION, stage);
-			Service.eventQueue().register(EventName.UNIT_DIED, stage);
-			Service.eventQueue().register(EventName.SET_DEBUG_RENDERER, stage);
-			Service.eventQueue().register(EventName.ATTACK_UNIT, stage);
-			Service.eventQueue().register(EventName.MOVE_TO_POSITION, stage);
-			Service.eventQueue().register(EventName.FOLLOW_UNIT, stage);
-			Service.eventQueue().register(EventName.UNIT_SELECTED, stage);
-			Service.eventQueue().register(EventName.DEVELOP_CITY, stage);
-		}
+		Service.eventQueue().register(EventName.MOVE_UNIT, stage);
+		Service.eventQueue().register(EventName.SELECTION_STARTED, stage);
+		Service.eventQueue().register(EventName.SELECTING, stage);
+		Service.eventQueue().register(EventName.SELECTION_COMPLETED, stage);
+		Service.eventQueue().register(EventName.MOVING_CAMERA, stage);
+		Service.eventQueue().register(EventName.RENDER_ANIMATION, stage);
+		Service.eventQueue().register(EventName.UNIT_DIED, stage);
+		Service.eventQueue().register(EventName.SET_DEBUG_RENDERER, stage);
+		Service.eventQueue().register(EventName.ATTACK_UNIT, stage);
+		Service.eventQueue().register(EventName.MOVE_TO_POSITION, stage);
+		Service.eventQueue().register(EventName.FOLLOW_UNIT, stage);
+		Service.eventQueue().register(EventName.UNIT_SELECTED, stage);
+		Service.eventQueue().register(EventName.UNIT_SELECTED, player);
+		Service.eventQueue().register(EventName.UNIT_DESELECTED, player);
+		Service.eventQueue().register(EventName.DEVELOP_CITY, stage);
 
-		Service.eventQueue().register(EventName.CANCEL_SELECTION, gameConfiguration.makeInputHandler());
 		Service.eventQueue().register(EventName.SELECTION_COMPLETED, gui);
 		Service.eventQueue().register(EventName.UNIT_SELECTED, gui);
+		Service.eventQueue().register(EventName.UNIT_DESELECTED, gui);
+		Service.eventQueue().register(EventName.GAIN_GOLD, player);
+		Service.eventQueue().register(EventName.BUY_ITEM, player);
 
 	}
 

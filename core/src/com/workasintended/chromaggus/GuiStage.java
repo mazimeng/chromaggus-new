@@ -11,8 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
+import com.workasintended.chromaggus.event.BuyItemEvent;
 import com.workasintended.chromaggus.event.SelectionCompleted;
-import com.workasintended.chromaggus.event.UnitSelectedEvent;
+import com.workasintended.chromaggus.event.UnitSelectionEvent;
 
 import java.util.List;
 
@@ -41,19 +42,7 @@ public class GuiStage extends Stage implements EventHandler {
 
     @Override
     public void handle(Event event) {
-        if (event instanceof SelectionCompleted) {
-            List<Unit> units = ((SelectionCompleted) event).getUnits();
-
-            if(units.size() == 0 || units.get(0).city==null) return;
-
-            Unit unit = units.get(0);
-            cityPanel.gold.setText(unit.city.getGold().toString());
-        }
-        else {
-            this.unitSelection.handle(event);
-        }
-
-
+        this.unitSelection.handle(event);
     }
 
     protected void initGui() {
@@ -88,7 +77,7 @@ public class GuiStage extends Stage implements EventHandler {
             imageButton.addListener(new ClickListener(){
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    super.clicked(event, x, y);
+                    Service.eventQueue().enqueue(new BuyItemEvent());
                 }
             });
 
@@ -200,13 +189,16 @@ public class GuiStage extends Stage implements EventHandler {
 
         @Override
         public void handle(Event event) {
-            UnitSelectedEvent unitSelectedEvent = event.cast(UnitSelectedEvent.class);
-            if(unitSelectedEvent!=null) {
+            UnitSelectionEvent unitSelectedEvent = event.cast(UnitSelectionEvent.class);
+            if(event.is(EventName.UNIT_SELECTED)) {
                 Unit unit = unitSelectedEvent.getUnit();
                 if(unit.renderer==null) return;
 
                 TextureRegion icon = unit.renderer.getIcon();
                 this.setDrawable(new TextureRegionDrawable(icon));
+            }
+            if(event.is(EventName.UNIT_DESELECTED)) {
+                this.setDrawable(null);
             }
         }
     }

@@ -11,11 +11,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  * Created by mazimeng on 1/15/16.
  */
 public abstract class GameConfiguration {
-    private float worldScale = 1.0f;
-    private float guiScale = 1.0f;
-
-    public abstract EventListener makeInputListener(WorldStage worldStage);
-    public abstract EventHandler makeInputHandler();
+    public abstract EventListener makeInputListener(WorldStage worldStage, Player player);
     public abstract Viewport makeWorldViewport();
     public abstract Viewport makeGuiViewport();
 
