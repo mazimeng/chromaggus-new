@@ -18,15 +18,9 @@ import com.workasintended.chromaggus.unitcomponent.*;
 import java.util.LinkedList;
 
 public class Unit extends Group {
-//    public int hp;
-//    public int strength;
     public float radius = 32;
     public float speed = 32;
     private Faction faction;
-//    private int experience = 0;
-//    private int experienceToLevelUp = 100;
-//    private int experienceGrowth = 20;
-//    private float attributeGrowth = 1.2f;
 
 
     public Sprite highlight;
@@ -49,29 +43,8 @@ public class Unit extends Group {
 
     public Grid currentGrid;
 
-    private LinkedList<UnitTask> taskQueue = new LinkedList<>();
-    private UnitTask executingTask = null;
-
     public Unit() {
         abilities = new Ability[9];
-
-
-        this.addListener(new InputListener() {
-
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer,
-                              Actor fromActor) {
-                Unit.this.highlighted = true;
-            }
-
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer,
-                             Actor toActor) {
-                Unit.this.highlighted = false;
-            }
-
-        });
-
     }
 
     public Sprite getSprite() {
@@ -106,11 +79,6 @@ public class Unit extends Group {
 
         if (this.order != null) this.order.update(delta);
         if (this.development != null) this.development.update(delta);
-
-        for (Ability ability : abilities) {
-            if (ability == null) continue;
-            ability.update(delta);
-        }
     }
 
     @Override
@@ -128,7 +96,10 @@ public class Unit extends Group {
                 , this.getScaleX(), this.getScaleY()
                 , this.getRotation());
 
-        if (font != null) font.draw(batch, Integer.toString(this.combat.getHp()), this.getX(), this.getY());
+        if (font != null && combat!=null) {
+            String hp = String.format("%s/%s", combat.getHp(), combat.getMaxHp());
+            font.draw(batch, hp, this.getX(), this.getY());
+        }
         if (this.city != null) this.city.draw(batch);
 
         if (this.highlight != null) batch.draw(highlight

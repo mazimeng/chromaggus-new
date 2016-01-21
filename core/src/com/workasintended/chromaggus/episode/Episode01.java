@@ -28,6 +28,7 @@ public class Episode01 {
         float h = Gdx.graphics.getHeight();
 
 		BitmapFont font = new BitmapFont();
+		font.getData().setScale(0.5f, 0.5f);
 
 		Texture textureCity = new Texture("city.png");
 		Texture textureCursor = new Texture("cursor.png");
