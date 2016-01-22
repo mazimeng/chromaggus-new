@@ -58,7 +58,7 @@ public class CityComponent extends UnitComponent {
         restore += delta;
         if (restore < restoreCooldown) return;
         restore = 0;
-        
+
         for (Actor actor : getSelf().getWorld().getActors()) {
             if (actor == getSelf()) continue;
             if (!(actor instanceof Unit)) continue;
