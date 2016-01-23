@@ -112,7 +112,7 @@ public class AndroidInputHandler extends ActorGestureListener {
         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
             if (selected != null) {
                 Unit selectedUnit = selected;
-                selected = null;
+                //selected = null;
                 Actor actor = getWorldStage().hit(x, y, false);
 
                 if(actor == null) {
@@ -141,7 +141,11 @@ public class AndroidInputHandler extends ActorGestureListener {
 
             if (actor instanceof Unit) {
                 Unit unit = (Unit) actor;
-                if(unit.getFaction().isFriend(player.getFaction())) selected = (Unit) actor;
+                if(unit.getFaction().isFriend(player.getFaction())) {
+                    selected = (Unit) actor;
+                    Service.eventQueue().enqueue(new UnitSelectionEvent(selected, true));
+                }
+
             }
         }
 
@@ -159,10 +163,10 @@ public class AndroidInputHandler extends ActorGestureListener {
 
         @Override
         public void zoom(InputEvent event, float initialDistance, float distance) {
-            this.selected = null;
-            int dir = distance > initialDistance ? 1 : -1;
-            Service.eventQueue().enqueue(new Event(EventName.CAMERA_ZOOM,
-                    new CameraZoomEvent(dir)));
+//            this.selected = null;
+//            int dir = distance > initialDistance ? 1 : -1;
+//            Service.eventQueue().enqueue(new Event(EventName.CAMERA_ZOOM,
+//                    new CameraZoomEvent(dir)));
 
         }
     }
