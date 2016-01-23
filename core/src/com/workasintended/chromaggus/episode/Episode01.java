@@ -32,7 +32,7 @@ public class Episode01 {
 
 		Texture textureCity = new Texture("city.png");
 		Texture textureCursor = new Texture("cursor.png");
-		Texture char00 = new Texture("char00.png");
+		Texture char00 = new Texture("effect00.png");
 		Texture char01 = new Texture("char01.png");
 		Texture char02 = new Texture("char02.png");
 
@@ -141,9 +141,10 @@ public class Episode01 {
 //        stage.addListener(new HumanController(stage));
 
 		{
+
 			TiledMap map = new TmxMapLoader(new InternalFileHandleResolver()).load("episode01.tmx");
 			float unitScale = 2f;
-			OrthogonalTiledMapRenderer renderer = new OrthogonalTiledMapRenderer(map, unitScale);
+			OrthogonalTiledMapRenderer renderer = new OrthogonalTiledMapRenderer(map, unitScale, stage.getBatch());
 			stage.setTiledMapRenderer(renderer);
 
 			TiledMapTileLayer layer = (TiledMapTileLayer)map.getLayers().get(0);

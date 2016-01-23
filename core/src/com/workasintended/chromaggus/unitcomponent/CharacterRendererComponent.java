@@ -13,6 +13,7 @@ import com.workasintended.chromaggus.unitcomponent.RendererComponent;
 public class CharacterRendererComponent extends RendererComponent {
     float stateTime;
     Animation animation;
+    private float blink = 0;
 
     public CharacterRendererComponent(Unit self) {
         super(self);
@@ -22,15 +23,22 @@ public class CharacterRendererComponent extends RendererComponent {
     public void draw(Batch batch, float parentAlpha) {
         Unit unit = getSelf();
         stateTime += Gdx.graphics.getDeltaTime();
+        float delta = Gdx.graphics.getDeltaTime();
         TextureRegion frame = animation.getKeyFrame(stateTime, true);
 
+        float alpha = (float)(Math.cos(blink) +1)/2.0f;
+        blink += delta*20f;
+
+        batch.setColor(1, 1, 1, alpha);
         batch.draw(frame
                 , unit.getX(), unit.getY()
                 , unit.getOriginX(), unit.getOriginY()
                 , unit.getWidth(), unit.getHeight()
                 , unit.getScaleX(), unit.getScaleY()
                 , unit.getRotation());
+
         super.draw(batch, parentAlpha);
+        batch.setColor(1, 1, 1, 1f);
     }
 
     @Override

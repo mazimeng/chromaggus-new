@@ -112,7 +112,7 @@ public class AndroidInputHandler extends ActorGestureListener {
         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
             if (selected != null) {
                 Unit selectedUnit = selected;
-                //selected = null;
+                selected = null;
                 Actor actor = getWorldStage().hit(x, y, false);
 
                 if(actor == null) {
