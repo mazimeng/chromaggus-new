@@ -20,5 +20,6 @@ public interface Ability {
 	float getCastingProgress();
 	void setCastingProgress(float castingProgress);
 	boolean isCasting();
+	boolean stop();
 
 }

@@ -49,12 +49,8 @@ public class Fireball extends OffensiveAbilityAdaptor {
     }
 
     @Override
-    protected void takeEffect() {
+    public void effect() {
         getTarget().combat.takeDamage(getUser().combat.getIntelligence());
-    }
-
-    @Override
-    public void update(float delta) {
-
+        super.effect();
     }
 }

@@ -17,6 +17,7 @@ public class UseAbility extends Action {
     }
     @Override
     public boolean act(float delta) {
+        if(ability.stop()) return true;
         if(!began) begin();
         if(ability.inRange() || ability.isCasting()) {
             if(ability.cast(delta)) {

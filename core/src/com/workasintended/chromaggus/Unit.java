@@ -68,8 +68,9 @@ public class Unit extends Group {
     @Override
     public void act(float delta) {
         if (this.dead()) {
-            this.remove();
+            //this.remove();
             Service.eventQueue().enqueue(new Event(EventName.UNIT_DIED, this));
+            return;
         }
         super.act(delta);
 

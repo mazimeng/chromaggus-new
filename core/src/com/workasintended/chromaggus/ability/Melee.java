@@ -15,13 +15,9 @@ public class Melee extends OffensiveAbilityAdaptor {
     }
 
     @Override
-    protected void useAbility() {
-        takeEffect();
-    }
-
-    @Override
-    protected void takeEffect() {
+    public void effect() {
         getTarget().combat.takeDamage(getUser().combat.getStrength());
+        super.effect();
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class ActorFactory {
     private static ActorFactory unitFactory = new ActorFactory();
     private TextureRegion[][] icon06;
+    private TextureRegion[][] icons;
 
     public static ActorFactory instance() {
         return unitFactory;
@@ -25,6 +26,13 @@ public class ActorFactory {
         return effect;
     }
 
+    public Animation dead() {
+        TextureRegion[] frames = new TextureRegion[]{ icon()[0][1] };
+        Animation animation = new Animation(0.5f, frames);
+
+        return animation;
+    }
+
     public TextureRegion[][] icon06() {
         if(icon06 == null) {
             Texture itemTexture = Service.assetManager().get("icon.06.png");
@@ -33,5 +41,14 @@ public class ActorFactory {
         }
 
         return icon06;
+    }
+    public TextureRegion[][] icon() {
+        if(icons == null) {
+            Texture itemTexture = Service.assetManager().get("icon.png");
+            icons = TextureRegion.split(itemTexture,
+                    itemTexture.getWidth() / 16, itemTexture.getHeight() / 39);
+        }
+
+        return icons;
     }
 }

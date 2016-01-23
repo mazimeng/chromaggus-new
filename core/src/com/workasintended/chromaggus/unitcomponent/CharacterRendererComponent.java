@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.workasintended.chromaggus.ActorFactory;
 import com.workasintended.chromaggus.Unit;
 import com.workasintended.chromaggus.unitcomponent.RendererComponent;
 
@@ -14,10 +15,12 @@ import com.workasintended.chromaggus.unitcomponent.RendererComponent;
 public class CharacterRendererComponent extends RendererComponent {
     float stateTime;
     Animation animation;
+    Animation dead;
     private float blink = 0;
 
     public CharacterRendererComponent(Unit self) {
         super(self);
+        dead = ActorFactory.instance().dead();
     }
 
     @Override
@@ -25,6 +28,8 @@ public class CharacterRendererComponent extends RendererComponent {
         Unit unit = getSelf();
         stateTime += Gdx.graphics.getDeltaTime();
         float delta = Gdx.graphics.getDeltaTime();
+
+        if(unit.dead()) animation = dead;
         TextureRegion frame = animation.getKeyFrame(stateTime, true);
 
 

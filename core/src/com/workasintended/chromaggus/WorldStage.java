@@ -8,6 +8,7 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -148,8 +149,11 @@ public class WorldStage extends Stage implements EventHandler {
         if (event.getName() == EventName.MOVING_CAMERA) {
             Vector2 dir = event.getArgument(Vector2.class);
             //getCamera().translate(position.x, position.y, 0);
-            cameraMovement.x = (cameraMovement.x + dir.x)*0.5f;
-            cameraMovement.y = (cameraMovement.y + dir.y)*0.5f;
+            dir.x = MathUtils.clamp(dir.x, -1, 1);
+            dir.y = MathUtils.clamp(dir.y, -1, 1);
+            cameraMovement.x = (cameraMovement.x + dir.x);
+            cameraMovement.y = (cameraMovement.y + dir.y);
+            System.out.println(String.format("dir(%s), cam(%s)", dir, cameraMovement));
 
             return;
         }

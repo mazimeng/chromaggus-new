@@ -23,10 +23,15 @@ public abstract class OffensiveAbilityAdaptor implements Ability {
         this.target = target;
     }
 
-    abstract protected void useAbility();
+    @Override
+    public void effect() {
+        experience();
+    }
 
-    abstract protected void takeEffect();
 
+    protected void useAbility() {
+        effect();
+    }
 
     @Override
     public void update(float delta) {
@@ -99,13 +104,6 @@ public abstract class OffensiveAbilityAdaptor implements Ability {
         this.castRange = castRange;
     }
 
-    @Override
-    public void effect() {
-        if (getUser().combat != null && getTarget().combat != null) {
-            takeEffect();
-            experience();
-        }
-    }
 
     public void setCooldown(float cooldown) {
         this.cooldown = cooldown;
@@ -149,5 +147,10 @@ public abstract class OffensiveAbilityAdaptor implements Ability {
     @Override
     public boolean isCasting() {
         return castingProgress != castingTime;
+    }
+
+    @Override
+    public boolean stop() {
+        return target.dead();
     }
 }

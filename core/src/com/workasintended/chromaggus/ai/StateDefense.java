@@ -29,6 +29,7 @@ public class StateDefense extends AiComponent {
             if(!(actor instanceof Unit) || getSelf() == actor) continue;
 
             Unit t = (Unit)actor;
+            if(t.dead()) continue;
             if((t.getFaction().isFriend(getSelf().getFaction()))) continue;
 
             if(Vector2.dst2(getSelf().getX(Align.center), getSelf().getY(Align.center),

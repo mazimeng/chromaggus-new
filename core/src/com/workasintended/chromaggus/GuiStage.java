@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
-import com.workasintended.chromaggus.ability.FireballSpell;
 import com.workasintended.chromaggus.event.BuyItemEvent;
 import com.workasintended.chromaggus.event.UnitSelectionEvent;
 import com.workasintended.chromaggus.event.UseAbilityEvent;
@@ -101,11 +100,6 @@ public class GuiStage extends Stage implements EventHandler {
                     Vector2 vec2 = GuiStage.this.stageToScreenCoordinates(new Vector2(event.getStageX(), event.getStageY()));
                     vec2 = worldStage.screenToStageCoordinates(vec2);
                     Actor actor = worldStage.hit(vec2.x, vec2.y, false);
-
-                    if(actor instanceof Unit) {
-                        FireballSpell fireball = new FireballSpell();
-                        Service.eventQueue().enqueue(new UseAbilityEvent(fireball, (Unit)actor));
-                    }
                 }
             });
         }
