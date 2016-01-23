@@ -110,6 +110,7 @@ public class WorldScreen implements Screen {
 		Service.eventQueue().register(EventName.UNIT_DESELECTED, gui);
 		Service.eventQueue().register(EventName.GAIN_GOLD, player);
 		Service.eventQueue().register(EventName.BUY_ITEM, player);
+		Service.eventQueue().register(EventName.USE_ABILITY, player);
 
 	}
 

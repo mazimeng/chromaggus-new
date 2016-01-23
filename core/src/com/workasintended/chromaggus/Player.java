@@ -1,8 +1,14 @@
 package com.workasintended.chromaggus;
 
+import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
+import com.workasintended.chromaggus.ability.Ability;
+import com.workasintended.chromaggus.action.Attack;
+import com.workasintended.chromaggus.action.UseAbility;
 import com.workasintended.chromaggus.event.BuyItemEvent;
 import com.workasintended.chromaggus.event.GainGoldEvent;
 import com.workasintended.chromaggus.event.UnitSelectionEvent;
+import com.workasintended.chromaggus.event.UseAbilityEvent;
 
 /**
  * Created by mazimeng on 1/21/16.
@@ -35,6 +41,30 @@ public class Player implements EventHandler {
         }
 
         handleBuyItem(event);
+        handleUseAbility(event);
+    }
+
+    private void handleUseAbility(Event event) {
+        if(!event.is(EventName.USE_ABILITY)) return;
+        if(selected==null) return;
+
+
+        UseAbilityEvent useAbilityEvent = event.cast(UseAbilityEvent.class);
+        Ability ability = useAbilityEvent.getAbility();
+        ability.setUser(selected);
+        ability.setTarget(useAbilityEvent.getTarget());
+
+        UseAbility useAbility = new UseAbility(ability, selected, useAbilityEvent.getTarget());
+        Attack attack = new Attack(useAbilityEvent.getTarget());
+        RepeatAction repeatAttack = new RepeatAction();
+        repeatAttack.setAction(attack);
+        repeatAttack.setCount(RepeatAction.FOREVER);
+        SequenceAction sequenceAction = new SequenceAction(useAbility, repeatAttack);
+        selected.clearActions();
+        selected.addAction(sequenceAction);
+
+        System.out.println("casting " + ability.toString());
+
     }
 
     private void handleBuyItem(Event event) {

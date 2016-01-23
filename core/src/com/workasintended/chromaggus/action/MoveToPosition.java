@@ -17,7 +17,10 @@ public class MoveToPosition extends Action {
     private Vector2 targetPosition;
     private boolean began;
 
-
+    public MoveToPosition(Vector2 targetPosition, Unit unit) {
+        this(targetPosition);
+        this.setActor(unit);
+    }
     public MoveToPosition(Vector2 targetPosition) {
         this.targetPosition = new Vector2(targetPosition);
     }

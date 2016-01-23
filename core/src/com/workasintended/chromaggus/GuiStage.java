@@ -11,9 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
+import com.workasintended.chromaggus.ability.Fireball;
 import com.workasintended.chromaggus.event.BuyItemEvent;
 import com.workasintended.chromaggus.event.SelectionCompleted;
 import com.workasintended.chromaggus.event.UnitSelectionEvent;
+import com.workasintended.chromaggus.event.UseAbilityEvent;
 
 import java.util.List;
 
@@ -62,9 +64,9 @@ public class GuiStage extends Stage implements EventHandler {
         }
 
         {
-            TextureRegionDrawable textureRegionDrawable = new TextureRegionDrawable(icons[9][3]);
+            TextureRegionDrawable textureRegionDrawable = new TextureRegionDrawable(icons[6][0]);
             final ImageButton imageButton  = new ImageButton(textureRegionDrawable);
-            ImageButton invalid = new ImageButton(new TextureRegionDrawable(icons[0][1]));
+            ImageButton invalid = new ImageButton(new TextureRegionDrawable(icons[3][9]));
             ImageButton valid = new ImageButton(new TextureRegionDrawable(icons[1][0]));
             valid.addListener(new ClickListener(){
                 @Override
@@ -102,6 +104,11 @@ public class GuiStage extends Stage implements EventHandler {
                     Vector2 vec2 = GuiStage.this.stageToScreenCoordinates(new Vector2(event.getStageX(), event.getStageY()));
                     vec2 = worldStage.screenToStageCoordinates(vec2);
                     Actor actor = worldStage.hit(vec2.x, vec2.y, false);
+
+                    if(actor instanceof Unit) {
+                        Fireball fireball = new Fireball();
+                        Service.eventQueue().enqueue(new UseAbilityEvent(fireball, (Unit)actor));
+                    }
                 }
             });
         }
