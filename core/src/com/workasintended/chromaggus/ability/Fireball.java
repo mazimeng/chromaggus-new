@@ -6,6 +6,6 @@ package com.workasintended.chromaggus.ability;
 public class Fireball implements Ability {
     @Override
     public void update(float delta) {
-        
+
     }
 }
