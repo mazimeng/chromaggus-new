@@ -14,7 +14,7 @@ public class MovementComponent extends UnitComponent{
     }
 
     public void moveToPosition(Vector2 position) {
-        Action action = new MoveToPosition(position);
+        Action action = new MoveToPosition(position, getSelf().getSpeed());
         getSelf().clearActions();
         getSelf().addAction(action);
     }

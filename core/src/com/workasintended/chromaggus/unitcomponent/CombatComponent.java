@@ -1,16 +1,14 @@
 package com.workasintended.chromaggus.unitcomponent;
 
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
-import com.badlogic.gdx.utils.Align;
+import com.workasintended.chromaggus.Service;
 import com.workasintended.chromaggus.Unit;
 import com.workasintended.chromaggus.ability.Ability;
-import com.workasintended.chromaggus.action.Attack;
 import com.workasintended.chromaggus.action.MoveToUnit;
+import com.workasintended.chromaggus.action.UseAbility;
+import com.workasintended.chromaggus.event.TakeDamageEvent;
 
 public class CombatComponent extends UnitComponent {
     private Ability[] abilities = new Ability[9];
@@ -19,12 +17,15 @@ public class CombatComponent extends UnitComponent {
     private int hp = 100;
     private int maxHp = 100;
     private int strength = 5;
+    private int intelligence = 5;
     private float radius = 32;
     private int experience = 0;
     private int experienceToLevelUp = 100;
     private float attributeGrowth = 1.2f;
     private float experienceGrowthFromAttack = 0.2f;
     private float experienceGrowthFromKill = 0.8f;
+
+    private Ability primaryAbility;
 
 
     public CombatComponent(Unit self) {
@@ -33,6 +34,7 @@ public class CombatComponent extends UnitComponent {
 
     @Override
     public void update(float delta) {
+        if (primaryAbility != null) primaryAbility.update(delta);
     }
 
     protected void updateAbilities(float delta) {
@@ -44,16 +46,34 @@ public class CombatComponent extends UnitComponent {
 
     public void attack(Unit target) {
         if (target == getSelf()) return;
+        if (primaryAbility == null) return;
 
-        SequenceAction sequenceAction = new SequenceAction(new MoveToUnit(target), new Attack(target));
+        primaryAbility.setTarget(target);
+        primaryAbility.setUser(getSelf());
+
+        UseAbility useAbility = new UseAbility(primaryAbility);
+
+//        RepeatAction repeatAttack = new RepeatAction();
+//        repeatAttack.setAction(new Attack(getSelf(), target));
+//        repeatAttack.setCount(RepeatAction.FOREVER);
+
+        SequenceAction sequenceAction = new SequenceAction(
+                new MoveToUnit(target, getSelf().getSpeed(), primaryAbility.getCastRange()),
+                useAbility);
+
         RepeatAction repeatAction = new RepeatAction();
         repeatAction.setAction(sequenceAction);
         repeatAction.setCount(RepeatAction.FOREVER);
-        Action action = repeatAction;
+
         getSelf().clearActions();
-        getSelf().addAction(action);
+        getSelf().addAction(repeatAction);
     }
 
+    public void takeDamage(int damage) {
+        this.setHp(this.getHp() - damage);
+
+        Service.eventQueue().enqueue(new TakeDamageEvent(this.getSelf()));
+    }
 
 
     public void setAbility(int index, Ability ability) {
@@ -75,8 +95,9 @@ public class CombatComponent extends UnitComponent {
     public void gainExperience(int exp) {
         this.experience += exp;
         this.levelup();
-        System.out.println(String.format("exp: %s, %s, %s, hp(%s), str(%s)",
-                this.getSelf().hashCode(), this.level, this.experience, this.maxHp, this.strength));
+        System.out.println(String.format("exp: %s, %s, %s, hp(%s), str(%s), int(%s)",
+                this.getSelf().hashCode(), this.level, this.experience, this.maxHp, this.strength,
+                this.intelligence));
     }
 
     public boolean levelup() {
@@ -88,6 +109,7 @@ public class CombatComponent extends UnitComponent {
             this.level++;
             this.maxHp = (int) (this.maxHp * this.attributeGrowth);
             this.strength = (int) (this.strength * this.attributeGrowth);
+            this.intelligence = (int) (this.intelligence * this.attributeGrowth);
         }
         return true;
     }
@@ -186,5 +208,21 @@ public class CombatComponent extends UnitComponent {
                 ", experienceGrowthFromKill=" + experienceGrowthFromKill +
                 ", radius=" + radius +
                 '}';
+    }
+
+    public int getIntelligence() {
+        return intelligence;
+    }
+
+    public void setIntelligence(int intelligence) {
+        this.intelligence = intelligence;
+    }
+
+    public void setPrimaryAbility(Ability primaryAbility) {
+        this.primaryAbility = primaryAbility;
+    }
+
+    public Ability getPrimaryAbility() {
+        return primaryAbility;
     }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.workasintended.chromaggus.ability.Ability;
 import com.workasintended.chromaggus.action.Attack;
+import com.workasintended.chromaggus.action.MoveToUnit;
 import com.workasintended.chromaggus.action.UseAbility;
 import com.workasintended.chromaggus.event.BuyItemEvent;
 import com.workasintended.chromaggus.event.GainGoldEvent;
@@ -50,18 +51,22 @@ public class Player implements EventHandler {
 
 
         UseAbilityEvent useAbilityEvent = event.cast(UseAbilityEvent.class);
+        Unit target = useAbilityEvent.getTarget();
         Ability ability = useAbilityEvent.getAbility();
         ability.setUser(selected);
         ability.setTarget(useAbilityEvent.getTarget());
 
-        UseAbility useAbility = new UseAbility(ability, selected, useAbilityEvent.getTarget());
-        Attack attack = new Attack(useAbilityEvent.getTarget());
-        RepeatAction repeatAttack = new RepeatAction();
-        repeatAttack.setAction(attack);
-        repeatAttack.setCount(RepeatAction.FOREVER);
-        SequenceAction sequenceAction = new SequenceAction(useAbility, repeatAttack);
+        UseAbility useAbility = new UseAbility(ability);
+
+        MoveToUnit moveToUnit = new MoveToUnit(target, selected.getSpeed(), ability.getCastRange());
+        SequenceAction sequenceAction = new SequenceAction(moveToUnit, useAbility);
+
+        RepeatAction repeat = new RepeatAction();
+        repeat.setAction(sequenceAction);
+        repeat.setCount(RepeatAction.FOREVER);
+
         selected.clearActions();
-        selected.addAction(sequenceAction);
+        selected.addAction(repeat);
 
         System.out.println("casting " + ability.toString());
 

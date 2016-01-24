@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.workasintended.chromaggus.action.ShakeCamera;
 import com.workasintended.chromaggus.event.*;
 import com.workasintended.chromaggus.event.order.MoveToPositionEvent;
 import com.workasintended.chromaggus.pathfinding.GridMap;
@@ -197,6 +198,10 @@ public class WorldStage extends Stage implements EventHandler {
             developCityEvent.getUnit().development.develop(developCityEvent.getCity());
         }
 
+        if(event.is(EventName.TAKE_DAMAGE)) {
+            TakeDamageEvent takeDamageEvent = event.cast();
+            ShakeCamera shakeCamera = new ShakeCamera((OrthographicCamera) getCamera());
+        }
 
 
 //        if(event instanceof UnitEvent) {

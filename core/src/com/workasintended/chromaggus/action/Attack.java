@@ -1,26 +1,30 @@
 package com.workasintended.chromaggus.action;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.utils.Align;
 import com.workasintended.chromaggus.*;
 import com.workasintended.chromaggus.event.DebugRendererArgument;
+import com.workasintended.chromaggus.event.TakeDamageEvent;
 
 /**
  * Created by mazimeng on 1/16/16.
  */
-public class Attack extends MoveToPosition{
+public class Attack extends Action{
+    private Unit attacker;
     private Unit targetUnit;
 
     private float attackCooldown = 2;
     private float nextAttack = 2;
 
-    public Attack(Unit targetUnit) {
-        super(new Vector2());
+    public Attack(Unit attacker, Unit targetUnit) {
+        this.attacker = attacker;
         this.targetUnit = targetUnit;
     }
 
     @Override
     public boolean act(float delta) {
-        if((getUnit().getFaction().isFriend(targetUnit.getFaction()))) return true;
+        if((attacker.getFaction().isFriend(targetUnit.getFaction()))) return true;
 
         if(targetUnit.dead()) return true;
 
@@ -28,7 +32,7 @@ public class Attack extends MoveToPosition{
             nextAttack -= delta;
 
             if(nextAttack<=0) {
-                targetUnit.combat.setHp(targetUnit.combat.getHp() - getUnit().combat.getStrength());
+                targetUnit.combat.takeDamage(attacker.combat.getStrength());
                 nextAttack = attackCooldown;
 
                 experience(targetUnit.dead());
@@ -43,21 +47,16 @@ public class Attack extends MoveToPosition{
     }
 
     private void experience(boolean killed) {
-        if(killed) this.getUnit().combat.gainExperienceFromKill();
-        else this.getUnit().combat.gainExperienceFromAttack();
+        if(killed) attacker.combat.gainExperienceFromKill();
+        else this.attacker.combat.gainExperienceFromAttack();
     }
 
     private boolean closeEnough(float delta) {
-        Unit self = getUnit();
-        Vector2 nextPosition = new Vector2(self.getX(getAlignment()), self.getY(getAlignment()));
-        float distance2 = Vector2.dst2(nextPosition.x, nextPosition.y, targetUnit.getX(getAlignment()), targetUnit.getY(getAlignment()));
+        Unit self = attacker;
+        Vector2 nextPosition = new Vector2(self.getX(Align.center), self.getY(Align.center));
+        float distance2 = Vector2.dst2(nextPosition.x, nextPosition.y, targetUnit.getX(Align.center), targetUnit.getY(Align.center));
 
 
         return distance2 <= self.radius*self.radius+targetUnit.radius*targetUnit.radius;
-    }
-
-    @Override
-    protected boolean completed(float delta) {
-        return false;
     }
 }

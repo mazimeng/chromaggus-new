@@ -14,7 +14,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.utils.Align;
 import com.workasintended.chromaggus.*;
+import com.workasintended.chromaggus.ability.Fireball;
+import com.workasintended.chromaggus.ability.Melee;
 import com.workasintended.chromaggus.ai.StateDefense;
 import com.workasintended.chromaggus.pathfinding.Grid;
 import com.workasintended.chromaggus.pathfinding.GridMap;
@@ -32,7 +35,7 @@ public class Episode01 {
 
 		Texture textureCity = new Texture("city.png");
 		Texture textureCursor = new Texture("cursor.png");
-		Texture char00 = new Texture("effect00.png");
+		Texture char00 = new Texture("char00.png");
 		Texture char01 = new Texture("char01.png");
 		Texture char02 = new Texture("char02.png");
 
@@ -59,6 +62,7 @@ public class Episode01 {
 
 				Unit unit = makeCharacter(stage, Faction.FACTION_A, font, frames);
 				unit.setPosition(470, 760);
+				unit.combat.setPrimaryAbility(new Melee());
 				stage.addActor(unit);
 			}
 			{
@@ -68,6 +72,7 @@ public class Episode01 {
 				frames[1] = char00Frames[0][5];
 				Unit unit = makeCharacter(stage, Faction.FACTION_A, font, frames);
 				unit.setPosition(400, 815);
+				unit.combat.setPrimaryAbility(new Fireball());
 				stage.addActor(unit);
 			}
 			{
@@ -79,6 +84,7 @@ public class Episode01 {
 				unit.setPosition(210, 720);
 				unit.ai = new StateDefense(unit, stage);
 				unit.combat.setStrength(8);
+				unit.combat.setPrimaryAbility(new Melee());
 				stage.addActor(unit);
 			}
 
@@ -90,6 +96,7 @@ public class Episode01 {
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(768, 470);
 				unit.combat.setStrength(12);
+				unit.combat.setPrimaryAbility(new Melee());
 				unit.ai = new StateDefense(unit, stage);
 				stage.addActor(unit);
 			}
@@ -101,6 +108,7 @@ public class Episode01 {
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(880, 380);
 				unit.combat.setStrength(15);
+				unit.combat.setPrimaryAbility(new Melee());
 				unit.ai = new StateDefense(unit, stage);
 				stage.addActor(unit);
 			}
@@ -110,6 +118,7 @@ public class Episode01 {
 				frames[0] = char02Frames[0][0];
 				frames[1] = char02Frames[0][2];
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
+				unit.combat.setPrimaryAbility(new Melee());
 				unit.setPosition(870, 320);
 				unit.ai = new StateDefense(unit, stage);
 				stage.addActor(unit);

@@ -26,7 +26,7 @@ public class DevelopmentComponent extends UnitComponent {
         if(city.city == null) return;
         Develop develop  = new Develop(city);
 
-        SequenceAction sequenceAction = new SequenceAction(new MoveToUnit(city), develop);
+        SequenceAction sequenceAction = new SequenceAction(new MoveToUnit(city, getSelf().getSpeed(), 32), develop);
         getSelf().clearActions();
         getSelf().addAction(sequenceAction);
     }

@@ -115,7 +115,7 @@ public class AndroidInputHandler extends ActorGestureListener {
                 selected = null;
                 Actor actor = getWorldStage().hit(x, y, false);
 
-                if(actor == null) {
+                if(actor == null || !(actor instanceof Unit)) {
                     Service.eventQueue().enqueue(new MoveToPositionEvent(selectedUnit, new Vector2(x, y)));
                     return;
                 }

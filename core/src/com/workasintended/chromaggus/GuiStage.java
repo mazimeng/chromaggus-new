@@ -11,13 +11,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
-import com.workasintended.chromaggus.ability.Fireball;
+import com.workasintended.chromaggus.ability.FireballSpell;
 import com.workasintended.chromaggus.event.BuyItemEvent;
-import com.workasintended.chromaggus.event.SelectionCompleted;
 import com.workasintended.chromaggus.event.UnitSelectionEvent;
 import com.workasintended.chromaggus.event.UseAbilityEvent;
-
-import java.util.List;
 
 /**
  * Created by mazimeng on 8/8/15.
@@ -106,7 +103,7 @@ public class GuiStage extends Stage implements EventHandler {
                     Actor actor = worldStage.hit(vec2.x, vec2.y, false);
 
                     if(actor instanceof Unit) {
-                        Fireball fireball = new Fireball();
+                        FireballSpell fireball = new FireballSpell();
                         Service.eventQueue().enqueue(new UseAbilityEvent(fireball, (Unit)actor));
                     }
                 }
@@ -196,7 +193,7 @@ public class GuiStage extends Stage implements EventHandler {
 
         @Override
         public void handle(Event event) {
-            UnitSelectionEvent unitSelectedEvent = event.cast(UnitSelectionEvent.class);
+            UnitSelectionEvent unitSelectedEvent = event.cast();
             if(event.is(EventName.UNIT_SELECTED)) {
                 Unit unit = unitSelectedEvent.getUnit();
                 if(unit.renderer==null) return;

@@ -1,6 +1,8 @@
 package com.workasintended.chromaggus.action;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Align;
 import com.workasintended.chromaggus.*;
 import com.workasintended.chromaggus.event.DebugRendererArgument;
 
@@ -8,15 +10,19 @@ import com.workasintended.chromaggus.event.DebugRendererArgument;
  * Created by mazimeng on 1/16/16.
  */
 public class MoveToUnit extends MoveToPosition{
-    private Unit targetUnit;
+    private Actor targetUnit;
+    private float radius;
 
-    private float attackCooldown = 2;
-    private float nextAttack = 2;
-
-    public MoveToUnit(Unit targetUnit) {
-        super(new Vector2());
+    public MoveToUnit(Actor targetUnit, float speed, float radius) {
+        super(new Vector2(targetUnit.getX(Align.center), targetUnit.getY(Align.center)), speed);
         this.targetUnit = targetUnit;
+        this.radius = radius;
     }
+
+//    public MoveToUnit(Unit targetUnit) {
+//        super(new Vector2());
+//        this.targetUnit = targetUnit;
+//    }
 
     @Override
     public boolean act(float delta) {
@@ -25,7 +31,7 @@ public class MoveToUnit extends MoveToPosition{
 
         if(closeEnough(delta)) return true;
 
-        Unit unit = getUnit();
+        Actor unit = getActor();
         Vector2 position = new Vector2(unit.getX(getAlignment()), unit.getY(getAlignment()));
         Service.eventQueue().enqueue(new Event(EventName.SET_DEBUG_RENDERER,
                 new DebugRendererArgument("direction_"+unit.hashCode(),
@@ -36,12 +42,12 @@ public class MoveToUnit extends MoveToPosition{
     }
 
     private boolean closeEnough(float delta) {
-        Unit self = getUnit();
+        Actor self = getActor();
         Vector2 nextPosition = new Vector2(self.getX(getAlignment()), self.getY(getAlignment()));
         float distance2 = Vector2.dst2(nextPosition.x, nextPosition.y, targetUnit.getX(getAlignment()), targetUnit.getY(getAlignment()));
 
 
-        return distance2 <= self.radius*self.radius+targetUnit.radius*targetUnit.radius;
+        return distance2 <= radius*radius;
     }
 
     @Override

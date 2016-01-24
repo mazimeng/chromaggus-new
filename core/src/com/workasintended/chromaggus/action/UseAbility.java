@@ -10,28 +10,35 @@ import com.workasintended.chromaggus.ability.Ability;
  */
 public class UseAbility extends Action {
     private Ability ability;
-    private Unit user;
-    private MoveToUnit moveToUnit;
+    private boolean began = false;
 
-    public UseAbility(Ability ability, Unit user, Unit target) {
+    public UseAbility(Ability ability) {
         this.ability = ability;
-        this.user = user;
-        this.moveToUnit = new MoveToUnit(target);
-        this.moveToUnit.setActor(user);
     }
     @Override
     public boolean act(float delta) {
-        if(ability.inRange()) {
+        if(!began) begin();
+        if(ability.inRange() || ability.isCasting()) {
             if(ability.cast(delta)) {
                 ability.use();
-                System.out.println(ability.toString() + " used");
+                finish();
                 return true;
             }
+            else {
+                return false;
+            }
         }
-        else {
-            ability.reset();
-            moveToUnit.act(delta);
-        }
-        return false;
+
+        finish();
+        return true;
+    }
+
+    private void begin() {
+        ability.reset();
+        began = true;
+    }
+
+    private void finish() {
+        began = false;
     }
 }

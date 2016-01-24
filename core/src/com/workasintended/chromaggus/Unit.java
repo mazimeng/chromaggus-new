@@ -34,7 +34,7 @@ public class Unit extends Group {
     public CombatComponent combat;
     public CityComponent city;
     public MovementComponent movement;
-    public RendererComponent renderer;
+    public CharacterRendererComponent renderer;
     public DevelopmentComponent development;
 
     private Order order = new Idle();
@@ -97,8 +97,12 @@ public class Unit extends Group {
                 , this.getRotation());
 
         if (font != null && combat!=null) {
-            String hp = String.format("%s/%s", combat.getHp(), combat.getMaxHp());
-            font.draw(batch, hp, this.getX(), this.getY());
+            String state = String.format("%s/%s, %.0f, %.0f",
+                    combat.getHp(),
+                    combat.getMaxHp(),
+                    combat.getPrimaryAbility().getCooldownProgress(),
+                    combat.getPrimaryAbility().getCastingProgress());
+            font.draw(batch, state, this.getX(), this.getY());
         }
         if (this.city != null) this.city.draw(batch);
 
@@ -211,16 +215,16 @@ public class Unit extends Group {
 
     }
 
-    private boolean handleMoveToPosition(Event event) {
-        if(!event.is(EventName.MOVE_TO_POSITION)) return false;
-
-        MoveToPositionEvent moveToPositionEvent = event.cast(MoveToPositionEvent.class);
-
-        Action action = new MoveToPosition(moveToPositionEvent.getPosition());
-        this.clearActions();
-        this.addAction(action);
-        return true;
-    }
+//    private boolean handleMoveToPosition(Event event) {
+//        if(!event.is(EventName.MOVE_TO_POSITION)) return false;
+//
+//        MoveToPositionEvent moveToPositionEvent = event.cast(MoveToPositionEvent.class);
+//
+//        Action action = new MoveToPosition(moveToPositionEvent.getPosition());
+//        this.clearActions();
+//        this.addAction(action);
+//        return true;
+//    }
 
 //    private boolean handleAttack(Event event) {
 //        if(!event.is(EventName.ATTACK_UNIT)) return false;

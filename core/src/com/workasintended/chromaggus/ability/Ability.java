@@ -10,9 +10,15 @@ public interface Ability {
 	float getCastingTime();
 	void use();
 	boolean inRange();
-	boolean isReady();
 	boolean cast(float delta);
 	void reset();
 	void setTarget(Unit target);
 	void setUser(Unit unit);
+	float getCastRange();
+	void effect();
+	float getCooldownProgress();
+	float getCastingProgress();
+	void setCastingProgress(float castingProgress);
+	boolean isCasting();
+
 }

@@ -54,6 +54,7 @@ public class WorldScreen implements Screen {
 
 	protected void initAssets() {
 		Service.assetManager().load("icon.png", Texture.class);
+		Service.assetManager().load("icon.06.png", Texture.class);
 		Service.assetManager().finishLoading();
 	}
 
@@ -111,6 +112,8 @@ public class WorldScreen implements Screen {
 		Service.eventQueue().register(EventName.GAIN_GOLD, player);
 		Service.eventQueue().register(EventName.BUY_ITEM, player);
 		Service.eventQueue().register(EventName.USE_ABILITY, player);
+		Service.eventQueue().register(EventName.TAKE_DAMAGE, new RenderHandler());
+		Service.eventQueue().register(EventName.TAKE_DAMAGE, stage);
 
 	}
 

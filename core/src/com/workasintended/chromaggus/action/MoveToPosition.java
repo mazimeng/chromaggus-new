@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Align;
 import com.workasintended.chromaggus.*;
 import com.workasintended.chromaggus.event.DebugRendererArgument;
@@ -16,14 +17,15 @@ public class MoveToPosition extends Action {
     private int alignment = Align.center;
     private Vector2 targetPosition;
     private boolean began;
+    private float speed;
 
-    public MoveToPosition(Vector2 targetPosition, Unit unit) {
-        this(targetPosition);
-        this.setActor(unit);
+    public MoveToPosition(Vector2 targetPosition, float speed) {
+        this.targetPosition = targetPosition;
+        this.speed = speed;
     }
-    public MoveToPosition(Vector2 targetPosition) {
-        this.targetPosition = new Vector2(targetPosition);
-    }
+//    public MoveToPosition(Vector2 targetPosition) {
+//        this.targetPosition = new Vector2(targetPosition);
+//    }
 
     @Override
     public boolean act(float delta) {
@@ -40,10 +42,10 @@ public class MoveToPosition extends Action {
     }
 
     protected boolean completed(float delta) {
-        Unit unit = getUnit();
+        Actor unit = getActor();
         Vector2 position = new Vector2(unit.getX(alignment), unit.getY(alignment));
 
-        float nextDistance = delta * unit.getSpeed();
+        float nextDistance = delta * speed;
 
         float nextDistance2 = nextDistance*nextDistance;
         float distanceToTarget2 = position.dst2(targetPosition.x, targetPosition.y);
@@ -57,14 +59,14 @@ public class MoveToPosition extends Action {
     }
 
     protected void move(float delta) {
-        Unit unit = getUnit();
+        Actor unit = getActor();
         Vector2 position = nextPosition(delta);
         unit.setPosition(position.x, position.y, alignment);
     }
 
     protected Vector2 nextPosition(float delta) {
-        Unit unit = getUnit();
-        float nextDistance = delta * unit.getSpeed();
+        Actor unit = getActor();
+        float nextDistance = delta * speed;
         Vector2 position = new Vector2(unit.getX(alignment), unit.getY(alignment));
         Vector2 velocity = new Vector2(direction).scl(nextDistance);
         position = position.add(velocity);
@@ -72,7 +74,7 @@ public class MoveToPosition extends Action {
     }
 
     protected void begin() {
-        Unit unit = getUnit();
+        Actor unit = getActor();
         Vector2 position = new Vector2(unit.getX(alignment), unit.getY(alignment));
         this.direction = new Vector2(targetPosition).sub(position).nor();
         this.began = true;
@@ -81,9 +83,9 @@ public class MoveToPosition extends Action {
                 new DebugRendererArgument("direction_"+unit.hashCode(), new DebugRenderer.LineRenderer(position.x, position.y, targetPosition.x, targetPosition.y))));
     }
 
-    protected Unit getUnit() {
-        return (Unit)this.getActor();
-    }
+//    protected Unit getUnit() {
+//        return (Unit)this.getActor();
+//    }
 
     public Vector2 getDirection() {
         return direction;

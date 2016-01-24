@@ -25,6 +25,7 @@ public enum EventName {
     UNIT_DESELECTED,
     GAIN_GOLD,
 	BUY_ITEM,
+	TAKE_DAMAGE,
 
 	/**
 	 *
