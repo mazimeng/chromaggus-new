@@ -14,6 +14,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.workasintended.chromaggus.*;
 import com.workasintended.chromaggus.ability.Fireball;
@@ -26,6 +28,11 @@ import com.workasintended.chromaggus.unitcomponent.*;
 import java.util.Iterator;
 
 public class Episode01 {
+	private Skin skin;
+
+	public Episode01(Skin skin) {
+		this.skin = skin;
+	}
 	public void build(WorldStage stage) {
 		float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -201,6 +208,7 @@ public class Episode01 {
         unit.development = developmentComponent;
 		unit.movement = movementComponent;
 		unit.combat = new CombatComponent(unit);
+        unit.dialogComponent = new DialogComponent(unit, new Label("", skin));
 		return unit;
 	}
 

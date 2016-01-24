@@ -1,11 +1,13 @@
 package com.workasintended.chromaggus.ability;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.RemoveActorAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.utils.Align;
 import com.workasintended.chromaggus.ActorFactory;
 import com.workasintended.chromaggus.Effect;
+import com.workasintended.chromaggus.Service;
 import com.workasintended.chromaggus.Unit;
 import com.workasintended.chromaggus.action.EffectAction;
 import com.workasintended.chromaggus.action.MoveToUnit;
@@ -46,11 +48,18 @@ public class Fireball extends OffensiveAbilityAdaptor {
         fireball.setRotation(angle);
 
         user.getWorld().addActor(fireball);
+
+        soundOnUse();
     }
 
     @Override
     public void effect() {
         getTarget().combat.takeDamage(getUser().combat.getIntelligence());
         super.effect();
+    }
+
+    private void soundOnUse() {
+        Sound sound = Service.assetManager().get("sound/fireball.wav");
+        sound.play();
     }
 }

@@ -1,5 +1,7 @@
 package com.workasintended.chromaggus.ability;
 
+import com.badlogic.gdx.audio.Sound;
+import com.workasintended.chromaggus.Service;
 import com.workasintended.chromaggus.Unit;
 
 /**
@@ -21,7 +23,18 @@ public class Melee extends OffensiveAbilityAdaptor {
     }
 
     @Override
+    protected void useAbility() {
+        super.useAbility();
+        soundOnUse();
+    }
+
+    @Override
     public String toString() {
         return "Melee";
+    }
+
+    private void soundOnUse() {
+        Sound sound = Service.assetManager().get("sound/melee.wav");
+        sound.play();
     }
 }

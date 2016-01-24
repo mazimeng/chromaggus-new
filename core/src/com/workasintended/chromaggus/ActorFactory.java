@@ -11,6 +11,7 @@ public class ActorFactory {
     private static ActorFactory unitFactory = new ActorFactory();
     private TextureRegion[][] icon06;
     private TextureRegion[][] icons;
+    private TextureRegion[][] selection;
 
     public static ActorFactory instance() {
         return unitFactory;
@@ -30,6 +31,17 @@ public class ActorFactory {
         TextureRegion[] frames = new TextureRegion[]{ icon()[0][1] };
         Animation animation = new Animation(0.5f, frames);
 
+        return animation;
+    }
+
+    public Animation selection() {
+        if(selection==null) {
+            Texture itemTexture = Service.assetManager().get("spritesheet/selection.png");
+            selection = TextureRegion.split(itemTexture,
+                    itemTexture.getWidth() / 2, itemTexture.getHeight() / 1);
+        }
+        TextureRegion[] frames = new TextureRegion[]{ selection[0][0], selection[0][1] };
+        Animation animation = new Animation(0.5f, frames);
         return animation;
     }
 

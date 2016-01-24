@@ -1,5 +1,6 @@
 package com.workasintended.chromaggus.unitcomponent;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
@@ -84,12 +85,16 @@ public class CombatComponent extends UnitComponent {
         return this.abilities[index];
     }
 
-    public void gainExperienceFromAttack() {
-        gainExperience((int) (experienceGrowthFromAttack * experienceToLevelUp));
+    public int gainExperienceFromAttack() {
+        int exp = (int) (experienceGrowthFromAttack * experienceToLevelUp);
+        gainExperience(exp);
+        return exp;
     }
 
-    public void gainExperienceFromKill() {
-        gainExperience((int) (experienceGrowthFromKill * experienceToLevelUp));
+    public int gainExperienceFromKill() {
+        int exp = (int) (experienceGrowthFromKill * experienceToLevelUp);
+        gainExperience(exp);
+        return exp;
     }
 
     public void gainExperience(int exp) {
@@ -111,6 +116,8 @@ public class CombatComponent extends UnitComponent {
             this.strength = (int) (this.strength * this.attributeGrowth);
             this.intelligence = (int) (this.intelligence * this.attributeGrowth);
         }
+        Sound sound = Service.assetManager().get("sound/level_up.wav");
+        sound.play();
         return true;
     }
 

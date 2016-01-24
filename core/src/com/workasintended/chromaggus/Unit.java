@@ -37,6 +37,8 @@ public class Unit extends Group {
     public CharacterRendererComponent renderer;
     public DevelopmentComponent development;
 
+    public DialogComponent dialogComponent;
+
     private Order order = new Idle();
 
     public Ability[] abilities;
@@ -67,8 +69,8 @@ public class Unit extends Group {
 
     @Override
     public void act(float delta) {
+        if (this.dialogComponent != null) this.dialogComponent.update(delta);
         if (this.dead()) {
-            //this.remove();
             Service.eventQueue().enqueue(new Event(EventName.UNIT_DIED, this));
             return;
         }
@@ -80,11 +82,12 @@ public class Unit extends Group {
 
         if (this.order != null) this.order.update(delta);
         if (this.development != null) this.development.update(delta);
+
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        super.draw(batch, parentAlpha);
+
 
         if (this.renderer != null) {
             renderer.draw(batch, parentAlpha);
@@ -97,7 +100,7 @@ public class Unit extends Group {
                 , this.getScaleX(), this.getScaleY()
                 , this.getRotation());
 
-        if (font != null && combat!=null) {
+        if (font != null && combat != null) {
             String state = String.format("%s/%s, %.0f, %.0f",
                     combat.getHp(),
                     combat.getMaxHp(),
@@ -113,6 +116,8 @@ public class Unit extends Group {
                 , this.getWidth(), this.getHeight()
                 , this.getScaleX(), this.getScaleY()
                 , 0);
+
+        super.draw(batch, parentAlpha);
     }
 
     public float getSpeed() {
@@ -124,7 +129,7 @@ public class Unit extends Group {
     }
 
     public boolean dead() {
-        return this.combat!= null && this.combat.getHp() <= 0;
+        return this.combat != null && this.combat.getHp() <= 0;
     }
 
     public WorldStage getWorld() {
@@ -249,7 +254,7 @@ public class Unit extends Group {
 //    }
 
     private boolean handleDevelop(Event event) {
-        if(!(event instanceof DevelopCityEvent)) return false;
+        if (!(event instanceof DevelopCityEvent)) return false;
 
         return true;
     }

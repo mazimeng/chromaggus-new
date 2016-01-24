@@ -193,10 +193,7 @@ public class WorldStage extends Stage implements EventHandler {
             Unit unit = attackUnitEvent.getUnit();
             if(unit.combat!=null) unit.combat.attack(attackUnitEvent.getTarget());
         }
-
-        if(event.is(EventName.UNIT_SELECTED)) {
-            UnitSelectionEvent unitSelectedEvent = event.cast(UnitSelectionEvent.class);
-        }
+        
         if(event.is(EventName.DEVELOP_CITY)) {
             DevelopCityEvent developCityEvent = event.cast(DevelopCityEvent.class);
             developCityEvent.getUnit().development.develop(developCityEvent.getCity());

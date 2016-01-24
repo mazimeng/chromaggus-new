@@ -25,7 +25,7 @@ public abstract class OffensiveAbilityAdaptor implements Ability {
 
     @Override
     public void effect() {
-        experience();
+        int exp = experience();
     }
 
 
@@ -109,14 +109,15 @@ public abstract class OffensiveAbilityAdaptor implements Ability {
         this.cooldown = cooldown;
     }
 
-    protected void experience() {
+    protected int experience() {
         if (user.combat != null) {
             if (target.dead()) {
-                user.combat.gainExperienceFromKill();
+                return user.combat.gainExperienceFromKill();
             } else {
-                user.combat.gainExperienceFromAttack();
+                return user.combat.gainExperienceFromAttack();
             }
         }
+        return 0;
     }
 
     protected void startCoolingDown() {

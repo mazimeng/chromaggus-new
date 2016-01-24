@@ -26,12 +26,23 @@ public class Player implements EventHandler {
     public void handle(Event event) {
         if(event.is(EventName.UNIT_SELECTED)) {
             UnitSelectionEvent unitSelectedEvent = event.cast(UnitSelectionEvent.class);
+            Unit newSelection = unitSelectedEvent.getUnit();
+
+            if(selected!=null) {
+                if(selected.renderer!=null) selected.renderer.setSelected(false);
+            }
+            if(newSelection.renderer!=null) {
+                newSelection.renderer.setSelected(true);
+            }
+
             selected = unitSelectedEvent.getUnit();
 
             if(selected.combat!=null) System.out.println(selected.combat);
         }
         if(event.is(EventName.UNIT_DESELECTED)) {
+            if(selected!=null && selected.renderer!=null) selected.renderer.setSelected(false);
             selected = null;
+
         }
         if(event.is(EventName.GAIN_GOLD)) {
             GainGoldEvent gainGoldEvent = event.cast(GainGoldEvent.class);

@@ -113,7 +113,7 @@ public class AndroidInputHandler extends ActorGestureListener {
             if (selected != null) {
                 Unit selectedUnit = selected;
                 selected = null;
-                Actor actor = getWorldStage().hit(x, y, false);
+                Actor actor = getWorldStage().hit(x, y, true);
 
                 if(actor == null || !(actor instanceof Unit)) {
                     Service.eventQueue().enqueue(new MoveToPositionEvent(selectedUnit, new Vector2(x, y)));
@@ -129,7 +129,6 @@ public class AndroidInputHandler extends ActorGestureListener {
                     else if(unit.city!=null &&
                             unit.getFaction().isFriend(selectedUnit.getFaction()) &&
                             selectedUnit.development!=null) {
-                        Service.eventQueue().enqueue(new DevelopCityEvent(selectedUnit, unit));
                     }
                 }
             }
@@ -137,7 +136,7 @@ public class AndroidInputHandler extends ActorGestureListener {
 
         @Override
         public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            Actor actor = getWorldStage().hit(x, y, false);
+            Actor actor = getWorldStage().hit(x, y, true);
 
             if (actor instanceof Unit) {
                 Unit unit = (Unit) actor;
@@ -151,7 +150,7 @@ public class AndroidInputHandler extends ActorGestureListener {
 
         @Override
         public void tap(InputEvent event, float x, float y, int pointer, int button) {
-            Actor actor = getWorldStage().hit(x, y, false);
+            Actor actor = getWorldStage().hit(x, y, true);
             if (actor instanceof Unit) {
                 Service.eventQueue().enqueue(new UnitSelectionEvent((Unit)actor, true));
             }
