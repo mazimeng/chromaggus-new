@@ -12,10 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
@@ -86,6 +83,8 @@ public class WorldScreen implements Screen {
 	}
 
 	protected void initGui() {
+        int w = Gdx.graphics.getWidth();
+        int h = Gdx.graphics.getHeight();
 		Viewport viewport = gameConfiguration.makeGuiViewport();
 
 		gui = new GuiStage();
@@ -99,11 +98,19 @@ public class WorldScreen implements Screen {
 		Table table = new Table().right().bottom();
 		table.defaults().size(32, 32);
 		table.setFillParent(true);
+
+		Stack stack = new Stack();
+		stack.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
+		stack.add(table);
+
+
+
 		gui.addActor(table);
 
 		{
 			unitSelection = new UnitSelection(new TextureRegionDrawable(icons[1][0]));
-			table.add(unitSelection);
+//			table.add(unitSelection);
+			stack.add(unitSelection);
 		}
 
 		{
@@ -126,7 +133,7 @@ public class WorldScreen implements Screen {
 				}
 			});
 
-			table.row();
+
 			table.add(imageButton);
 			table.add(invalid);
 			table.add(valid);

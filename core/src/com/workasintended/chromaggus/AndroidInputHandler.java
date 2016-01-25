@@ -85,6 +85,16 @@ public class AndroidInputHandler extends ActorGestureListener {
         }
     }
 
+    public class Dialog extends InputHandler {
+        public Dialog(WorldStage worldStage) {
+            super(worldStage);
+        }
+
+        @Override
+        public void tap(InputEvent event, float x, float y, int pointer, int button) {
+
+        }
+    }
     public class Selection extends InputHandler {
         Unit selected = null;
 
