@@ -18,7 +18,8 @@ public class AndroidInputHandler extends ActorGestureListener {
 
     public AndroidInputHandler(WorldStage worldStage, Player player) {
         this.worldStage = worldStage;
-        inputHandler = new Selection(worldStage);
+        inputHandler = new Dialog(worldStage);
+//        inputHandler = new Selection(worldStage);
         this.player = player;
     }
 

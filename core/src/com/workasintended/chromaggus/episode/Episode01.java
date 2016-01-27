@@ -29,6 +29,8 @@ import java.util.Iterator;
 
 public class Episode01 {
 	private Skin skin;
+	public Unit lead1;
+	public Unit lead2;
 
 	public Episode01(Skin skin) {
 		this.skin = skin;
@@ -71,6 +73,7 @@ public class Episode01 {
 				unit.setPosition(470, 760);
 				unit.combat.setPrimaryAbility(new Melee());
 				stage.addActor(unit);
+				lead1 = unit;
 			}
 			{
 				TextureRegion[] frames = new TextureRegion[2];
@@ -81,6 +84,7 @@ public class Episode01 {
 				unit.setPosition(400, 815);
 				unit.combat.setPrimaryAbility(new Fireball());
 				stage.addActor(unit);
+				lead2 = unit;
 			}
 			{
 				TextureRegion[] frames = new TextureRegion[2];
@@ -132,29 +136,6 @@ public class Episode01 {
 			}
 
 		}
-
-//		{
-//			Unit city = this.makeCity(stage, font, textureCity);
-//			city.setPosition(4*32, 4*32);
-//			stage.addActor(city);
-//			stage.getGridMap().grid(4, 4).state= Grid.State.Blocked;
-//
-//			{
-//				Unit unit = this.makeCharacter(2, font, unit2);
-//				unit.ai = new StateDevelop(city, unit);
-//				unit.setPosition(12*32, 4*32);
-//				stage.addActor(unit);
-//
-//			}
-//		}
-
-		{
-//			Cursor cursor = new Cursor(textureCursor);
-//			stage.addListener(new CursorListener(cursor));
-//			stage.addActor(cursor);
-		}
-
-//        stage.addListener(new HumanController(stage));
 
 		{
 

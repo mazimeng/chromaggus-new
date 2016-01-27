@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -12,12 +13,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.*;
+import com.workasintended.chromaggus.action.Do;
+import com.workasintended.chromaggus.action.Wait;
 import com.workasintended.chromaggus.episode.Episode01;
 import com.workasintended.chromaggus.event.BuyItemEvent;
 import com.workasintended.chromaggus.pathfinding.GridMap;
@@ -79,7 +84,53 @@ public class WorldScreen implements Screen {
 		stage.addListener(this.inputHandler);
 
 
-		new Episode01(skin).build(stage);
+        final OrthographicCamera cam = (OrthographicCamera) stage.getCamera();
+		final Episode01 e01 = new Episode01(skin);
+        e01.build(stage);
+
+        SequenceAction sequenceAction = new SequenceAction();
+        {
+            sequenceAction.addAction(new Wait(2));
+
+            sequenceAction.addAction(new Do(new Runnable() {
+                @Override
+                public void run() {
+                    cam.position.x = e01.lead1.getX(Align.center);
+                    cam.position.y = e01.lead1.getY(Align.center);
+                    e01.lead1.dialogComponent.say("hi");
+                }
+            }));
+            sequenceAction.addAction(new Wait(2));
+            sequenceAction.addAction(new Do(new Runnable() {
+                @Override
+                public void run() {
+                    e01.lead1.dialogComponent.say("bye");
+                }
+            }));
+
+        }
+
+        {
+            sequenceAction.addAction(new Wait(2));
+
+            sequenceAction.addAction(new Do(new Runnable() {
+                @Override
+                public void run() {
+                    cam.position.x = e01.lead2.getX(Align.center);
+                    cam.position.y = e01.lead2.getY(Align.center);
+                    e01.lead2.dialogComponent.say("hi");
+                }
+            }));
+            sequenceAction.addAction(new Wait(2));
+            sequenceAction.addAction(new Do(new Runnable() {
+                @Override
+                public void run() {
+                    e01.lead2.dialogComponent.say("bye");
+                }
+            }));
+
+        }
+        stage.addAction(sequenceAction);
 	}
 
 	protected void initGui() {
@@ -109,8 +160,8 @@ public class WorldScreen implements Screen {
 
 		{
 			unitSelection = new UnitSelection(new TextureRegionDrawable(icons[1][0]));
-//			table.add(unitSelection);
-			stack.add(unitSelection);
+			table.add(unitSelection);
+//			stack.add(unitSelection);
 		}
 
 		{

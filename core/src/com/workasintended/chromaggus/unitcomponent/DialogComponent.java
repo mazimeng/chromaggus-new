@@ -15,7 +15,7 @@ public class DialogComponent extends UnitComponent{
     private LinkedList<String> lines = new LinkedList<String>();
     private String text;
     private int visibleLineCount = 3;
-    private float fade = 2;
+    private float fade = 3;
     private float fadeProgress = 0;
 
     public DialogComponent(Unit self, Label dialog) {
