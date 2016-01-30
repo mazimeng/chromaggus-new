@@ -31,5 +31,7 @@ public enum EventName {
 	 *
 	 */
 	ABILITY_SELECTION,
-	USE_ABILITY
+	USE_ABILITY,
+
+	SHOW_CITY_WEAPON
 }

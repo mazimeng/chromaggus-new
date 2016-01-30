@@ -9,8 +9,11 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.workasintended.chromaggus.Service;
 import com.workasintended.chromaggus.Unit;
+import com.workasintended.chromaggus.Weapon;
 import com.workasintended.chromaggus.WorldStage;
 import com.workasintended.chromaggus.event.GainGoldEvent;
+
+import java.util.LinkedList;
 
 public class CityComponent extends UnitComponent {
     private float radius = 64;
@@ -22,6 +25,8 @@ public class CityComponent extends UnitComponent {
 
     private float restoreCooldown = 3;
     private float restore = 0;
+
+    private LinkedList<Weapon> weapons = new LinkedList<>();
 
     public CityComponent(Unit self) {
         super(self);
@@ -95,4 +100,7 @@ public class CityComponent extends UnitComponent {
     }
 
 
+    public LinkedList<Weapon> getWeapons() {
+        return weapons;
+    }
 }

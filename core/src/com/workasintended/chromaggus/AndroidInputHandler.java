@@ -18,8 +18,8 @@ public class AndroidInputHandler extends ActorGestureListener {
 
     public AndroidInputHandler(WorldStage worldStage, Player player) {
         this.worldStage = worldStage;
-        inputHandler = new Dialog(worldStage);
-//        inputHandler = new Selection(worldStage);
+//        inputHandler = new Dialog(worldStage);
+        inputHandler = new Selection(worldStage);
         this.player = player;
     }
 
@@ -163,6 +163,10 @@ public class AndroidInputHandler extends ActorGestureListener {
         public void tap(InputEvent event, float x, float y, int pointer, int button) {
             Actor actor = getWorldStage().hit(x, y, true);
             if (actor instanceof Unit) {
+                Unit unit = (Unit)actor;
+                if(unit.city!=null) {
+                    Service.eventQueue().enqueue(new ShowCityWeaponEvent((Unit)actor, true));
+                }
                 Service.eventQueue().enqueue(new UnitSelectionEvent((Unit)actor, true));
             }
 

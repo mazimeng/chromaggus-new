@@ -26,6 +26,7 @@ import com.workasintended.chromaggus.action.Wait;
 import com.workasintended.chromaggus.episode.Episode01;
 import com.workasintended.chromaggus.event.BuyItemEvent;
 import com.workasintended.chromaggus.pathfinding.GridMap;
+import com.workasintended.chromaggus.unitcomponent.CityComponent;
 
 public class WorldScreen implements Screen {
 	private WorldStage stage;
@@ -35,6 +36,7 @@ public class WorldScreen implements Screen {
 	private Player player = new Player();
 	private UnitSelection unitSelection;
     private Skin skin;
+	private CityWeapon cityWeapon;
 
 	public WorldScreen(GameConfiguration gameConfiguration) {
 		this.gameConfiguration = gameConfiguration;
@@ -130,9 +132,30 @@ public class WorldScreen implements Screen {
             }));
 
         }
-        stage.addAction(sequenceAction);
+        //stage.addAction(sequenceAction);
 	}
 
+	protected void initCityWeapon(Table table, TextureRegion[][] icons) {
+		int slots = 3;
+        cityWeapon = new CityWeapon(slots);
+        for(int i=0; i<slots; ++i) {
+            final ImageButton imageButton = new ImageButton(new TextureRegionDrawable(icons[1][0]));
+
+            imageButton.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    System.out.println(String.format("weapon clicked: target(%s)", imageButton.getUserObject()));
+                }
+            });
+
+            cityWeapon.getWeaponSlots()[i] = imageButton;
+        }
+
+		for (ImageButton imageButton : cityWeapon.getWeaponSlots()) {
+			table.add(imageButton);
+		}
+	}
 	protected void initGui() {
         int w = Gdx.graphics.getWidth();
         int h = Gdx.graphics.getHeight();
@@ -141,22 +164,19 @@ public class WorldScreen implements Screen {
 		gui = new GuiStage();
 		gui.setViewport(viewport);
 
-		Texture itemTexture = Service.assetManager().get("icon.png");
-		TextureRegion[][] icons = TextureRegion.split(itemTexture,
-				itemTexture.getWidth() / 16, itemTexture.getHeight() / 39);
+		TextureRegion[][] icons = ActorFactory.instance().icon();
 
 		// Create a table that fills the screen. Everything else will go inside this table.
 		Table table = new Table().right().bottom();
 		table.defaults().size(32, 32);
 		table.setFillParent(true);
 
-		Stack stack = new Stack();
-		stack.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
-		stack.add(table);
+		initCityWeapon(table, icons);
 
-
+		table.row();
 
 		gui.addActor(table);
+
 
 		{
 			unitSelection = new UnitSelection(new TextureRegionDrawable(icons[1][0]));
@@ -214,6 +234,7 @@ public class WorldScreen implements Screen {
 		}
 
 		table.setDebug(true);
+
 	}
 
 	protected void initInputs() {
@@ -249,6 +270,7 @@ public class WorldScreen implements Screen {
 		Service.eventQueue().register(EventName.USE_ABILITY, player);
 		Service.eventQueue().register(EventName.TAKE_DAMAGE, new RenderHandler());
 		Service.eventQueue().register(EventName.TAKE_DAMAGE, stage);
+		Service.eventQueue().register(EventName.SHOW_CITY_WEAPON, cityWeapon);
 
 	}
 
