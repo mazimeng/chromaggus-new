@@ -3,21 +3,15 @@ package com.workasintended.chromaggus;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.*;
@@ -26,7 +20,6 @@ import com.workasintended.chromaggus.action.Wait;
 import com.workasintended.chromaggus.episode.Episode01;
 import com.workasintended.chromaggus.event.BuyItemEvent;
 import com.workasintended.chromaggus.pathfinding.GridMap;
-import com.workasintended.chromaggus.unitcomponent.CityComponent;
 
 public class WorldScreen implements Screen {
 	private WorldStage stage;
@@ -36,7 +29,8 @@ public class WorldScreen implements Screen {
 	private Player player = new Player();
 	private UnitSelection unitSelection;
     private Skin skin;
-	private CityWeapon cityWeapon;
+
+    private Cell cityCraft;
 
 	public WorldScreen(GameConfiguration gameConfiguration) {
 		this.gameConfiguration = gameConfiguration;
@@ -135,27 +129,12 @@ public class WorldScreen implements Screen {
         //stage.addAction(sequenceAction);
 	}
 
-	protected void initCityWeapon(Table table, TextureRegion[][] icons) {
+	protected void makeCityWeapon(Table table, Unit city) {
 		int slots = 3;
-        cityWeapon = new CityWeapon(slots);
-        for(int i=0; i<slots; ++i) {
-            final ImageButton imageButton = new ImageButton(new TextureRegionDrawable(icons[1][0]));
-
-            imageButton.addListener(new ClickListener(){
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    super.clicked(event, x, y);
-                    System.out.println(String.format("weapon clicked: target(%s)", imageButton.getUserObject()));
-                }
-            });
-
-            cityWeapon.getWeaponSlots()[i] = imageButton;
-        }
-
-		for (ImageButton imageButton : cityWeapon.getWeaponSlots()) {
-			table.add(imageButton);
-		}
+        cityCraft = table.add();
+        city.city.setCityWeapon(new CityArmory(slots, skin));
 	}
+
 	protected void initGui() {
         int w = Gdx.graphics.getWidth();
         int h = Gdx.graphics.getHeight();
@@ -168,10 +147,10 @@ public class WorldScreen implements Screen {
 
 		// Create a table that fills the screen. Everything else will go inside this table.
 		Table table = new Table().right().bottom();
-		table.defaults().size(32, 32);
+		//table.defaults().size(32, 32);
 		table.setFillParent(true);
 
-		initCityWeapon(table, icons);
+		initCityWeapon(table);
 
 		table.row();
 
@@ -284,7 +263,8 @@ public class WorldScreen implements Screen {
 		stage.getViewport().setWorldSize(width, height);
 		stage.getViewport().update(width, height);
 
-		gui.getViewport().setWorldSize(width*0.4f, height*0.4f);
+        float zoom = 1280*0.4f/width;
+		gui.getViewport().setWorldSize(width*zoom, height*zoom);
 		gui.getViewport().update(width, height, true);
 	}
 

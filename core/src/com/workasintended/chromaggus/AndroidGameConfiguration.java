@@ -26,9 +26,10 @@ public class AndroidGameConfiguration extends GameConfiguration {
     public Viewport makeWorldViewport() {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
+        float zoom = 1280*0.4f/w;
 
         OrthographicCamera cam = makeCamera();
-        cam.zoom = 0.4f;
+        cam.zoom = zoom;
 
         Viewport viewport = new FillViewport(w, h);
         viewport.setCamera(cam);
@@ -39,7 +40,8 @@ public class AndroidGameConfiguration extends GameConfiguration {
         OrthographicCamera cam = makeCamera();
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
-        Viewport viewport = new FillViewport(w*0.4f, h*0.4f);
+        float zoom = 1280*0.4f/w;
+        Viewport viewport = new FillViewport(w*zoom, h*zoom);
         viewport.setCamera(cam);
 
         return viewport;

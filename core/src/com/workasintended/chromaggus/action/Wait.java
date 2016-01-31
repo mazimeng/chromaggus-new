@@ -15,6 +15,12 @@ public class Wait extends Action {
     @Override
     public boolean act(float delta) {
         waited = Math.min(waited+delta, wait);
-        return waited==wait;
+        boolean done = waited==wait;
+        if(done) done();
+        return done;
+    }
+
+    protected void done() {
+
     }
 }

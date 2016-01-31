@@ -14,9 +14,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.Align;
 import com.workasintended.chromaggus.*;
 import com.workasintended.chromaggus.ability.Fireball;
 import com.workasintended.chromaggus.ability.Melee;
@@ -60,9 +60,9 @@ public class Episode01 {
 			{
 				Unit city = this.makeCity(stage, font, new TextureRegion(textureCity), Faction.FACTION_A);
 				city.setPosition(14*32, 25*32);
-				city.city.getWeapons().add(new Weapon(ActorFactory.instance().icon()[9][3]));
-				city.city.getWeapons().add(new Weapon(ActorFactory.instance().icon()[9][4]));
-				city.city.getWeapons().add(new Weapon(ActorFactory.instance().icon()[9][5]));
+				city.city.getCrafts().add(new CityArmory.Craft(new Image(ActorFactory.instance().icon()[9][3]), skin));
+				city.city.getCrafts().add(new CityArmory.Craft(new Image(ActorFactory.instance().icon()[9][4]), skin));
+				city.city.getCrafts().add(new CityArmory.Craft(new Image(ActorFactory.instance().icon()[9][5]), skin));
 				stage.addActor(city);
 			}
 			stage.getGridMap().grid(8, 7).state= Grid.State.Blocked;

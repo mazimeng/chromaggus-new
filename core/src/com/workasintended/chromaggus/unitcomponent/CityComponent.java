@@ -2,18 +2,11 @@ package com.workasintended.chromaggus.unitcomponent;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
-import com.workasintended.chromaggus.Service;
-import com.workasintended.chromaggus.Unit;
-import com.workasintended.chromaggus.Weapon;
-import com.workasintended.chromaggus.WorldStage;
+import com.workasintended.chromaggus.*;
 import com.workasintended.chromaggus.event.GainGoldEvent;
-
-import java.util.LinkedList;
 
 public class CityComponent extends UnitComponent {
     private float radius = 64;
@@ -25,8 +18,7 @@ public class CityComponent extends UnitComponent {
 
     private float restoreCooldown = 3;
     private float restore = 0;
-
-    private LinkedList<Weapon> weapons = new LinkedList<>();
+    private CityArmory cityWeapon;
 
     public CityComponent(Unit self) {
         super(self);
@@ -99,8 +91,11 @@ public class CityComponent extends UnitComponent {
         this.development = development;
     }
 
+    public CityArmory getCityWeapon() {
+        return cityWeapon;
+    }
 
-    public LinkedList<Weapon> getWeapons() {
-        return weapons;
+    public void setCityWeapon(CityArmory cityWeapon) {
+        this.cityWeapon = cityWeapon;
     }
 }
