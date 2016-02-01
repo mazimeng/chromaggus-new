@@ -50,6 +50,10 @@ public class CityArmory extends Table implements EventHandler{
         initInventory();
     }
 
+    public void addCraft(Item item) {
+
+    }
+
     private void addItem(Image item) {
         for (InventorySlot inventorySlot : inventory) {
             if(inventorySlot.isEmpty()) {
@@ -93,16 +97,16 @@ public class CityArmory extends Table implements EventHandler{
     @Override
     public void handle(Event event) {
         if(event.is(EventName.SHOW_CITY_WEAPON)) {
-            ShowCityWeaponEvent showCityWeaponEvent = event.cast();
-            boolean show = showCityWeaponEvent.isShow();
-            List<Craft> crafts = showCityWeaponEvent.getCity().city.getCrafts();
-            int i=0;
-            for (Craft craft : crafts) {
-                Cell slot = weaponSlots[i];
-                slot.setActor(craft);
-                if(i>=weaponSlots.length) break;
-                ++i;
-            }
+//            ShowCityWeaponEvent showCityWeaponEvent = event.cast();
+//            boolean show = showCityWeaponEvent.isShow();
+//            List<Craft> crafts = showCityWeaponEvent.getCity().city.getCrafts();
+//            int i=0;
+//            for (Craft craft : crafts) {
+//                Cell slot = weaponSlots[i];
+//                slot.setActor(craft);
+//                if(i>=weaponSlots.length) break;
+//                ++i;
+//            }
         }
     }
 
@@ -115,6 +119,12 @@ public class CityArmory extends Table implements EventHandler{
 
         public void setEmpty(boolean empty) {
             this.empty = empty;
+        }
+    }
+
+    public static class Item extends Image {
+        public Item clone() {
+            return new Item();
         }
     }
 
