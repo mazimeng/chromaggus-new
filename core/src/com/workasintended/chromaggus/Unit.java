@@ -38,6 +38,7 @@ public class Unit extends Group {
     public DevelopmentComponent development;
 
     public DialogComponent dialogComponent;
+    public CityArmory.Inventory inventory;
 
     private Order order = new Idle();
 

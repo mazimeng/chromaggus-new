@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
@@ -19,9 +21,12 @@ import com.workasintended.chromaggus.action.Do;
 import com.workasintended.chromaggus.action.Wait;
 import com.workasintended.chromaggus.episode.Episode01;
 import com.workasintended.chromaggus.event.BuyItemEvent;
+import com.workasintended.chromaggus.event.ShowCityWeaponEvent;
+import com.workasintended.chromaggus.event.TransferItemEvent;
+import com.workasintended.chromaggus.event.UnitSelectionEvent;
 import com.workasintended.chromaggus.pathfinding.GridMap;
 
-public class WorldScreen implements Screen {
+public class WorldScreen implements Screen, EventHandler {
 	private WorldStage stage;
 	private GuiStage gui;
 	private EventListener inputHandler;
@@ -30,7 +35,10 @@ public class WorldScreen implements Screen {
 	private UnitSelection unitSelection;
     private Skin skin;
 
-    private Cell cityCraft;
+    private Table guiLayout;
+
+    private Cell cityArmoryRenderer;
+    private Cell unitPortraitRenderer;
 
 	public WorldScreen(GameConfiguration gameConfiguration) {
 		this.gameConfiguration = gameConfiguration;
@@ -40,7 +48,10 @@ public class WorldScreen implements Screen {
 		this.initPlayer();
 		this.initWorld();
 		this.initGui();
+
 		this.initInputs();
+
+        this.initEpisode();
 		this.initEvents();
 	}
 	
@@ -80,60 +91,58 @@ public class WorldScreen implements Screen {
 		stage.addListener(this.inputHandler);
 
 
-        final OrthographicCamera cam = (OrthographicCamera) stage.getCamera();
-		final Episode01 e01 = new Episode01(skin);
-        e01.build(stage);
 
-        SequenceAction sequenceAction = new SequenceAction();
-        {
-            sequenceAction.addAction(new Wait(2));
-
-            sequenceAction.addAction(new Do(new Runnable() {
-                @Override
-                public void run() {
-                    cam.position.x = e01.lead1.getX(Align.center);
-                    cam.position.y = e01.lead1.getY(Align.center);
-                    e01.lead1.dialogComponent.say("hi");
-                }
-            }));
-            sequenceAction.addAction(new Wait(2));
-            sequenceAction.addAction(new Do(new Runnable() {
-                @Override
-                public void run() {
-                    e01.lead1.dialogComponent.say("bye");
-                }
-            }));
-
-        }
-
-        {
-            sequenceAction.addAction(new Wait(2));
-
-            sequenceAction.addAction(new Do(new Runnable() {
-                @Override
-                public void run() {
-                    cam.position.x = e01.lead2.getX(Align.center);
-                    cam.position.y = e01.lead2.getY(Align.center);
-                    e01.lead2.dialogComponent.say("hi");
-                }
-            }));
-            sequenceAction.addAction(new Wait(2));
-            sequenceAction.addAction(new Do(new Runnable() {
-                @Override
-                public void run() {
-                    e01.lead2.dialogComponent.say("bye");
-                }
-            }));
-
-        }
         //stage.addAction(sequenceAction);
 	}
 
-	protected void makeCityWeapon(Table table, Unit city) {
-		int slots = 3;
-        cityCraft = table.add();
-        city.city.setCityWeapon(new CityArmory(slots, skin));
-	}
+    protected void initEpisode() {
+        final OrthographicCamera cam = (OrthographicCamera) stage.getCamera();
+        final Episode01 e01 = new Episode01(skin);
+        e01.build(stage, guiLayout);
+
+//        SequenceAction sequenceAction = new SequenceAction();
+//        {
+//            sequenceAction.addAction(new Wait(2));
+//
+//            sequenceAction.addAction(new Do(new Runnable() {
+//                @Override
+//                public void run() {
+//                    cam.position.x = e01.lead1.getX(Align.center);
+//                    cam.position.y = e01.lead1.getY(Align.center);
+//                    e01.lead1.dialogComponent.say("hi");
+//                }
+//            }));
+//            sequenceAction.addAction(new Wait(2));
+//            sequenceAction.addAction(new Do(new Runnable() {
+//                @Override
+//                public void run() {
+//                    e01.lead1.dialogComponent.say("bye");
+//                }
+//            }));
+//
+//        }
+//
+//        {
+//            sequenceAction.addAction(new Wait(2));
+//
+//            sequenceAction.addAction(new Do(new Runnable() {
+//                @Override
+//                public void run() {
+//                    cam.position.x = e01.lead2.getX(Align.center);
+//                    cam.position.y = e01.lead2.getY(Align.center);
+//                    e01.lead2.dialogComponent.say("hi");
+//                }
+//            }));
+//            sequenceAction.addAction(new Wait(2));
+//            sequenceAction.addAction(new Do(new Runnable() {
+//                @Override
+//                public void run() {
+//                    e01.lead2.dialogComponent.say("bye");
+//                }
+//            }));
+//
+//        }
+    }
 
 	protected void initGui() {
         int w = Gdx.graphics.getWidth();
@@ -147,10 +156,11 @@ public class WorldScreen implements Screen {
 
 		// Create a table that fills the screen. Everything else will go inside this table.
 		Table table = new Table().right().bottom();
+        guiLayout = table;
+        cityArmoryRenderer = table.add();
+
 		//table.defaults().size(32, 32);
 		table.setFillParent(true);
-
-		initCityWeapon(table);
 
 		table.row();
 
@@ -159,7 +169,7 @@ public class WorldScreen implements Screen {
 
 		{
 			unitSelection = new UnitSelection(new TextureRegionDrawable(icons[1][0]));
-			table.add(unitSelection);
+            unitPortraitRenderer = table.add();
 //			stack.add(unitSelection);
 		}
 
@@ -249,7 +259,9 @@ public class WorldScreen implements Screen {
 		Service.eventQueue().register(EventName.USE_ABILITY, player);
 		Service.eventQueue().register(EventName.TAKE_DAMAGE, new RenderHandler());
 		Service.eventQueue().register(EventName.TAKE_DAMAGE, stage);
-		Service.eventQueue().register(EventName.SHOW_CITY_WEAPON, cityWeapon);
+		Service.eventQueue().register(EventName.SHOW_CITY_WEAPON, this);
+		Service.eventQueue().register(EventName.TRANSFER_ITEM, this);
+		Service.eventQueue().register(EventName.UNIT_SELECTED, this);
 
 	}
 
@@ -315,4 +327,45 @@ public class WorldScreen implements Screen {
 	public EventListener getInputHandler() {
 		return inputHandler;
 	}
+
+    @Override
+    public void handle(Event event) {
+        if(event.is(EventName.SHOW_CITY_WEAPON)) {
+            ShowCityWeaponEvent showCityWeaponEvent = event.cast();
+            boolean show = showCityWeaponEvent.isShow();
+            CityArmory cityArmory = showCityWeaponEvent.getCity().city.getArmory();
+            cityArmoryRenderer.setActor(cityArmory);
+        }
+
+        if(event.is(EventName.TRANSFER_ITEM)) {
+
+            TransferItemEvent transferItemEvent = event.cast();
+
+            System.out.println(String.format("EventName.TRANSFER_ITEM: %s", transferItemEvent.getTargetPosition()));
+
+            Vector2 vec2 = transferItemEvent.getTargetPosition();
+            Actor actor = gui.hit(vec2.x, vec2.y, true);
+            if(actor != null) {
+                System.out.println(String.format("EventName.TRANSFER_ITEM: GUI: %s, %s", actor, transferItemEvent.getTargetPosition()));
+            }
+
+            vec2 = gui.stageToScreenCoordinates(transferItemEvent.getTargetPosition());
+            vec2 = stage.screenToStageCoordinates(vec2);
+
+            actor = stage.hit(vec2.x, vec2.y, true);
+            if(actor != null && actor instanceof Unit) {
+                Unit unit = (Unit)actor;
+                if(unit.inventory!=null) {
+                    transferItemEvent.getItem().remove();
+                    unit.inventory.putItem(transferItemEvent.getItem());
+                }
+            }
+        }
+
+        if(event.is(EventName.UNIT_SELECTED)) {
+            UnitSelectionEvent unitSelectedEvent = event.cast();
+            Unit unit = unitSelectedEvent.getUnit();
+            if(unit.inventory!=null) this.unitPortraitRenderer.setActor(unit.inventory);
+        }
+    }
 }

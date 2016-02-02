@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.workasintended.chromaggus.*;
 import com.workasintended.chromaggus.ability.Fireball;
 import com.workasintended.chromaggus.ability.Melee;
@@ -35,7 +37,7 @@ public class Episode01 {
 	public Episode01(Skin skin) {
 		this.skin = skin;
 	}
-	public void build(WorldStage stage) {
+	public void build(WorldStage stage, Table guiLayout) {
 		float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
 
@@ -60,10 +62,8 @@ public class Episode01 {
 			{
 				Unit city = this.makeCity(stage, font, new TextureRegion(textureCity), Faction.FACTION_A);
 				city.setPosition(14*32, 25*32);
-				city.city.getCrafts().add(new CityArmory.Craft(new Image(ActorFactory.instance().icon()[9][3]), skin));
-				city.city.getCrafts().add(new CityArmory.Craft(new Image(ActorFactory.instance().icon()[9][4]), skin));
-				city.city.getCrafts().add(new CityArmory.Craft(new Image(ActorFactory.instance().icon()[9][5]), skin));
 				stage.addActor(city);
+				makeCityArmory(city);
 			}
 			stage.getGridMap().grid(8, 7).state= Grid.State.Blocked;
 
@@ -193,8 +193,21 @@ public class Episode01 {
 		unit.movement = movementComponent;
 		unit.combat = new CombatComponent(unit);
         unit.dialogComponent = new DialogComponent(unit, new Label("", skin));
+		unit.inventory = new CityArmory.Inventory(2);
 		return unit;
 	}
+
+	protected void makeCityArmory(Unit city) {
+		int slots = 3;
+
+		CityArmory cityArmory = new CityArmory(slots, skin);
+		city.city.setArmory(cityArmory);
+
+		CityArmory.Item sword = new CityArmory.Item(new TextureRegionDrawable(ActorFactory.instance().icon()[9][3]));
+
+		cityArmory.addCraft(sword);
+	}
+
 
 	protected Unit makeCity(WorldStage stage, BitmapFont font, TextureRegion texture, Faction faction) {
 		Sprite sprite = new Sprite(texture);

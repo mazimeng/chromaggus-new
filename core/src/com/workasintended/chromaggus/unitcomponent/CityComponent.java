@@ -18,7 +18,7 @@ public class CityComponent extends UnitComponent {
 
     private float restoreCooldown = 3;
     private float restore = 0;
-    private CityArmory cityWeapon;
+    private CityArmory armory;
 
     public CityComponent(Unit self) {
         super(self);
@@ -91,11 +91,11 @@ public class CityComponent extends UnitComponent {
         this.development = development;
     }
 
-    public CityArmory getCityWeapon() {
-        return cityWeapon;
+    public CityArmory getArmory() {
+        return armory;
     }
 
-    public void setCityWeapon(CityArmory cityWeapon) {
-        this.cityWeapon = cityWeapon;
+    public void setArmory(CityArmory armory) {
+        this.armory = armory;
     }
 }
