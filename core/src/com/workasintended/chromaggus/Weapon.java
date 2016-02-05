@@ -1,33 +1,44 @@
 package com.workasintended.chromaggus;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.workasintended.chromaggus.ability.Ability;
 
 /**
  * Created by mazimeng on 1/30/16.
  */
-public class Weapon {
-    private int count = 0;
+public class Weapon extends CityArmory.Item{
+    private Ability ability;
 
-    private TextureRegion icon;
-
-    public Weapon(TextureRegion icon) {
-        this.icon = icon;
+    public Weapon(Drawable drawable) {
+        super(drawable);
+    }
+    public Weapon(Drawable drawable, Ability ability) {
+        super(drawable);
+        this.ability = ability;
     }
 
-    public int getCount() {
-        return count;
+    public Ability getAbility() {
+        return ability;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public void setAbility(Ability ability) {
+        this.ability = ability;
     }
 
-    public TextureRegion getIcon() {
-        return icon;
+    public void update(float delta) {
+        if(ability!=null) {
+            ability.update(delta);
+        }
     }
 
-    public void setIcon(TextureRegion icon) {
-        this.icon = icon;
+    @Override
+    public CityArmory.Item clone() {
+        Ability weaponAbility = null;
+        if(this.ability!=null) {
+            weaponAbility = this.ability.clone();
+        }
+        Weapon weapon = new Weapon(this.getDrawable(), weaponAbility);
+        return weapon;
     }
 }

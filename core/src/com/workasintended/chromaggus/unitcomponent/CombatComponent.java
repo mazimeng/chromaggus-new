@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.workasintended.chromaggus.Service;
 import com.workasintended.chromaggus.Unit;
+import com.workasintended.chromaggus.Weapon;
 import com.workasintended.chromaggus.ability.Ability;
 import com.workasintended.chromaggus.action.MoveToUnit;
 import com.workasintended.chromaggus.action.UseAbility;
@@ -26,8 +27,8 @@ public class CombatComponent extends UnitComponent {
     private float experienceGrowthFromAttack = 0.2f;
     private float experienceGrowthFromKill = 0.8f;
 
-    private Ability primaryAbility;
-
+    //private Ability primaryAbility;
+    private Weapon primaryWeapon;
 
     public CombatComponent(Unit self) {
         super(self);
@@ -35,7 +36,7 @@ public class CombatComponent extends UnitComponent {
 
     @Override
     public void update(float delta) {
-        if (primaryAbility != null) primaryAbility.update(delta);
+        if (primaryWeapon != null) primaryWeapon.update(delta);
     }
 
     protected void updateAbilities(float delta) {
@@ -47,7 +48,9 @@ public class CombatComponent extends UnitComponent {
 
     public void attack(Unit target) {
         if (target == getSelf()) return;
-        if (primaryAbility == null) return;
+
+        if(primaryWeapon==null || primaryWeapon.getAbility() == null) return;
+        Ability primaryAbility = primaryWeapon.getAbility();
 
         primaryAbility.setTarget(target);
         primaryAbility.setUser(getSelf());
@@ -201,6 +204,13 @@ public class CombatComponent extends UnitComponent {
         this.experienceGrowthFromKill = experienceGrowthFromKill;
     }
 
+    public Ability getPrimaryAbility() {
+        if(this.primaryWeapon!=null) {
+            return this.primaryWeapon.getAbility();
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return "CombatComponent{" +
@@ -224,12 +234,12 @@ public class CombatComponent extends UnitComponent {
     public void setIntelligence(int intelligence) {
         this.intelligence = intelligence;
     }
-
-    public void setPrimaryAbility(Ability primaryAbility) {
-        this.primaryAbility = primaryAbility;
+    
+    public Weapon getPrimaryWeapon() {
+        return primaryWeapon;
     }
 
-    public Ability getPrimaryAbility() {
-        return primaryAbility;
+    public void setPrimaryWeapon(Weapon primaryWeapon) {
+        this.primaryWeapon = primaryWeapon;
     }
 }

@@ -53,6 +53,11 @@ public class Fireball extends OffensiveAbilityAdaptor {
     }
 
     @Override
+    public Ability clone() {
+        return new Fireball();
+    }
+
+    @Override
     public void effect() {
         getTarget().combat.takeDamage(getUser().combat.getIntelligence());
         super.effect();

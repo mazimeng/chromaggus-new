@@ -17,6 +17,11 @@ public class Melee extends OffensiveAbilityAdaptor {
     }
 
     @Override
+    public Ability clone() {
+        return new Melee();
+    }
+
+    @Override
     public void effect() {
         getTarget().combat.takeDamage(getUser().combat.getStrength());
         super.effect();

@@ -74,7 +74,6 @@ public class Episode01 {
 
 				Unit unit = makeCharacter(stage, Faction.FACTION_A, font, frames);
 				unit.setPosition(470, 760);
-				unit.combat.setPrimaryAbility(new Melee());
 				stage.addActor(unit);
 				lead1 = unit;
 			}
@@ -85,7 +84,6 @@ public class Episode01 {
 				frames[1] = char00Frames[0][5];
 				Unit unit = makeCharacter(stage, Faction.FACTION_A, font, frames);
 				unit.setPosition(400, 815);
-				unit.combat.setPrimaryAbility(new Fireball());
 				stage.addActor(unit);
 				lead2 = unit;
 			}
@@ -98,7 +96,7 @@ public class Episode01 {
 				unit.setPosition(210, 720);
 				unit.ai = new StateDefense(unit, stage);
 				unit.combat.setStrength(8);
-				unit.combat.setPrimaryAbility(new Melee());
+				unit.combat.setPrimaryWeapon(makeFireball());
 				stage.addActor(unit);
 			}
 
@@ -110,7 +108,6 @@ public class Episode01 {
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(768, 470);
 				unit.combat.setStrength(12);
-				unit.combat.setPrimaryAbility(new Melee());
 				unit.ai = new StateDefense(unit, stage);
 				stage.addActor(unit);
 			}
@@ -122,7 +119,6 @@ public class Episode01 {
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(880, 380);
 				unit.combat.setStrength(15);
-				unit.combat.setPrimaryAbility(new Melee());
 				unit.ai = new StateDefense(unit, stage);
 				stage.addActor(unit);
 			}
@@ -132,7 +128,6 @@ public class Episode01 {
 				frames[0] = char02Frames[0][0];
 				frames[1] = char02Frames[0][2];
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
-				unit.combat.setPrimaryAbility(new Melee());
 				unit.setPosition(870, 320);
 				unit.ai = new StateDefense(unit, stage);
 				stage.addActor(unit);
@@ -194,6 +189,7 @@ public class Episode01 {
 		unit.combat = new CombatComponent(unit);
         unit.dialogComponent = new DialogComponent(unit, new Label("", skin));
 		unit.inventory = new CityArmory.Inventory(2);
+		unit.inventory.addListener(new EquipEventListener(unit));
 		return unit;
 	}
 
@@ -203,9 +199,18 @@ public class Episode01 {
 		CityArmory cityArmory = new CityArmory(slots, skin);
 		city.city.setArmory(cityArmory);
 
-		CityArmory.Item sword = new CityArmory.Item(new TextureRegionDrawable(ActorFactory.instance().icon()[9][3]));
 
-		cityArmory.addCraft(sword);
+		cityArmory.addCraft(makeSword());
+		cityArmory.addCraft(makeFireball());
+	}
+
+	private Weapon makeSword() {
+		Weapon sword = new Weapon(new TextureRegionDrawable(ActorFactory.instance().icon()[9][3]), new Melee());
+		return sword;
+	}
+	private Weapon makeFireball() {
+		Weapon fireball = new Weapon(new TextureRegionDrawable(ActorFactory.instance().icon()[6][0]), new Fireball());
+		return fireball;
 	}
 
 

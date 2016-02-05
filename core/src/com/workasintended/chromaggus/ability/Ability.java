@@ -21,5 +21,6 @@ public interface Ability {
 	void setCastingProgress(float castingProgress);
 	boolean isCasting();
 	boolean stop();
+	Ability clone();
 
 }

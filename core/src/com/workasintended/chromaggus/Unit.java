@@ -102,11 +102,15 @@ public class Unit extends Group {
                 , this.getRotation());
 
         if (font != null && combat != null) {
+            float cooldown = combat.getPrimaryAbility()==null?
+                    0f: combat.getPrimaryAbility().getCooldownProgress();
+            float cast = combat.getPrimaryAbility()==null?
+                    0f: combat.getPrimaryAbility().getCooldownProgress();
             String state = String.format("%s/%s, %.0f, %.0f",
                     combat.getHp(),
                     combat.getMaxHp(),
-                    combat.getPrimaryAbility().getCooldownProgress(),
-                    combat.getPrimaryAbility().getCastingProgress());
+                    cooldown,
+                    cast);
             font.draw(batch, state, this.getX(), this.getY());
         }
         if (this.city != null) this.city.draw(batch);

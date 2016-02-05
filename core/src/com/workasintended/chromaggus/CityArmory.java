@@ -1,20 +1,14 @@
 package com.workasintended.chromaggus;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.workasintended.chromaggus.action.Wait;
-import com.workasintended.chromaggus.event.ShowCityWeaponEvent;
 import com.workasintended.chromaggus.event.TransferItemEvent;
-
-import java.util.List;
 
 /**
  * Created by mazimeng on 1/30/16.
@@ -25,7 +19,7 @@ public class CityArmory extends Table implements EventHandler{
 
     public CityArmory(int slotCount, Skin skin) {
         super();
-        this.defaults().size(32);
+//        this.defaults().size(32);
         this.crafts = new Craft[slotCount];
 
         for(int i=0; i<slotCount; ++i) {
@@ -90,9 +84,48 @@ public class CityArmory extends Table implements EventHandler{
     }
 
     public static class InventorySlot extends Container {
+        private DragAndDrop dragAndDrop = new DragAndDrop();
         public InventorySlot() {
             super();
             this.setTouchable(Touchable.enabled);
+            this.initDrag();
+            this.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    InventorySlot thisSlot = InventorySlot.this;
+                    super.clicked(event, x, y);
+                    System.out.println("inventory slot: " + thisSlot.getClass());
+
+                    if(thisSlot.getItem()!=null) thisSlot.fire(new EquipEvent(thisSlot.getItem()));
+                }
+            });
+        }
+
+        public Item getItem() {
+            return (Item)getActor();
+        }
+
+        private void initDrag() {
+            dragAndDrop.addSource(new DragAndDrop.Source(this) {
+                @Override
+                public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
+                    if(InventorySlot.this.getActor()==null) return null;
+                    Item item = (Item)InventorySlot.this.getActor();
+                    DragAndDrop.Payload payload = new DragAndDrop.Payload();
+                    payload.setDragActor(new Image(item.getDrawable()));
+                    //dragAndDrop.setDragActorPosition(-inventorySlot.getWidth()*0.5f, inventorySlot.getHeight()*0.5f);
+                    return payload;
+                }
+
+                @Override
+                public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
+                    super.dragStop(event, x, y, pointer, payload, target);
+//					Vector2 vec2 = GuiStage.this.stageToScreenCoordinates(new Vector2(event.getStageX(), event.getStageY()));
+//					vec2 = worldStage.screenToStageCoordinates(vec2);
+                    TransferItemEvent transferItemEvent = new TransferItemEvent(InventorySlot.this, new Vector2(event.getStageX(), event.getStageY()));
+                    Service.eventQueue().enqueue(transferItemEvent);
+                }
+            });
         }
     }
 
@@ -116,31 +149,15 @@ public class CityArmory extends Table implements EventHandler{
                 }
             }
         }
+
+        public void remoteItem(Item item) {
+            this.removeActor(item);
+        }
     }
 
     public static class Item extends Image {
-        private DragAndDrop dragAndDrop = new DragAndDrop();
         public Item(Drawable drawable) {
             super(drawable);
-            dragAndDrop.addSource(new DragAndDrop.Source(this) {
-                @Override
-                public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
-                    DragAndDrop.Payload payload = new DragAndDrop.Payload();
-                    payload.setDragActor(new Image(Item.this.getDrawable()));
-                    //dragAndDrop.setDragActorPosition(-inventorySlot.getWidth()*0.5f, inventorySlot.getHeight()*0.5f);
-                    return payload;
-                }
-
-                @Override
-                public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
-                    super.dragStop(event, x, y, pointer, payload, target);
-//					Vector2 vec2 = GuiStage.this.stageToScreenCoordinates(new Vector2(event.getStageX(), event.getStageY()));
-//					vec2 = worldStage.screenToStageCoordinates(vec2);
-                    Item item = (Item)getActor();
-                    TransferItemEvent transferItemEvent = new TransferItemEvent(item, new Vector2(event.getStageX(), event.getStageY()));
-                    Service.eventQueue().enqueue(transferItemEvent);
-                }
-            });
         }
         public Item clone() {
             return new Item(this.getDrawable());

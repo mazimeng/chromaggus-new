@@ -23,6 +23,8 @@ public abstract class OffensiveAbilityAdaptor implements Ability {
         this.target = target;
     }
 
+    public abstract Ability clone();
+
     @Override
     public void effect() {
         int exp = experience();

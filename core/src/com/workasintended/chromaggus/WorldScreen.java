@@ -194,9 +194,9 @@ public class WorldScreen implements Screen, EventHandler {
 			});
 
 
-			table.add(imageButton);
-			table.add(invalid);
-			table.add(valid);
+//			table.add(imageButton);
+//			table.add(invalid);
+//			table.add(valid);
 
 			/**
 			 * these are drag&drop example.
@@ -353,12 +353,16 @@ public class WorldScreen implements Screen, EventHandler {
             vec2 = stage.screenToStageCoordinates(vec2);
 
             actor = stage.hit(vec2.x, vec2.y, true);
-            if(actor != null && actor instanceof Unit) {
-                Unit unit = (Unit)actor;
-                if(unit.inventory!=null) {
-                    transferItemEvent.getItem().remove();
-                    unit.inventory.putItem(transferItemEvent.getItem());
-                }
+            if(actor != null) {
+				if(actor instanceof Unit) {
+					Unit unit = (Unit)actor;
+					if(unit.inventory!=null) {
+						CityArmory.InventorySlot slot = transferItemEvent.getSlot();
+						CityArmory.Item item = slot.getItem();
+						slot.removeActor(slot.getActor());
+						unit.inventory.putItem(item);
+					}
+				}
             }
         }
 

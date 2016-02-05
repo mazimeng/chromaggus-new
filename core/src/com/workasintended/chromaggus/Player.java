@@ -47,9 +47,6 @@ public class Player implements EventHandler {
         if(event.is(EventName.GAIN_GOLD)) {
             GainGoldEvent gainGoldEvent = event.cast(GainGoldEvent.class);
             this.gold += gainGoldEvent.getGold();
-            System.out.println(String.format("player gain gold: %s, %s",
-                    gainGoldEvent.getGold(),
-                    this.gold));
         }
 
         handleBuyItem(event);
