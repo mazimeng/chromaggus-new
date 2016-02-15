@@ -8,6 +8,7 @@ import com.workasintended.chromaggus.Unit;
  * Created by mazimeng on 1/22/16.
  */
 public class Melee extends OffensiveAbilityAdaptor {
+    private float power = 1.0f;
     public Melee() {
         super(null, null);
         setCastingTime(0.5f);
@@ -16,15 +17,35 @@ public class Melee extends OffensiveAbilityAdaptor {
         setCooldownProgress(1f);
     }
 
+    protected Melee(Melee melee) {
+        super(null, null);
+        this.setPower(melee.getPower());
+        this.setCastingTime(melee.getCastingTime());
+        this.setCastRange(melee.getCastRange());
+        this.setCooldown(melee.getCooldown());
+        this.setCooldownProgress(melee.getCooldownProgress());
+    }
+
     @Override
     public Ability clone() {
-        return new Melee();
+        Melee clone = new Melee(this);
+
+        return clone;
     }
 
     @Override
     public void effect() {
-        getTarget().combat.takeDamage(getUser().combat.getStrength());
+        getTarget().combat.takeDamage((int)(getUser().combat.getStrength() * power));
         super.effect();
+    }
+
+
+    public float getPower() {
+        return power;
+    }
+
+    public void setPower(float power) {
+        this.power = power;
     }
 
     @Override

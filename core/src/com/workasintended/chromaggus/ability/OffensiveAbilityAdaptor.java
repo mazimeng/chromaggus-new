@@ -156,4 +156,8 @@ public abstract class OffensiveAbilityAdaptor implements Ability {
     public boolean stop() {
         return target.dead();
     }
+
+    public float getCooldown() {
+        return cooldown;
+    }
 }

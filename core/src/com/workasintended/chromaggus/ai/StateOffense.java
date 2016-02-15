@@ -31,7 +31,11 @@ public class StateOffense extends AiComponent {
     public void update(float delta) {
         super.update(delta);
 
-        if(target.dead() || !inSafeRadius()) getSelf().ai = new StateReturn(this, initialPosition);
+        if(target.dead() || !inSafeRadius()) {
+            if(!exit()) {
+                getSelf().ai = new StateReturn(this, initialPosition);
+            }
+        }
     }
 
     protected boolean inSafeRadius() {

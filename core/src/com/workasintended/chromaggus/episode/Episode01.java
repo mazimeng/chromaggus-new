@@ -199,13 +199,25 @@ public class Episode01 {
 		CityArmory cityArmory = new CityArmory(slots, skin);
 		city.city.setArmory(cityArmory);
 
+		{
+			Melee melee = new Melee();
+			melee.setPower(1.0f);
+			Weapon weapon = makeSword(ActorFactory.instance().icon()[9][3], melee);
+			cityArmory.addCraft(weapon);
 
-		cityArmory.addCraft(makeSword());
+		}
+		{
+			Melee melee = new Melee();
+			melee.setPower(2f);
+			Weapon weapon = makeSword(ActorFactory.instance().icon()[24][5], melee);
+			cityArmory.addCraft(weapon);
+
+		}
 		cityArmory.addCraft(makeFireball());
 	}
 
-	private Weapon makeSword() {
-		Weapon sword = new Weapon(new TextureRegionDrawable(ActorFactory.instance().icon()[9][3]), new Melee());
+	private Weapon makeSword(TextureRegion icon, Melee melee) {
+		Weapon sword = new Weapon(new TextureRegionDrawable(icon), melee);
 		return sword;
 	}
 	private Weapon makeFireball() {

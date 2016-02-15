@@ -153,7 +153,6 @@ public class WorldStage extends Stage implements EventHandler {
             dir.y = MathUtils.clamp(dir.y, -1, 1);
             cameraMovement.x = (cameraMovement.x + dir.x);
             cameraMovement.y = (cameraMovement.y + dir.y);
-            System.out.println(String.format("dir(%s), cam(%s)", dir, cameraMovement));
 
             return;
         }
