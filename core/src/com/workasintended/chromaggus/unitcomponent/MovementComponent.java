@@ -2,6 +2,7 @@ package com.workasintended.chromaggus.unitcomponent;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.workasintended.chromaggus.InterruptionActorEvent;
 import com.workasintended.chromaggus.Unit;
 import com.workasintended.chromaggus.action.MoveToPosition;
 
@@ -17,5 +18,7 @@ public class MovementComponent extends UnitComponent{
         Action action = new MoveToPosition(position, getSelf().getSpeed());
         getSelf().clearActions();
         getSelf().addAction(action);
+
+        getSelf().fire(new InterruptionActorEvent());
     }
 }

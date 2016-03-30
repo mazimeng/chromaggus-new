@@ -17,7 +17,7 @@ public class SeizeAction extends EventAction {
 
     @Override
     public boolean handle(Event event) {
-        boolean handled = (event instanceof TakeDamageActorEvent);
+        boolean handled = (event instanceof ActionInterruption);
 
         if(handled) {
             System.out.println("seize interrupted");
