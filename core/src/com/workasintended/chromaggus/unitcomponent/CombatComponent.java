@@ -2,6 +2,7 @@ package com.workasintended.chromaggus.unitcomponent;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.workasintended.chromaggus.Service;
@@ -9,6 +10,8 @@ import com.workasintended.chromaggus.Unit;
 import com.workasintended.chromaggus.Weapon;
 import com.workasintended.chromaggus.ability.Ability;
 import com.workasintended.chromaggus.action.MoveToUnit;
+import com.workasintended.chromaggus.action.SeizeAction;
+import com.workasintended.chromaggus.action.TakeDamageActorEvent;
 import com.workasintended.chromaggus.action.UseAbility;
 import com.workasintended.chromaggus.event.TakeDamageEvent;
 
@@ -26,6 +29,8 @@ public class CombatComponent extends UnitComponent {
     private float attributeGrowth = 1.2f;
     private float experienceGrowthFromAttack = 0.2f;
     private float experienceGrowthFromKill = 0.8f;
+
+    private boolean seizing = false;
 
     //private Ability primaryAbility;
     private Weapon primaryWeapon;
@@ -73,10 +78,19 @@ public class CombatComponent extends UnitComponent {
         getSelf().addAction(repeatAction);
     }
 
+    public void attack(Vector2 location) {
+
+    }
+
+    public void seize(Unit city) {
+        getSelf().addAction(new SeizeAction());
+    }
+
     public void takeDamage(int damage) {
         this.setHp(this.getHp() - damage);
 
         Service.eventQueue().enqueue(new TakeDamageEvent(this.getSelf()));
+        this.getSelf().fire(new TakeDamageActorEvent());
     }
 
 

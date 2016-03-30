@@ -133,13 +133,19 @@ public class AndroidInputHandler extends ActorGestureListener {
 
                 Unit unit = (Unit)actor;
                 if (selectedUnit != unit) {
-                    if(unit.city==null &&
-                            !unit.getFaction().isFriend(selectedUnit.getFaction())) {
+//                    if(unit.city==null &&
+//                            !unit.getFaction().isFriend(selectedUnit.getFaction())) {
+//                        Service.eventQueue().enqueue(new AttackUnitEvent(selectedUnit, (Unit) actor));
+//                    }
+//                    else if(unit.city!=null &&
+//                            unit.getFaction().isFriend(selectedUnit.getFaction()) &&
+//                            selectedUnit.development!=null) {
+//                    }
+                    if(unit.city==null) {
                         Service.eventQueue().enqueue(new AttackUnitEvent(selectedUnit, (Unit) actor));
                     }
-                    else if(unit.city!=null &&
-                            unit.getFaction().isFriend(selectedUnit.getFaction()) &&
-                            selectedUnit.development!=null) {
+                    else if(unit.city != null && selectedUnit.combat != null) {
+                        selectedUnit.combat.seize(unit);
                     }
                 }
             }
