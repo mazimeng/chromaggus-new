@@ -10,6 +10,7 @@ import com.workasintended.chromaggus.Service;
 import com.workasintended.chromaggus.Unit;
 import com.workasintended.chromaggus.Weapon;
 import com.workasintended.chromaggus.ability.Ability;
+import com.workasintended.chromaggus.ability.Seize;
 import com.workasintended.chromaggus.action.*;
 import com.workasintended.chromaggus.event.TakeDamageEvent;
 
@@ -27,8 +28,6 @@ public class CombatComponent extends UnitComponent {
     private float attributeGrowth = 1.2f;
     private float experienceGrowthFromAttack = 0.2f;
     private float experienceGrowthFromKill = 0.8f;
-
-    private boolean seizing = false;
 
     //private Ability primaryAbility;
     private Weapon primaryWeapon;
@@ -52,17 +51,13 @@ public class CombatComponent extends UnitComponent {
     public void attack(Unit target) {
         if (target == getSelf()) return;
 
-        if(primaryWeapon==null || primaryWeapon.getAbility() == null) return;
+        if (primaryWeapon == null || primaryWeapon.getAbility() == null) return;
         Ability primaryAbility = primaryWeapon.getAbility();
 
         primaryAbility.setTarget(target);
         primaryAbility.setUser(getSelf());
 
         UseAbility useAbility = new UseAbility(primaryAbility);
-
-//        RepeatAction repeatAttack = new RepeatAction();
-//        repeatAttack.setAction(new Attack(getSelf(), target));
-//        repeatAttack.setCount(RepeatAction.FOREVER);
 
         SequenceAction sequenceAction = new SequenceAction(
                 new MoveToUnit(target, getSelf().getSpeed(), primaryAbility.getCastRange()),
@@ -74,8 +69,6 @@ public class CombatComponent extends UnitComponent {
 
         getSelf().clearActions();
         getSelf().addAction(repeatAction);
-
-        getSelf().fire(new InterruptionActorEvent());
     }
 
     public void attack(Vector2 location) {
@@ -83,17 +76,25 @@ public class CombatComponent extends UnitComponent {
     }
 
     public void seize(Unit city) {
-        getSelf().clearActions();
-        getSelf().addAction(new SeizeAction());
+        if (city == getSelf()) return;
+        if (city.city == null) return;
 
-        getSelf().fire(new InterruptionActorEvent());
+        Seize seize = new Seize(getSelf(), city);
+
+        UseAbility useAbility = new UseAbility(seize);
+
+        SequenceAction sequenceAction = new SequenceAction(
+                new MoveToUnit(city, getSelf().getSpeed(), seize.getCastRange()),
+                useAbility);
+
+        getSelf().clearActions();
+        getSelf().addAction(sequenceAction);
     }
 
     public void takeDamage(int damage) {
         this.setHp(this.getHp() - damage);
 
         Service.eventQueue().enqueue(new TakeDamageEvent(this.getSelf()));
-        this.getSelf().fire(new TakeDamageActorEvent());
     }
 
 
@@ -222,7 +223,7 @@ public class CombatComponent extends UnitComponent {
     }
 
     public Ability getPrimaryAbility() {
-        if(this.primaryWeapon!=null) {
+        if (this.primaryWeapon != null) {
             return this.primaryWeapon.getAbility();
         }
         return null;
@@ -251,7 +252,7 @@ public class CombatComponent extends UnitComponent {
     public void setIntelligence(int intelligence) {
         this.intelligence = intelligence;
     }
-    
+
     public Weapon getPrimaryWeapon() {
         return primaryWeapon;
     }
