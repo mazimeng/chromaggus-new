@@ -29,6 +29,8 @@ public class CombatComponent extends UnitComponent {
     private float experienceGrowthFromAttack = 0.2f;
     private float experienceGrowthFromKill = 0.8f;
 
+    private float sightRadius = 64;
+
     //private Ability primaryAbility;
     private Weapon primaryWeapon;
 
@@ -259,5 +261,13 @@ public class CombatComponent extends UnitComponent {
 
     public void setPrimaryWeapon(Weapon primaryWeapon) {
         this.primaryWeapon = primaryWeapon;
+    }
+
+    public float getSightRadius() {
+        return sightRadius;
+    }
+
+    public void setSightRadius(float sightRadius) {
+        this.sightRadius = sightRadius;
     }
 }
