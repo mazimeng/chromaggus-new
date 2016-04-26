@@ -14,7 +14,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -22,7 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.workasintended.chromaggus.*;
 import com.workasintended.chromaggus.ability.Fireball;
 import com.workasintended.chromaggus.ability.Melee;
-import com.workasintended.chromaggus.ai.StateDefense;
+import com.workasintended.chromaggus.ai.AiComponent;
 import com.workasintended.chromaggus.pathfinding.Grid;
 import com.workasintended.chromaggus.pathfinding.GridMap;
 import com.workasintended.chromaggus.unitcomponent.*;
@@ -44,7 +43,6 @@ public class Episode01 {
 		BitmapFont font = new BitmapFont();
 		font.getData().setScale(0.5f, 0.5f);
 
-		Texture textureCity = new Texture("city.png");
 		Texture textureCursor = new Texture("cursor.png");
 		Texture char00 = new Texture("char00.png");
 		Texture char01 = new Texture("char01.png");
@@ -56,7 +54,7 @@ public class Episode01 {
 				char00.getWidth() / 12, char00.getHeight() / 8);
 		TextureRegion[][] char02Frames = TextureRegion.split(char02,
 				char00.getWidth() / 12, char00.getHeight() / 8);
-		textureCity = textureCursor;
+		Texture textureCity = textureCursor;
 
 		{
 			{
@@ -65,6 +63,13 @@ public class Episode01 {
 				stage.addActor(city);
 				makeCityArmory(city);
 			}
+
+			{
+				Unit city = this.makeCity(stage, font, new TextureRegion(textureCity), Faction.FACTION_B);
+				city.setPosition(25*32, 10*32);
+				stage.addActor(city);
+			}
+
 			stage.getGridMap().grid(8, 7).state= Grid.State.Blocked;
 
 			{
@@ -94,7 +99,7 @@ public class Episode01 {
 				frames[1] = char00Frames[4][2];
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(210, 720);
-				unit.ai = new StateDefense(unit, stage);
+//				unit.ai = new StateDefense(unit, stage);
 				unit.combat.setStrength(8);
 				unit.combat.setPrimaryWeapon(makeFireball());
 				stage.addActor(unit);
@@ -108,7 +113,8 @@ public class Episode01 {
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(768, 470);
 				unit.combat.setStrength(12);
-				unit.ai = new StateDefense(unit, stage);
+//				unit.ai = new StateDefense(unit, stage);
+				unit.ai = new AiComponent(unit, stage);
 				stage.addActor(unit);
 			}
 			{
@@ -119,7 +125,7 @@ public class Episode01 {
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(880, 380);
 				unit.combat.setStrength(15);
-				unit.ai = new StateDefense(unit, stage);
+//				unit.ai = new StateDefense(unit, stage);
 				stage.addActor(unit);
 			}
 			{
@@ -129,7 +135,7 @@ public class Episode01 {
 				frames[1] = char02Frames[0][2];
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(870, 320);
-				unit.ai = new StateDefense(unit, stage);
+//				unit.ai = new StateDefense(unit, stage);
 				stage.addActor(unit);
 			}
 

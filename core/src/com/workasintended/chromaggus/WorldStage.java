@@ -105,6 +105,18 @@ public class WorldStage extends Stage implements EventHandler {
         return units;
     }
 
+    public Iterable<Unit> getUnits() {
+        LinkedList<Unit> units = new LinkedList<Unit>();
+        for (Actor actor : this.getActors()) {
+            Unit unit = (actor instanceof Unit) ? (Unit) actor : null;
+            if (unit == null) continue;
+
+            units.add(unit);
+        }
+
+        return units;
+    }
+
     public GridMap getGridMap() {
         return gridMap;
     }

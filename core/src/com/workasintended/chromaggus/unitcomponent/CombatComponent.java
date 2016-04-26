@@ -31,10 +31,7 @@ public class CombatComponent extends UnitComponent {
 
     private float sightRadius = 64;
 
-    public final static int IDLE = 0;
-    public final static int BUSY = 1;
-    public final static int INTERRUPTABLE = 2;
-    private int status = IDLE;
+
 
     //private Ability primaryAbility;
     private Weapon primaryWeapon;
@@ -276,11 +273,4 @@ public class CombatComponent extends UnitComponent {
         this.sightRadius = sightRadius;
     }
 
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
 }
