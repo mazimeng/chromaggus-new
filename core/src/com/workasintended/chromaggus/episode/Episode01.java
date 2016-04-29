@@ -1,6 +1,13 @@
 package com.workasintended.chromaggus.episode;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.btree.BehaviorTree;
+import com.badlogic.gdx.ai.btree.branch.DynamicGuardSelector;
+import com.badlogic.gdx.ai.btree.branch.Parallel;
+import com.badlogic.gdx.ai.btree.decorator.Invert;
+import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibrary;
+import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibraryManager;
+import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -22,6 +29,7 @@ import com.workasintended.chromaggus.*;
 import com.workasintended.chromaggus.ability.Fireball;
 import com.workasintended.chromaggus.ability.Melee;
 import com.workasintended.chromaggus.ai.AiComponent;
+import com.workasintended.chromaggus.ai.behavior.*;
 import com.workasintended.chromaggus.pathfinding.Grid;
 import com.workasintended.chromaggus.pathfinding.GridMap;
 import com.workasintended.chromaggus.unitcomponent.*;
@@ -35,6 +43,8 @@ public class Episode01 {
 
 	public Episode01(Skin skin) {
 		this.skin = skin;
+
+		this.initBehaviorTree();
 	}
 	public void build(WorldStage stage, Table guiLayout) {
 		float w = Gdx.graphics.getWidth();
@@ -100,6 +110,7 @@ public class Episode01 {
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(210, 720);
 //				unit.ai = new StateDefense(unit, stage);
+				makeAi(unit);
 				unit.combat.setStrength(8);
 				unit.combat.setPrimaryWeapon(makeFireball());
 				stage.addActor(unit);
@@ -114,7 +125,7 @@ public class Episode01 {
 				unit.setPosition(768, 470);
 				unit.combat.setStrength(12);
 //				unit.ai = new StateDefense(unit, stage);
-				unit.ai = new AiComponent(unit, stage);
+
 				stage.addActor(unit);
 			}
 			{
@@ -245,5 +256,43 @@ public class Episode01 {
         unitCity.city = component;
         unitCity.setSprite(sprite);
         return unitCity;
+	}
+
+	protected void makeAi(Unit unit) {
+		Blackboard blackboard = new Blackboard();
+		blackboard.setSelf(unit);
+
+		BehaviorTreeLibrary library = BehaviorTreeLibraryManager.getInstance().getLibrary();
+
+		BehaviorTree<Blackboard> tree = library.createBehaviorTree("move", blackboard);
+		unit.ai = new AiComponent(unit, tree);
+	}
+
+	private void initBehaviorTree() {
+		BehaviorTreeLibraryManager libraryManager = BehaviorTreeLibraryManager.getInstance();
+		BehaviorTreeLibrary library = new BehaviorTreeLibrary(BehaviorTreeParser.DEBUG_HIGH);
+		libraryManager.setLibrary(library);
+
+		{
+			TargetExists targetExists = new TargetExists();
+			TargetWithinRadius targetWithinRadius = new TargetWithinRadius();
+			MoveToTarget moveToTarget = new MoveToTarget();
+			ScanNearbyEnemy scanNearbyEnemy = new ScanNearbyEnemy();
+			DynamicGuardSelector<Blackboard> blackboardDynamicGuardSelector = new DynamicGuardSelector<>();
+			Parallel<Blackboard> parallel = new Parallel<>(Parallel.Policy.Sequence);
+
+			targetWithinRadius.setGuard(targetExists);
+			moveToTarget.setGuard(new Invert<>(targetWithinRadius));
+
+			blackboardDynamicGuardSelector.addChild(moveToTarget);
+
+			parallel.addChild(scanNearbyEnemy);
+			parallel.addChild(blackboardDynamicGuardSelector);
+
+			BehaviorTree<Blackboard> move = new BehaviorTree<Blackboard>(parallel);
+
+			library.registerArchetypeTree("move", move);
+		}
+
 	}
 }

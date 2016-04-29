@@ -2,9 +2,11 @@ package com.workasintended.chromaggus.unitcomponent;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.workasintended.chromaggus.InterruptionActorEvent;
 import com.workasintended.chromaggus.Unit;
 import com.workasintended.chromaggus.action.MoveToPosition;
+import com.workasintended.chromaggus.action.MoveToUnit;
 
 /**
  * Created by mazimeng on 7/18/15.
@@ -20,5 +22,13 @@ public class MovementComponent extends UnitComponent{
         getSelf().addAction(action);
 
         getSelf().fire(new InterruptionActorEvent());
+    }
+    public void followUnit(Unit target) {
+        MoveToUnit moveToUnit = new MoveToUnit(target, getSelf().getSpeed(), 32);
+        RepeatAction repeatAction = new RepeatAction();
+        repeatAction.setCount(RepeatAction.FOREVER);
+        repeatAction.setAction(moveToUnit);
+        getSelf().clearActions();
+        getSelf().addAction(repeatAction);
     }
 }
