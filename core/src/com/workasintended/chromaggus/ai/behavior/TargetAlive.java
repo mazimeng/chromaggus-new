@@ -7,19 +7,13 @@ import com.workasintended.chromaggus.Unit;
 /**
  * Created by mazimeng on 4/28/16.
  */
-public class StopDoingEverything extends LeafTask<Blackboard> {
-    public StopDoingEverything() {
-//        setGuard(new TargetExists());
-    }
-
+public class TargetAlive extends LeafTask<Blackboard> {
     @Override
     public Status execute() {
-        Unit self = getObject().getSelf();
-        self.clearActions();
+        Unit target = getObject().getTarget();
 
-        getObject().setTarget(null);
-
-        return Status.SUCCEEDED;
+        return target.combat.getHp()>0?
+                Status.SUCCEEDED: Status.FAILED;
     }
 
     @Override

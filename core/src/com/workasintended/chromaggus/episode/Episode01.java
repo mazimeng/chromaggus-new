@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.ai.btree.branch.DynamicGuardSelector;
 import com.badlogic.gdx.ai.btree.branch.Parallel;
+import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibrary;
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibraryManager;
@@ -109,6 +110,7 @@ public class Episode01 {
 				frames[1] = char00Frames[4][2];
 				Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
 				unit.setPosition(210, 720);
+				unit.setSpeed(16);
 //				unit.ai = new StateDefense(unit, stage);
 				makeAi(unit);
 				unit.combat.setStrength(8);
@@ -264,7 +266,7 @@ public class Episode01 {
 
 		BehaviorTreeLibrary library = BehaviorTreeLibraryManager.getInstance().getLibrary();
 
-		BehaviorTree<Blackboard> tree = library.createBehaviorTree("move", blackboard);
+		BehaviorTree<Blackboard> tree = library.createBehaviorTree("selfDefense", blackboard);
 		unit.ai = new AiComponent(unit, tree);
 	}
 
@@ -275,23 +277,38 @@ public class Episode01 {
 
 		{
 			TargetExists targetExists = new TargetExists();
-			TargetWithinRadius targetWithinRadius = new TargetWithinRadius();
+			TargetWithinAttackRadius targetWithinAttackRadiusBeforeAttacking = new TargetWithinAttackRadius();
+			TargetWithinAttackRadius targetWithinAttackRadiusBeforeMoving = new TargetWithinAttackRadius();
 			MoveToTarget moveToTarget = new MoveToTarget();
 			ScanNearbyEnemy scanNearbyEnemy = new ScanNearbyEnemy();
 			DynamicGuardSelector<Blackboard> blackboardDynamicGuardSelector = new DynamicGuardSelector<>();
 			Parallel<Blackboard> parallel = new Parallel<>(Parallel.Policy.Sequence);
+            StopDoingEverything stop = new StopDoingEverything();
+            TargetAlive targetAlive = new TargetAlive();
 
-			targetWithinRadius.setGuard(targetExists);
-			moveToTarget.setGuard(new Invert<>(targetWithinRadius));
+			AttackTarget attackTarget = new AttackTarget();
+			targetWithinAttackRadiusBeforeAttacking.setGuard(new TargetExists());
+			attackTarget.setGuard(targetWithinAttackRadiusBeforeAttacking);
+
+			targetWithinAttackRadiusBeforeMoving.setGuard(new TargetExists());
+			moveToTarget.setGuard(new Invert<>(targetWithinAttackRadiusBeforeMoving));
 
 			blackboardDynamicGuardSelector.addChild(moveToTarget);
 
-			parallel.addChild(scanNearbyEnemy);
+            Selector<Blackboard> blackboardSelector = new Selector<>();
+            blackboardSelector.addChild(scanNearbyEnemy);
+            blackboardSelector.addChild(new Invert<Blackboard>(stop));
+            targetAlive.setGuard(new TargetExists());
+            attackTarget.setGuard(targetAlive);
+
+
+			parallel.addChild(blackboardSelector);
 			parallel.addChild(blackboardDynamicGuardSelector);
+			parallel.addChild(attackTarget);
 
 			BehaviorTree<Blackboard> move = new BehaviorTree<Blackboard>(parallel);
 
-			library.registerArchetypeTree("move", move);
+			library.registerArchetypeTree("selfDefense", move);
 		}
 
 	}

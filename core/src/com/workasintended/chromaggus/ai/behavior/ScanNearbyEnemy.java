@@ -16,12 +16,17 @@ public class ScanNearbyEnemy extends LeafTask<Blackboard> {
     public Status execute() {
         final Blackboard b = getObject();
         WorldStage worldStage = b.getWorldStage();
-        Unit enemy = b.findNearest(worldStage.getUnits(), new Predicate<Unit>() {
-            @Override
-            public boolean evaluate(Unit u) {
-                return u.combat!=null && u.getFaction()!=b.getSelf().getFaction();
-            }
-        });
+        Unit enemy = b.getTarget();
+
+        if(enemy == null) {
+            enemy = b.findNearest(worldStage.getUnits(), new Predicate<Unit>() {
+                @Override
+                public boolean evaluate(Unit u) {
+                    return u.combat!=null && u.getFaction()!=b.getSelf().getFaction();
+                }
+            });
+        }
+
 
         if(enemy!=null) {
             Unit self = getObject().getSelf();

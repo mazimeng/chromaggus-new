@@ -19,7 +19,7 @@ public class Fireball extends OffensiveAbilityAdaptor {
     public Fireball() {
         super(null, null);
         setCastingTime(2f);
-        setCastRange(128f);
+        setCastRange(96f);
         setCooldown(0f);
         setCooldownProgress(0f);
     }

@@ -12,7 +12,6 @@ import com.workasintended.chromaggus.WorldStage;
  */
 public class MoveToTarget extends LeafTask<Blackboard> {
     public MoveToTarget() {
-//        setGuard(new TargetExists());
     }
 
     @Override

@@ -8,8 +8,7 @@ import com.workasintended.chromaggus.Unit;
 /**
  * Created by mazimeng on 4/28/16.
  */
-public class TargetWithinRadius extends LeafTask<Blackboard> {
-    private float radius = 32;
+public abstract class TargetWithinRadius extends LeafTask<Blackboard> {
     @Override
     public Status execute() {
         Unit target = getObject().getTarget();
@@ -17,7 +16,7 @@ public class TargetWithinRadius extends LeafTask<Blackboard> {
 
         float d = Vector2.dst2(target.getX(), target.getY(), self.getX(), self.getY());
 
-        return d <= radius*radius?
+        return d <= getRadius()*getRadius()?
                 Status.SUCCEEDED: Status.FAILED;
     }
 
@@ -25,4 +24,6 @@ public class TargetWithinRadius extends LeafTask<Blackboard> {
     protected Task<Blackboard> copyTo(Task<Blackboard> task) {
         return task;
     }
+
+    abstract protected float getRadius();
 }
