@@ -5,6 +5,7 @@ import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.ai.btree.branch.DynamicGuardSelector;
 import com.badlogic.gdx.ai.btree.branch.Parallel;
 import com.badlogic.gdx.ai.btree.branch.Selector;
+import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.badlogic.gdx.ai.btree.decorator.Invert;
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibrary;
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibraryManager;
@@ -114,6 +115,7 @@ public class Episode01 {
 //				unit.ai = new StateDefense(unit, stage);
 				makeAi(unit);
 				unit.combat.setStrength(8);
+				unit.combat.setIntelligence(24);
 				unit.combat.setPrimaryWeapon(makeFireball());
 				stage.addActor(unit);
 			}
@@ -276,39 +278,58 @@ public class Episode01 {
 		libraryManager.setLibrary(library);
 
 		{
-			TargetExists targetExists = new TargetExists();
-			TargetWithinAttackRadius targetWithinAttackRadiusBeforeAttacking = new TargetWithinAttackRadius();
-			TargetWithinAttackRadius targetWithinAttackRadiusBeforeMoving = new TargetWithinAttackRadius();
-			MoveToTarget moveToTarget = new MoveToTarget();
-			ScanNearbyEnemy scanNearbyEnemy = new ScanNearbyEnemy();
-			DynamicGuardSelector<Blackboard> blackboardDynamicGuardSelector = new DynamicGuardSelector<>();
-			Parallel<Blackboard> parallel = new Parallel<>(Parallel.Policy.Sequence);
-            StopDoingEverything stop = new StopDoingEverything();
-            TargetAlive targetAlive = new TargetAlive();
+			FindThreat findThreat = new FindThreat();
+            Sequence<Blackboard> findThreatSequence = new Sequence<>();
+            findThreatSequence.addChild(findThreat);
+            findThreatSequence.addChild(new TargetIsAThreat());
 
-			AttackTarget attackTarget = new AttackTarget();
-			targetWithinAttackRadiusBeforeAttacking.setGuard(new TargetExists());
-			attackTarget.setGuard(targetWithinAttackRadiusBeforeAttacking);
+            Selector<Blackboard> threatSelector = new Selector<>();
+            threatSelector.addChild(findThreatSequence);
+            threatSelector.addChild(new StopEverything());
 
-			targetWithinAttackRadiusBeforeMoving.setGuard(new TargetExists());
-			moveToTarget.setGuard(new Invert<>(targetWithinAttackRadiusBeforeMoving));
+            Sequence<Blackboard> attackGuardSequence = new Sequence<>();
+            attackGuardSequence.addChild(new TargetExists());
+            attackGuardSequence.addChild(new TargetIsAThreat());
+            attackGuardSequence.addChild(new TargetWithinAttackRadius());
 
-			blackboardDynamicGuardSelector.addChild(moveToTarget);
+            AttackTarget attackTarget = new AttackTarget();
+            attackTarget.setGuard(attackGuardSequence);
 
-            Selector<Blackboard> blackboardSelector = new Selector<>();
-            blackboardSelector.addChild(scanNearbyEnemy);
-            blackboardSelector.addChild(new Invert<Blackboard>(stop));
-            targetAlive.setGuard(new TargetExists());
-            attackTarget.setGuard(targetAlive);
+            DynamicGuardSelector<Blackboard> attackSelector = new DynamicGuardSelector<>();
+            attackSelector.addChild(attackTarget);
+
+            Sequence<Blackboard> moveToTargetGuardSequence = new Sequence<>();
+            moveToTargetGuardSequence.addChild(new TargetExists());
+            moveToTargetGuardSequence.addChild(new TargetIsAThreat());
+            moveToTargetGuardSequence.addChild(new Invert<Blackboard>(new TargetWithinAttackRadius()));
+
+            MoveToTarget moveToTarget = new MoveToTarget();
+            moveToTarget.setGuard(moveToTargetGuardSequence);
+
+            DynamicGuardSelector<Blackboard> defenseSelector = new DynamicGuardSelector<>();
+            defenseSelector.addChild(moveToTarget);
+            defenseSelector.addChild(attackSelector);
 
 
-			parallel.addChild(blackboardSelector);
-			parallel.addChild(blackboardDynamicGuardSelector);
-			parallel.addChild(attackTarget);
+            Sequence<Blackboard> findCity = new Sequence<>();
+            findCity.addChild(new FindClosestCity());
 
-			BehaviorTree<Blackboard> move = new BehaviorTree<Blackboard>(parallel);
+            Sequence<Blackboard> moveToCityGuardSequence = new Sequence<>();
+            moveToCityGuardSequence.addChild(new TargetExists());
+            moveToCityGuardSequence.addChild(new Invert<Blackboard>(new TargetWithinRadius(32)));
 
-			library.registerArchetypeTree("selfDefense", move);
+            MoveToTarget moveToCity = new MoveToTarget();
+            moveToTarget.setGuard(moveToCityGuardSequence);
+
+
+            Parallel<Blackboard> parallel = new Parallel<>(Parallel.Policy.Sequence);
+            parallel.addChild(threatSelector);
+			parallel.addChild(defenseSelector);
+
+			BehaviorTree<Blackboard> tree = new BehaviorTree<Blackboard>(new Parallel<>(Parallel.Policy.Selector,
+                    parallel, new Sequence<Blackboard>(findCity, moveToCity)));
+
+			library.registerArchetypeTree("selfDefense", tree);
 		}
 
 	}

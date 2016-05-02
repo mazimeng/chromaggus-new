@@ -7,8 +7,8 @@ import com.workasintended.chromaggus.Unit;
 /**
  * Created by mazimeng on 4/28/16.
  */
-public class StopDoingEverything extends LeafTask<Blackboard> {
-    public StopDoingEverything() {
+public class StopEverything extends LeafTask<Blackboard> {
+    public StopEverything() {
 //        setGuard(new TargetExists());
     }
 

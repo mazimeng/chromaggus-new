@@ -8,7 +8,16 @@ import com.workasintended.chromaggus.Unit;
 /**
  * Created by mazimeng on 4/28/16.
  */
-public abstract class TargetWithinRadius extends LeafTask<Blackboard> {
+public class TargetWithinRadius extends LeafTask<Blackboard> {
+    private float radius = 32;
+
+    public TargetWithinRadius(float radius) {
+        this.radius = radius;
+    }
+
+    public TargetWithinRadius() {
+    }
+
     @Override
     public Status execute() {
         Unit target = getObject().getTarget();
@@ -25,5 +34,7 @@ public abstract class TargetWithinRadius extends LeafTask<Blackboard> {
         return task;
     }
 
-    abstract protected float getRadius();
+    protected float getRadius() {
+        return radius;
+    }
 }

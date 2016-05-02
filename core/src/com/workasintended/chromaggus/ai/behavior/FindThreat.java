@@ -10,7 +10,7 @@ import com.workasintended.chromaggus.WorldStage;
 /**
  * Created by mazimeng on 4/28/16.
  */
-public class ScanNearbyEnemy extends LeafTask<Blackboard> {
+public class FindThreat extends LeafTask<Blackboard> {
     private float radius = 128;
     @Override
     public Status execute() {
@@ -22,17 +22,17 @@ public class ScanNearbyEnemy extends LeafTask<Blackboard> {
             enemy = b.findNearest(worldStage.getUnits(), new Predicate<Unit>() {
                 @Override
                 public boolean evaluate(Unit u) {
-                    return u.combat!=null && u.getFaction()!=b.getSelf().getFaction();
+                    return u.combat!=null && u.getFaction()!=b.getSelf().getFaction()
+                            && u.combat.getHp()>0;
                 }
             });
         }
 
-
-        if(enemy!=null) {
-            Unit self = getObject().getSelf();
-            float d2 = Vector2.dst2(enemy.getX(), enemy.getY(), self.getX(), self.getY());
-            if(d2 > radius*radius) enemy = null;
-        }
+//        if(enemy!=null) {
+//            Unit self = getObject().getSelf();
+//            float d2 = Vector2.dst2(enemy.getX(), enemy.getY(), self.getX(), self.getY());
+//            if(d2 > radius*radius) enemy = null;
+//        }
 
         b.setTarget(enemy);
 
