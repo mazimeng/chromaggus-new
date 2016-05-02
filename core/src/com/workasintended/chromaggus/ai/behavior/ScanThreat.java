@@ -10,39 +10,31 @@ import com.workasintended.chromaggus.WorldStage;
 /**
  * Created by mazimeng on 4/28/16.
  */
-public class FindThreat extends LeafTask<Blackboard> {
+public class ScanThreat extends LeafTask<Blackboard> {
     private float radius = 128;
     @Override
     public Status execute() {
         final Blackboard b = getObject();
         WorldStage worldStage = b.getWorldStage();
-        Unit target = b.getTarget();
 
-        Unit enemy = null;
-        if(target == null || target.getFaction()==b.getSelf().getFaction()) {
-            enemy = b.findNearest(worldStage.getUnits(), new Predicate<Unit>() {
-                @Override
-                public boolean evaluate(Unit u) {
-                    return u.combat!=null
-                            && u.getFaction()!=b.getSelf().getFaction()
-                            && u.combat.getHp()>0;
-                }
-            });
-        }
-        else {
-            enemy = target;
-        }
+        Unit enemy = b.findNearest(worldStage.getUnits(), new Predicate<Unit>() {
+            @Override
+            public boolean evaluate(Unit u) {
+                return u.combat!=null
+                        && u.getFaction()!=b.getSelf().getFaction()
+                        && u.combat.getHp()>0;
+            }
+        });
 
         if(enemy!=null) {
             Unit self = getObject().getSelf();
             float d2 = Vector2.dst2(enemy.getX(), enemy.getY(), self.getX(), self.getY());
             if(d2 <= radius*radius) {
-                b.setTarget(enemy);
+                b.setLastSeenEnemy(enemy);
                 return Status.SUCCEEDED;
             }
         }
 
-        b.setTarget(null);
         return Status.FAILED;
     }
 

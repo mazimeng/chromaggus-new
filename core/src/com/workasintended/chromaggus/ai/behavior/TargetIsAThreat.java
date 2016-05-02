@@ -10,7 +10,7 @@ import com.workasintended.chromaggus.WorldStage;
  * Created by mazimeng on 5/2/16.
  */
 public class TargetIsAThreat extends LeafTask<Blackboard> {
-    private float radius = 128;
+    private float radius = 160;
 
     @Override
     public Status execute() {
@@ -22,7 +22,7 @@ public class TargetIsAThreat extends LeafTask<Blackboard> {
             Unit self = getObject().getSelf();
             float d2 = Vector2.dst2(enemy.getX(), enemy.getY(), self.getX(), self.getY());
             threat = d2 <= radius*radius;
-            threat = threat && enemy.combat.getHp()>0;
+            threat = threat && enemy.combat != null && enemy.getFaction() != self.getFaction() && enemy.combat.getHp()>0;
         }
 
         return threat? Status.SUCCEEDED: Status.FAILED;
