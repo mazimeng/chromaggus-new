@@ -22,7 +22,7 @@ public class Seize extends OffensiveAbilityAdaptor {
     @Override
     public void effect() {
         super.effect();
-        System.out.println("seize effect");
+        System.out.println("THIS CITY BELONGS TO ME NOW !");
     }
 
     @Override

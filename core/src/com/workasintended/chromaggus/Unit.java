@@ -40,6 +40,8 @@ public class Unit extends Group {
     public DialogComponent dialogComponent;
     public CityArmory.Inventory inventory;
 
+    private SequenceAction abilityAction = new SequenceAction();
+
     private Order order = new Idle();
 
     public Ability[] abilities;
