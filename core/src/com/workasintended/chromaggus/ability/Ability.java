@@ -22,5 +22,6 @@ public interface Ability {
 	boolean isCasting();
 	boolean stop();
 	Ability clone();
+	float getCooldown();
 
 }

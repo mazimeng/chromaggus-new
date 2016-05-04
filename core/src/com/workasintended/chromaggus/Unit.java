@@ -39,8 +39,7 @@ public class Unit extends Group {
 
     public DialogComponent dialogComponent;
     public CityArmory.Inventory inventory;
-
-    private SequenceAction abilityAction = new SequenceAction();
+    private AbilityComponent abilityComponent;
 
     private Order order = new Idle();
 
@@ -272,5 +271,13 @@ public class Unit extends Group {
 
     public void setFaction(Faction faction) {
         this.faction = faction;
+    }
+
+    public AbilityComponent getAbilityComponent() {
+        return abilityComponent;
+    }
+
+    public void setAbilityComponent(AbilityComponent abilityComponent) {
+        this.abilityComponent = abilityComponent;
     }
 }

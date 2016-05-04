@@ -218,6 +218,7 @@ public class Episode01 {
         unit.dialogComponent = new DialogComponent(unit, new Label("", skin));
 		unit.inventory = new CityArmory.Inventory(2);
 		unit.inventory.addListener(new EquipEventListener(unit));
+		unit.setAbilityComponent(new AbilityComponent(unit));
 		return unit;
 	}
 
