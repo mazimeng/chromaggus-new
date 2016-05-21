@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.workasintended.chromaggus.InterruptionActorEvent;
 import com.workasintended.chromaggus.Unit;
+import com.workasintended.chromaggus.action.MoveIntoRadius;
 import com.workasintended.chromaggus.action.MoveToPosition;
 import com.workasintended.chromaggus.action.MoveToUnit;
 
@@ -22,6 +23,11 @@ public class MovementComponent extends UnitComponent{
         getSelf().addAction(action);
 
         getSelf().fire(new InterruptionActorEvent());
+    }
+    public void moveToPosition(Vector2 position, float radius) {
+        Action action = new MoveIntoRadius(position, getSelf().getSpeed(), radius);
+        getSelf().clearActions();
+        getSelf().addAction(action);
     }
     public void followUnit(Unit target) {
         MoveToUnit moveToUnit = new MoveToUnit(target, getSelf().getSpeed(), 32);

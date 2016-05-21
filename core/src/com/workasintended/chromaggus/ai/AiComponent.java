@@ -1,6 +1,7 @@
 package com.workasintended.chromaggus.ai;
 
 import com.badlogic.gdx.ai.btree.BehaviorTree;
+import com.workasintended.chromaggus.BehaviorTreeViewer;
 import com.workasintended.chromaggus.Unit;
 import com.workasintended.chromaggus.ai.behavior.Blackboard;
 import com.workasintended.chromaggus.unitcomponent.UnitComponent;
@@ -9,6 +10,7 @@ public class AiComponent extends UnitComponent {
 	private BehaviorTree<Blackboard> behaviorTree;
 	private float interval = 0.2f;
 	private float elapsed = 0;
+	private BehaviorTreeViewer<Blackboard> debugger;
 
 	public AiComponent(Unit self, BehaviorTree<Blackboard> behaviorTree) {
 		super(self);
@@ -26,6 +28,14 @@ public class AiComponent extends UnitComponent {
 				behaviorTree.step();
 			}
 		}
+	}
+
+	public BehaviorTreeViewer<Blackboard> getDebugger() {
+		return debugger;
+	}
+
+	public void setDebugger(BehaviorTreeViewer<Blackboard> debugger) {
+		this.debugger = debugger;
 	}
 
 //	private void defend() {

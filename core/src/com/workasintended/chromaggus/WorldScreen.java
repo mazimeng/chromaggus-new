@@ -37,6 +37,7 @@ public class WorldScreen implements Screen, EventHandler {
     private Skin skin;
 
     private Table guiLayout;
+	private Container<Table> behaviorDebugger = new Container<>();
 
     private Cell cityArmoryRenderer;
     private Cell unitPortraitRenderer;
@@ -156,7 +157,7 @@ public class WorldScreen implements Screen, EventHandler {
 		TextureRegion[][] icons = ActorFactory.instance().icon();
 
 		// Create a table that fills the screen. Everything else will go inside this table.
-		Table table = new Table().right().bottom();
+		Table table = new Table(skin).right().bottom();
         guiLayout = table;
         cityArmoryRenderer = table.add();
 
@@ -224,7 +225,13 @@ public class WorldScreen implements Screen, EventHandler {
 		}
 
 		table.setDebug(true);
+		table.row();
 
+		{
+			Cell<Table> cell = table.add();
+//			cell.width(100);
+			cell.setActor(behaviorDebugger);
+		}
 	}
 
 	protected void initInputs() {
@@ -372,5 +379,14 @@ public class WorldScreen implements Screen, EventHandler {
             Unit unit = unitSelectedEvent.getUnit();
             if(unit.inventory!=null) this.unitPortraitRenderer.setActor(unit.inventory);
         }
+
+		if(event.is(EventName.UNIT_SELECTED)) {
+			UnitSelectionEvent unitSelectedEvent = event.cast();
+			Unit unit = unitSelectedEvent.getUnit();
+
+			if(unit.ai != null && unit.ai.getDebugger()!=null) {
+				behaviorDebugger.setActor(unit.ai.getDebugger());
+			}
+		}
     }
 }

@@ -291,6 +291,9 @@ public class Episode01 {
 
 			}
 		});
+
+		BehaviorTreeViewer behaviorTreeViewer = new BehaviorTreeViewer(tree, skin);
+		unit.ai.setDebugger(behaviorTreeViewer);
 	}
 
 	private void initBehaviorTree() {
@@ -301,7 +304,7 @@ public class Episode01 {
 		{
 
 			Task<Blackboard> defense = makeDefense();
-//			Task<Blackboard> develop = makeDevelop();
+			Task<Blackboard> develop = makeDevelop();
 
 
 			BehaviorTree<Blackboard> tree = new BehaviorTree<Blackboard>(new Selector<>(defense));
@@ -326,7 +329,7 @@ public class Episode01 {
 
 
 		Sequence<Blackboard> findCity = new Sequence<>();
-		findCity.addChild(new FindClosestCity());
+		findCity.addChild(new FindClosestOurCity());
 
 		Sequence<Blackboard> moveToCityGuardSequence = new Sequence<>();
 		moveToCityGuardSequence.addChild(new Invert<Blackboard>(new TargetWithinRadius(32)));
@@ -336,12 +339,13 @@ public class Episode01 {
 
 		DevelopCity developCity = new DevelopCity();
 		developCity.setGuard(new Sequence<Blackboard>(new Invert<Blackboard>(new ScanThreat()), new Invert<Blackboard>(new TargetWithinRadius(32))));
-		Sequence<Blackboard> developSequence = new Sequence<>(new FindClosestCity(), new DynamicGuardSelector<>(developCity));
+		Sequence<Blackboard> developSequence = new Sequence<>(new FindClosestOurCity(), new DynamicGuardSelector<>(developCity));
 		return developSequence;
 	}
 
 	private Task<Blackboard> makeDefense() {
-		Sequence<Blackboard> findThreatSequence = new Sequence<>();
+		Parallel<Blackboard> parallelSelector = new Parallel<>(Parallel.Policy.Selector);
+		Sequence<Blackboard> findThreatSequence = new Sequence<Blackboard>();
 		findThreatSequence.addChild(new ScanThreat());
 		findThreatSequence.addChild(new TargetEnemy());
 
@@ -350,19 +354,59 @@ public class Episode01 {
 		attackGuardSequence.addChild(new TargetIsAThreat());
 
 		AttackTarget attackTarget = new AttackTarget();
-		DynamicGuardSelector<Blackboard> attackSelector = new DynamicGuardSelector<>();
 
-		Parallel<Blackboard> parallelSelector = new Parallel<>(Parallel.Policy.Selector);
-		parallelSelector.addChild(new Wait<Blackboard>(5));
+
+		parallelSelector.addChild(new Wait<Blackboard>(3));
 		parallelSelector.addChild(attackTarget);
-		parallelSelector.addChild(new StopEverything());
+		Sequence<Blackboard> returnSequence = new Sequence<>();
+		returnSequence.addChild(new Selector(new TargetIsDead(), new TooFarAwayFromCity()));
+		returnSequence.addChild(new FindClosestOurCity());
+		returnSequence.addChild(new MoveToTarget());
 
-		parallelSelector.setGuard(attackGuardSequence);
-
-		attackSelector.addChild(parallelSelector);
-
-		Sequence<Blackboard> defenseSequence = new Sequence<>(findThreatSequence, attackSelector);
+		Sequence<Blackboard> defenseSequence = new Sequence<>(findThreatSequence, parallelSelector, returnSequence);
 
 		return defenseSequence;
 	}
+
+	private Task<Blackboard> makeClear() {
+
+		//kill anything within range of enemy's city
+		{
+			Parallel<Blackboard> parallelSelector = new Parallel<>(Parallel.Policy.Selector);
+			Sequence<Blackboard> findThreatSequence = new Sequence<Blackboard>();
+			findThreatSequence.addChild(new ScanThreat());
+			findThreatSequence.addChild(new TargetEnemy());
+
+			Sequence<Blackboard> attackGuardSequence = new Sequence<>();
+			attackGuardSequence.addChild(new TargetExists());
+			attackGuardSequence.addChild(new TargetIsAThreat());
+
+			AttackTarget attackTarget = new AttackTarget();
+
+			parallelSelector.addChild(new Wait<Blackboard>(3));
+			parallelSelector.addChild(attackTarget);
+
+			Sequence<Blackboard> returnSequence = new Sequence<>();
+			returnSequence.addChild(new Selector(new TargetIsDead(), new TooFarAwayFromEnemyCity()));
+			returnSequence.addChild(new FindClosestEnemyCity());
+			returnSequence.addChild(new MoveToTarget());
+
+			Sequence<Blackboard> clearSequence = new Sequence<>(findThreatSequence, parallelSelector, returnSequence);
+			return clearSequence;
+		}
+	}
+
+	private Task<Blackboard> makeSeize() {
+		TooFarAwayFromEnemyCity tooFarAwayFromEnemyCity = new TooFarAwayFromEnemyCity();
+		SeizeCity seizeCity = new SeizeCity();
+
+		Parallel<Blackboard> parallelSelector = new Parallel<>(Parallel.Policy.Selector);
+		parallelSelector.addChild(tooFarAwayFromEnemyCity);
+		parallelSelector.addChild(new ScanThreat());
+		parallelSelector.addChild(new Wait<Blackboard>(2));
+		parallelSelector.addChild(seizeCity);
+
+		return parallelSelector;
+	}
+
 }

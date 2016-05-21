@@ -42,4 +42,9 @@ public class ScanThreat extends LeafTask<Blackboard> {
     protected Task copyTo(Task task) {
         return task;
     }
+
+    @Override
+    public String toString() {
+        return "ScanThreat";
+    }
 }

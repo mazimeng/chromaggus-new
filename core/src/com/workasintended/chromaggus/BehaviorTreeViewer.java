@@ -102,65 +102,65 @@ public class BehaviorTreeViewer<E> extends Table {
 
         treeStatus = BT_SUSPENDED;
 
-        runDelaySlider = new Slider(0, 5, 0.01f, false, skin);
-        runDelaySlider.setValue(.5f);
-
-        runButton = new TextButton("Run", skin);
-        runButton.addListener(new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                if (treeStatus == BT_SUSPENDED) {
-                    treeStatus = BT_RUNNING;
-                    runDelayAccumulator = runDelaySlider.getValue(); // this makes it start immediately
-                    runButton.setText("Suspend");
-                    stepButton.setDisabled(true);
-                    if (saveButton != null) saveButton.setDisabled(true);
-                    if (loadButton != null) loadButton.setDisabled(true);
-                } else {
-                    treeStatus = BT_SUSPENDED;
-                    runButton.setText("Run");
-                    stepButton.setDisabled(false);
-                    if (saveButton != null) saveButton.setDisabled(false);
-                    if (loadButton != null) loadButton.setDisabled(!saved);
-                }
-            }
-        });
-
-        stepButton = new TextButton("Step", skin);
-        stepButton.addListener(new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                treeStatus = BT_STEP;
-            }
-        });
-
-        resetButton = new TextButton("Reset", skin);
-        resetButton.addListener(new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                BehaviorTreeViewer.this.tree.reset();
-                rebuildDisplayTree();
-            }
-        });
+//        runDelaySlider = new Slider(0, 5, 0.01f, false, skin);
+//        runDelaySlider.setValue(.5f);
+//
+//        runButton = new TextButton("Run", skin);
+//        runButton.addListener(new ChangeListener() {
+//            @Override
+//            public void changed (ChangeEvent event, Actor actor) {
+//                if (treeStatus == BT_SUSPENDED) {
+//                    treeStatus = BT_RUNNING;
+//                    runDelayAccumulator = runDelaySlider.getValue(); // this makes it start immediately
+//                    runButton.setText("Suspend");
+//                    stepButton.setDisabled(true);
+//                    if (saveButton != null) saveButton.setDisabled(true);
+//                    if (loadButton != null) loadButton.setDisabled(true);
+//                } else {
+//                    treeStatus = BT_SUSPENDED;
+//                    runButton.setText("Run");
+//                    stepButton.setDisabled(false);
+//                    if (saveButton != null) saveButton.setDisabled(false);
+//                    if (loadButton != null) loadButton.setDisabled(!saved);
+//                }
+//            }
+//        });
+//
+//        stepButton = new TextButton("Step", skin);
+//        stepButton.addListener(new ChangeListener() {
+//            @Override
+//            public void changed (ChangeEvent event, Actor actor) {
+//                treeStatus = BT_STEP;
+//            }
+//        });
+//
+//        resetButton = new TextButton("Reset", skin);
+//        resetButton.addListener(new ChangeListener() {
+//            @Override
+//            public void changed (ChangeEvent event, Actor actor) {
+//                BehaviorTreeViewer.this.tree.reset();
+//                rebuildDisplayTree();
+//            }
+//        });
 
         stepLabel = new Label(new StringBuilder(LABEL_STEP + step), skin);
 
-        this.row().height(26).fillX();
-        this.add(runDelaySlider);
-        this.add(runButton);
-        this.add(stepButton);
-        this.add(resetButton);
-        if (loadAndSave) {
-            this.add(saveButton);
-            this.add(loadButton);
-        }
-        this.add(stepLabel);
+//        this.row().height(26).fillX();
+//        this.add(runDelaySlider);
+//        this.add(runButton);
+//        this.add(stepButton);
+//        this.add(resetButton);
+//        if (loadAndSave) {
+//            this.add(saveButton);
+//            this.add(loadButton);
+//        }
+//        this.add(stepLabel);
         this.row();
         displayTree = new Tree(skin);
 
         rebuildDisplayTree();
 
-        this.add(displayTree).colspan(5 + (loadAndSave ? 2 : 0)).grow();
+        this.add(displayTree);
     }
 
     public BehaviorTree<E> getBehaviorTree () {
@@ -194,22 +194,22 @@ public class BehaviorTreeViewer<E> extends Table {
 
     private float runDelayAccumulator;
 
-    @Override
-    public void act (float delta) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        if (treeStatus == BT_RUNNING) {
-            runDelayAccumulator += delta;
-            if (runDelayAccumulator > runDelaySlider.getValue()) {
-                runDelayAccumulator = 0;
-                step();
-            }
-        } else if (treeStatus == BT_STEP) {
-            step();
-            treeStatus = BT_SUSPENDED;
-        }
-        super.act(delta);
-    }
+//    @Override
+//    public void act (float delta) {
+//        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//
+////        if (treeStatus == BT_RUNNING) {
+////            runDelayAccumulator += delta;
+////            if (runDelayAccumulator > runDelaySlider.getValue()) {
+////                runDelayAccumulator = 0;
+////                step();
+////            }
+////        } else if (treeStatus == BT_STEP) {
+////            step();
+////            treeStatus = BT_SUSPENDED;
+////        }
+//        super.act(delta);
+//    }
 
     private void rebuildDisplayTree () {
         rebuildDisplayTree(null);

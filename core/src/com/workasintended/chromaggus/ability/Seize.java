@@ -22,6 +22,7 @@ public class Seize extends OffensiveAbilityAdaptor {
     @Override
     public void effect() {
         super.effect();
+        getTarget().setFaction(getUser().getFaction());
         System.out.println("THIS CITY BELONGS TO ME NOW !");
     }
 

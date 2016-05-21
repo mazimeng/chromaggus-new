@@ -10,18 +10,18 @@ import com.workasintended.chromaggus.WorldStage;
 /**
  * Created by mazimeng on 5/2/16.
  */
-public class FindClosestCity extends LeafTask<Blackboard> {
+public abstract class FindClosestCity extends LeafTask<Blackboard> {
     @Override
     public Task.Status execute() {
         final Blackboard b = getObject();
         WorldStage worldStage = b.getWorldStage();
         Unit city = b.getTarget();
 
-        if(city == null) {
+        if(city == null || city.city == null) {
             city = b.findNearest(worldStage.getUnits(), new Predicate<Unit>() {
                 @Override
                 public boolean evaluate(Unit u) {
-                    return u.city!=null && u.getFaction()==b.getSelf().getFaction();
+                    return u.city!=null && filter(u);
                 }
             });
         }
@@ -31,6 +31,8 @@ public class FindClosestCity extends LeafTask<Blackboard> {
         return city!=null?
                 Task.Status.SUCCEEDED : Task.Status.FAILED;
     }
+
+    protected abstract boolean filter(Unit city);
 
     @Override
     protected Task copyTo(Task task) {

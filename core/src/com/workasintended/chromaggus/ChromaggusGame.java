@@ -6,6 +6,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class ChromaggusGame extends Game implements EventHandler{
 	private GameConfiguration gameConfiguration;
@@ -45,6 +46,7 @@ public class ChromaggusGame extends Game implements EventHandler{
 		Service.assetManager().load("sound/level_up.wav", Sound.class);
 		Service.assetManager().load("sound/fireball.wav", Sound.class);
 		Service.assetManager().load("sound/melee.wav", Sound.class);
+		Service.assetManager().load("uiskin.json", Skin.class);
 		Service.assetManager().finishLoading();
 	}
 
