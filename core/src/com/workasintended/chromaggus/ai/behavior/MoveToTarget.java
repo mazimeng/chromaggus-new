@@ -25,6 +25,7 @@ public class MoveToTarget extends LeafTask<Blackboard> {
         }
 
         if(arrived()) {
+            getObject().setTarget(null);
             return Status.SUCCEEDED;
         }
 

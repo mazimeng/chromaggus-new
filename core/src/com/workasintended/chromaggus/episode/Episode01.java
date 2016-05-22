@@ -117,7 +117,7 @@ public class Episode01 {
 //				unit.ai = new StateDefense(unit, stage);
 				makeAi(unit);
 				unit.combat.setStrength(32);
-				unit.combat.setIntelligence(24);
+				unit.combat.setIntelligence(32);
 
 				Melee melee = new Melee();
 				melee.setPower(1.0f);
@@ -283,7 +283,7 @@ public class Episode01 {
 			@Override
 			public void statusUpdated(Task<Blackboard> task, Task.Status previousStatus) {
 				if(task.getStatus() == previousStatus) return;
-				System.out.println(String.format("tree updated: %s(%s), %s", task, task.getStatus(), previousStatus));
+//				System.out.println(String.format("tree updated: %s(%s), %s", task, task.getStatus(), previousStatus));
 			}
 
 			@Override
@@ -305,9 +305,10 @@ public class Episode01 {
 
 			Task<Blackboard> defense = makeDefense();
 			Task<Blackboard> develop = makeDevelop();
+			Task<Blackboard> seize = makeSeize();
 
 
-			BehaviorTree<Blackboard> tree = new BehaviorTree<Blackboard>(new Selector<>(defense));
+			BehaviorTree<Blackboard> tree = new BehaviorTree<Blackboard>(new Selector<>(seize));
 			library.registerArchetypeTree("selfDefense", tree);
 		}
 	}
@@ -368,7 +369,7 @@ public class Episode01 {
 		return defenseSequence;
 	}
 
-	private Task<Blackboard> makeClear() {
+	private Task<Blackboard> makeSeize() {
 
 		//kill anything within range of enemy's city
 		{
@@ -391,22 +392,8 @@ public class Episode01 {
 			returnSequence.addChild(new FindClosestEnemyCity());
 			returnSequence.addChild(new MoveToTarget());
 
-			Sequence<Blackboard> clearSequence = new Sequence<>(findThreatSequence, parallelSelector, returnSequence);
-			return clearSequence;
+			Sequence<Blackboard> clear = new Sequence<>(returnSequence, findThreatSequence, parallelSelector);
+			return clear;
 		}
 	}
-
-	private Task<Blackboard> makeSeize() {
-		TooFarAwayFromEnemyCity tooFarAwayFromEnemyCity = new TooFarAwayFromEnemyCity();
-		SeizeCity seizeCity = new SeizeCity();
-
-		Parallel<Blackboard> parallelSelector = new Parallel<>(Parallel.Policy.Selector);
-		parallelSelector.addChild(tooFarAwayFromEnemyCity);
-		parallelSelector.addChild(new ScanThreat());
-		parallelSelector.addChild(new Wait<Blackboard>(2));
-		parallelSelector.addChild(seizeCity);
-
-		return parallelSelector;
-	}
-
 }

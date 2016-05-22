@@ -145,7 +145,7 @@ public class AndroidInputHandler extends ActorGestureListener {
                         Service.eventQueue().enqueue(new AttackUnitEvent(selectedUnit, (Unit) actor));
                     }
                     else if(unit.city != null && selectedUnit.combat != null) {
-                        selectedUnit.combat.seize(unit);
+                        //selectedUnit.combat.seize(unit);
                     }
                 }
             }

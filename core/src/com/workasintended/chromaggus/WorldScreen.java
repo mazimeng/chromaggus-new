@@ -388,5 +388,15 @@ public class WorldScreen implements Screen, EventHandler {
 				behaviorDebugger.setActor(unit.ai.getDebugger());
 			}
 		}
+
+		if(event.is(EventName.UNIT_SELECTED)) {
+			UnitSelectionEvent unitSelectedEvent = event.cast();
+
+			Unit unit = unitSelectedEvent.getUnit();
+
+			if(unit.city != null) {
+				System.out.println(unit.city.printFaction());
+			}
+		}
     }
 }

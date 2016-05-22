@@ -8,6 +8,9 @@ import com.badlogic.gdx.utils.Align;
 import com.workasintended.chromaggus.*;
 import com.workasintended.chromaggus.event.GainGoldEvent;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class CityComponent extends UnitComponent {
     private float radius = 64;
     private BitmapFont font;
@@ -20,6 +23,13 @@ public class CityComponent extends UnitComponent {
     private float restore = 0;
     private CityArmory armory;
 
+    private float restoreRate = 0.2f;
+    private float restoreRadius2 = 64f * 64f;
+    private float seizeRadius2 = 64f * 64f;
+    private float seizeTime = 5f; //5 secs
+    private float seizeCount = 0f;
+    private Set<Faction> factionSet = new HashSet<>();
+
     public CityComponent(Unit self) {
         super(self);
     }
@@ -31,9 +41,28 @@ public class CityComponent extends UnitComponent {
 //		this.stage = stage;
 //	}
 
+    public String printFaction() {
+        return String.format("cityFaction: #%s, %s/%s", getSelf().getFaction().getValue(), seizeCount, seizeTime);
+    }
+
     public void update(float delta) {
+        restore += delta;
+
         tax(delta);
-        restore(delta);
+        for (Actor actor : getSelf().getWorld().getActors()) {
+            if (actor == getSelf()) continue;
+            if (!(actor instanceof Unit)) continue;
+
+            Unit unit = (Unit) actor;
+            restore(delta, unit);
+            faction(unit);
+        }
+
+        computeFaction(delta);
+
+        if (restore >= restoreCooldown) {
+            restore = 0;
+        }
     }
 
     public void draw(Batch batch) {
@@ -51,28 +80,48 @@ public class CityComponent extends UnitComponent {
         }
     }
 
-    private void restore(float delta) {
-        restore += delta;
+    private void restore(float delta, Unit unit) {
+        if (!unit.getFaction().isFriend(getSelf().getFaction())) return;
+        if (unit.city != null) return;
+        if (unit.combat == null) return;
+        if (unit.combat.getHp() == unit.combat.getMaxHp()) return;
+        if (unit.dead()) return;
+
+        if (Vector2.dst2(unit.getX(Align.center), unit.getY(Align.center),
+                getSelf().getX(Align.center), getSelf().getY(Align.center)) > restoreRadius2) return;
+
         if (restore < restoreCooldown) return;
-        restore = 0;
 
-        for (Actor actor : getSelf().getWorld().getActors()) {
-            if (actor == getSelf()) continue;
-            if (!(actor instanceof Unit)) continue;
+        unit.combat.setHp((int) (unit.combat.getHp() * (restoreRate + 1f)));
+    }
 
-            Unit unit = (Unit) actor;
+    private void faction(Unit unit) {
+        if (Vector2.dst2(unit.getX(Align.center), unit.getY(Align.center),
+                getSelf().getX(Align.center), getSelf().getY(Align.center)) > seizeRadius2) return;
 
-            if (!unit.getFaction().isFriend(getSelf().getFaction())) continue;
-            if (unit.city != null) continue;
-            if (unit.combat == null) continue;
-            if (unit.combat.getHp() == unit.combat.getMaxHp()) continue;
+        if (unit.dead()) return;
+        factionSet.add(unit.getFaction());
+    }
 
-            if (Vector2.dst2(unit.getX(Align.center), unit.getY(Align.center),
-                    getSelf().getX(Align.center), getSelf().getY(Align.center)) > 64 * 64) continue;
+    private void computeFaction(float delta) {
+        if (factionSet.size() == 1) {
+            Faction faction = factionSet.iterator().next();
+            if (faction != getSelf().getFaction()) {
+                seizeCount += delta;
 
-            unit.combat.setHp(unit.combat.getHp() + 3);
-
+                if (seizeCount >= seizeTime) {
+                    System.out.println(String.format("faction changed: #%s->#%s", getSelf().getFaction().getValue(), faction.getValue()));
+                    getSelf().setFaction(faction);
+                    seizeCount = 0;
+                }
+            } else {
+                seizeCount = 0;
+            }
+        } else {
+            seizeCount = 0;
         }
+
+        factionSet.clear();
     }
 
     public float getRadius() {

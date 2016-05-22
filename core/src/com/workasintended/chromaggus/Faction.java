@@ -12,6 +12,9 @@ public class Faction {
     public boolean isFriend(Faction faction) {
         return (this.value & faction.value) > 0;
     }
+    public int getValue() {
+        return value;
+    }
 
     private Faction(int v) {
         this.value = v;
