@@ -308,7 +308,7 @@ public class Episode01 {
 			Task<Blackboard> seize = makeSeize();
 
 
-			BehaviorTree<Blackboard> tree = new BehaviorTree<Blackboard>(new Selector<>(seize));
+			BehaviorTree<Blackboard> tree = new BehaviorTree<Blackboard>(new Selector<>(defense, new Sequence<>(new Powerful(), seize)));
 			library.registerArchetypeTree("selfDefense", tree);
 		}
 	}
