@@ -1,10 +1,16 @@
 package com.workasintended.chromaggus;
 
+import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.ai.btree.Task;
+import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
+import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibrary;
+import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibraryManager;
+import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.workasintended.chromaggus.ai.behavior.Blackboard;
+import com.workasintended.chromaggus.ai.behavior.Powerful;
 import com.workasintended.chromaggus.event.order.MoveToPositionEvent;
 
 /**
@@ -12,12 +18,16 @@ import com.workasintended.chromaggus.event.order.MoveToPositionEvent;
  */
 public class Main {
     public static void main(String[] arguments) throws IllegalAccessException, InstantiationException, ReflectionException {
-        Sequence<Blackboard> findThreatSequence = new Sequence<Blackboard>(){
-            @Override
-            public String toString() {
-                return "findThreatSequence";
-            }
-        };
-        Task<Blackboard> seq = findThreatSequence.cloneTask();
+    }
+
+    public static void initBt() {
+        BehaviorTreeLibraryManager libraryManager = BehaviorTreeLibraryManager.getInstance();
+        BehaviorTreeLibrary library = new BehaviorTreeLibrary(BehaviorTreeParser.DEBUG_HIGH);
+        libraryManager.setLibrary(library);
+
+        {
+            BehaviorTree<Blackboard> tree = new BehaviorTree<Blackboard>();
+            library.registerArchetypeTree("test", tree);
+        }
     }
 }
