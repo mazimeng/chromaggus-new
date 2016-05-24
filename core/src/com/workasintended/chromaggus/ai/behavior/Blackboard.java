@@ -16,6 +16,8 @@ public class Blackboard {
     private Unit target;
     private LinkedList<Unit> enemies = new LinkedList<>();
     private Unit lastSeenEnemy;
+    private Vector2 stationPosition;
+    private float stationRadius = 64f;
 
     public Unit popEnemy() {
         if(enemies.isEmpty()) return null;
@@ -73,5 +75,21 @@ public class Blackboard {
 
     public void setLastSeenEnemy(Unit lastSeenEnemy) {
         this.lastSeenEnemy = lastSeenEnemy;
+    }
+
+    public Vector2 getStationPosition() {
+        return stationPosition;
+    }
+
+    public void setStationPosition(Vector2 stationPosition) {
+        this.stationPosition = stationPosition;
+    }
+
+    public float getStationRadius() {
+        return stationRadius;
+    }
+
+    public void setStationRadius(float stationRadius) {
+        this.stationRadius = stationRadius;
     }
 }

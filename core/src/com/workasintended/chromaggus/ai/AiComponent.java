@@ -8,7 +8,7 @@ import com.workasintended.chromaggus.unitcomponent.UnitComponent;
 
 public class AiComponent extends UnitComponent {
 	private BehaviorTree<Blackboard> behaviorTree;
-	private float interval = 0.2f;
+	private float interval = 1f;
 	private float elapsed = 0;
 	private BehaviorTreeViewer<Blackboard> debugger;
 

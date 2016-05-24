@@ -20,7 +20,7 @@ public class Powerful extends LeafTask<Blackboard> {
 
         System.out.println("feeling powerful: "+next);
 
-        if(next >= 0.1f) return Status.SUCCEEDED;
+        if(next < 0.2f) return Status.SUCCEEDED;
 
         return Status.FAILED;
     }

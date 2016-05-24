@@ -11,7 +11,16 @@ import com.workasintended.chromaggus.WorldStage;
  * Created by mazimeng on 4/28/16.
  */
 public class ScanThreat extends LeafTask<Blackboard> {
+
     private float radius = 128;
+
+    public ScanThreat(float radius) {
+        this.radius = radius;
+    }
+
+    public ScanThreat() {
+    }
+
     @Override
     public Status execute() {
         final Blackboard b = getObject();
@@ -47,4 +56,13 @@ public class ScanThreat extends LeafTask<Blackboard> {
     public String toString() {
         return "ScanThreat";
     }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
+    }
+
 }
