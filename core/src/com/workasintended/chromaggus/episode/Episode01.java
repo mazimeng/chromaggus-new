@@ -449,12 +449,6 @@ public class Episode01 {
     private Task<Blackboard> makeGuard() {
         Sequence<Blackboard> findThreatSequence = new Sequence<Blackboard>();
         findThreatSequence.addChild(new ScanThreat(64));
-//        findThreatSequence.addChild(new WithinRadius(new GetPosition() {
-//            @Override
-//            public Vector2 get(Blackboard blackboard) {
-//                return blackboard.getStationPosition();
-//            }
-//        }, 64f));
         findThreatSequence.addChild(new TargetEnemy());
 
         AttackTarget attackTarget = new AttackTarget();
