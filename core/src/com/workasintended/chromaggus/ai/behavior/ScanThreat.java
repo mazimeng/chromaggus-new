@@ -40,9 +40,13 @@ public class ScanThreat extends LeafTask<Blackboard> {
             float d2 = Vector2.dst2(enemy.getX(), enemy.getY(), self.getX(), self.getY());
             if(d2 <= radius*radius) {
                 b.setLastSeenEnemy(enemy);
+                System.out.println(String.format("ScanThreat: %s is a threat", enemy.getName()));
                 return Status.SUCCEEDED;
             }
         }
+
+        System.out.println(String.format("ScanThreat:none"));
+        b.setLastSeenEnemy(null);
 
         return Status.FAILED;
     }

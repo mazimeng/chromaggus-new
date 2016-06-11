@@ -17,9 +17,9 @@ public class TargetEnemy extends LeafTask<Blackboard> {
         final Blackboard b = getObject();
 
         Unit enemy = b.getLastSeenEnemy();
-
+        b.setTarget(enemy);
         if(enemy != null) {
-            b.setTarget(enemy);
+
         }
         return Status.SUCCEEDED;
     }

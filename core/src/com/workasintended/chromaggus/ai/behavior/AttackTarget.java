@@ -15,10 +15,11 @@ public class AttackTarget extends LeafTask<Blackboard> {
     @Override
     public Status execute() {
         if(getStatus()!=Status.RUNNING) {
-            Unit self = getObject().getSelf();
-            Unit target = getObject().getTarget();
-            self.combat.attack(target);
+
         }
+        Unit self = getObject().getSelf();
+        Unit target = getObject().getTarget();
+        self.combat.attack(target);
 
         return Status.RUNNING;
     }

@@ -2,6 +2,7 @@ package com.workasintended.chromaggus.episode;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.btree.BehaviorTree;
+import com.badlogic.gdx.ai.btree.LeafTask;
 import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.DynamicGuardSelector;
 import com.badlogic.gdx.ai.btree.branch.Parallel;
@@ -99,6 +100,7 @@ public class Episode01 {
                 unit.setPosition(470, 760);
                 stage.addActor(unit);
                 lead1 = unit;
+                unit.setName("lead1");
             }
             {
                 TextureRegion[] frames = new TextureRegion[2];
@@ -109,6 +111,7 @@ public class Episode01 {
                 unit.setPosition(400, 815);
                 stage.addActor(unit);
                 lead2 = unit;
+                unit.setName("lead2");
             }
             {
                 TextureRegion[] frames = new TextureRegion[2];
@@ -117,7 +120,7 @@ public class Episode01 {
                 frames[1] = char00Frames[4][2];
                 Unit unit = makeCharacter(stage, Faction.FACTION_B, font, frames);
                 unit.setPosition(240, 720);
-//				unit.setSpeed(4);
+				unit.setSpeed(32);
 //				unit.ai = new StateDefense(unit, stage);
                 makeAi(unit);
                 unit.combat.setStrength(32);
@@ -447,27 +450,56 @@ public class Episode01 {
     }
 
     private Task<Blackboard> makeGuard() {
+        LeafTask<Blackboard> markPosition = new MarkStation();
         Sequence<Blackboard> findThreatSequence = new Sequence<Blackboard>();
         findThreatSequence.addChild(new ScanThreat(64));
         findThreatSequence.addChild(new TargetEnemy());
 
+        {
+            WithinRadius withinRadius = new WithinRadius(new GetPosition() {
+                @Override
+                public Vector2 get(Blackboard blackboard) {
+                    return blackboard.getStationPosition();
+                }
+            }, 64);
+            findThreatSequence.addChild(withinRadius);
+        }
+
         AttackTarget attackTarget = new AttackTarget();
 
 
-        DynamicGuardSelector<Blackboard> dynamicGuardSelector = new DynamicGuardSelector<>();
+        DynamicGuardSelector<Blackboard> attack = new DynamicGuardSelector<>();
         attackTarget.setGuard(findThreatSequence);
 
-        dynamicGuardSelector.addChild(attackTarget);
-//        dynamicGuardSelector.addChild(new StopEverything());
+        StopEverything stopEverything = new StopEverything();
+        stopEverything.setGuard(new Invert<Blackboard>(new ScanThreat(64)));
 
+        attack.addChild(attackTarget);
+
+        WithinRadius withinRadius = new WithinRadius(new GetPosition() {
+            @Override
+            public Vector2 get(Blackboard blackboard) {
+                return blackboard.getStationPosition();
+            }
+        }, 8);
         MoveToPosition moveToPosition = new MoveToPosition(new GetPosition() {
             @Override
             public Vector2 get(Blackboard blackboard) {
                 return blackboard.getStationPosition();
             }
-        }, 2);
+        }, 8);
 
-        return new Parallel<>(Parallel.Policy.Selector, new GuardCurrentArea(), new AlwaysFail<>(dynamicGuardSelector), new AlwaysFail<>(moveToPosition));
+        moveToPosition.setGuard(new Invert<Blackboard>(withinRadius));
+
+        DynamicGuardSelector<Blackboard> returnToStation = new DynamicGuardSelector<>();
+        returnToStation.addChild(moveToPosition);
+
+        return new Sequence<>(markPosition, new Selector<>(
+                attack, returnToStation
+        ));
+
+//        return new Parallel<>(Parallel.Policy.Selector, new GuardCurrentArea(), new AlwaysFail<>(dynamicGuardSelector), new AlwaysFail<>(moveToPosition));
 //        return new Parallel<>(Parallel.Policy.Selector, new GuardCurrentArea(), new AlwaysFail<>(dynamicGuardSelector));
     }
+
 }
