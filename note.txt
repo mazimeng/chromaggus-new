@@ -1,2 +1,3 @@
-todo:
-make seize leaf task
+guard an area:
+if moved out of area: go back to the station
+if enemy spotted: attack
