@@ -318,7 +318,8 @@ public class Episode01 {
 
 
 //            BehaviorTree<Blackboard> tree = new BehaviorTree<Blackboard>(new Selector<>(defense, new Sequence<>(new Wait(3), new Powerful(), seize)));
-            BehaviorTree<Blackboard> tree = new BehaviorTree<Blackboard>(guard);
+            BehaviorTree<Blackboard> tree = new BehaviorTree<Blackboard>();
+            tree.addChild(guard);
             library.registerArchetypeTree("selfDefense", tree);
         }
     }
