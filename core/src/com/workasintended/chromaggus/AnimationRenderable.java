@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
  * Created by mazimeng on 8/2/15.
  */
 public class AnimationRenderable {
-    private Animation animation;
+    private Animation<TextureRegion> animation;
     private float stateTime;
     private float x, y;
     private float speed = 8f;

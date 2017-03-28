@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
  * Created by mazimeng on 1/23/16.
  */
 public class Effect extends Actor {
-    private Animation animation;
+    private Animation<TextureRegion> animation;
     private float time = 0;
     private float rotationOffset = 0;
 

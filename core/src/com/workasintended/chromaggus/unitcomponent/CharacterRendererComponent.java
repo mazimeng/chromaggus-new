@@ -15,9 +15,9 @@ import com.workasintended.chromaggus.unitcomponent.RendererComponent;
  */
 public class CharacterRendererComponent extends RendererComponent {
     float stateTime;
-    Animation animation;
-    Animation dead;
-    Animation selection;
+    Animation<TextureRegion> animation;
+    Animation<TextureRegion> dead;
+    Animation<TextureRegion> selection;
 
     private boolean selected = false;
 
